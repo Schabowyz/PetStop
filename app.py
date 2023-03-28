@@ -128,7 +128,7 @@ def register():
             error = "Incorrect email adress!"
 
         cur.execute("SELECT email FROM users WHERE email = ?", (email, ))
-        if email == conv_tup_to_str(email):
+        if email == conv_tup_to_str(cur.fetchone()):
             error = "Email adress already taken!"
 
         # Checks password
@@ -150,9 +150,12 @@ def register():
             password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
 
             cur.execute("INSERT INTO users (username, email, password) VALUES (?, ?, ?)", (username, email, password))
+            cur.execute("SELECT id FROM users WHERE username = ?", (username, ))
+            user_id = cur.fetchone()[0]
+            session["user_id"] = user_id
             con.commit()
             con.close()
-
+            
             return render_template("index.html")
         
     con.close()    
