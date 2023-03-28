@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+{% block title %}: Login{% endblock %}
+
+{% block body %}
+
+    <!-- Error message -->
+    {% if error != None %}
+        <div class="alert alert-primary" role="alert">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <br>
+    <div class="container">
+        <h3>Log in</h3>
+        <br>
+        <div class="row justify-content-center align-items-center">
+            <form action="/login" method="post">
+
+                <div class="form-group">
+                    <label for="usernameInput">Username</label>
+                    <input name="username" type="text" class="form-control" id="usernameInput" placeholder="Name">
+                </div>
+                <br>
+
+                <div class="form-group">
+                    <label for="passwordInput">Password</label>
+                    <input name="password" type="password" class="form-control" id="passwordInput" placeholder="Password">
+                </div>
+                <br>
+                
+                <button type="submit" class="btn btn-outline-primary">Log in</button>
+            </form>
+        </div>
+    </div>
+    
+{% endblock %}

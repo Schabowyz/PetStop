@@ -1,15 +1,18 @@
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, session
 from werkzeug.security import check_password_hash, generate_password_hash
 import sqlite3
 
-from helpers import check_email, conv_tup_to_str
+from helpers import check_email, conv_tup_to_str, login_required
 
 # Configure application
 app = Flask(__name__)
 
+app.secret_key = 'dupa'
+
 @app.route("/")
 def index():
     return render_template("index.html")
+
 
 @app.route("/add", methods=["GET", "POST"])
 def add():
@@ -39,8 +42,62 @@ def add():
         return redirect("/")
     
 
+@app.route("/profile")
+@login_required
+def profile():
+    return render_template("profile.html")
+
+
+
+@app.route("/login", methods = ["GET", "POST"])
+def login():
+
+    session.clear()
+    error = None
+
+    if request.method == "POST":
+
+        # Opens a database and creates a cursor
+        con = sqlite3.connect("database.db")
+        cur = con.cursor()
+
+        # Check if user is in database
+        username = request.form.get("username")
+        cur.execute("SELECT username FROM users WHERE username = ?", (username, ))
+        username_check = conv_tup_to_str(cur.fetchone())
+        print(username_check)
+        if username != username_check:
+            error = "Wrong username!"
+            return render_template("login.html", error = error)
+
+        # Check password
+        password = request.form.get("password")
+        cur.execute("SELECT password FROM users WHERE username = ?", (username, ))
+        password_check = conv_tup_to_str(cur.fetchone())
+        print(password_check)
+        if not check_password_hash(password_check, password):
+            error = "Wrong password!"
+            return render_template("login.html", error = error)
+        
+        # After passing checks, creates a session and redirects user to index page
+        cur.execute("SELECT id FROM users WHERE username = ?", (username, ))
+        user_id = cur.fetchone()[0]
+        session["user_id"] = user_id
+        return redirect("/")
+
+
+    return render_template("login.html", error = error)
+
+@app.route("/logout")
+@login_required
+def logout():
+    session.clear()
+    return redirect("/")
+
+
 @app.route("/register", methods = ["GET", "POST"])
 def register():
+    
     error = None
 
     # Opens database and creates a cursor
@@ -102,8 +159,6 @@ def register():
     return render_template("register.html", error=error)
 
 
-
-    
 @app.route("/registershelter", methods = ["GET", "POST"])
 def registershelter():
     if request.method == "GET":
