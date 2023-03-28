@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, flash
+from werkzeug.security import check_password_hash, generate_password_hash
 import sqlite3
 
 from helpers import check_email, conv_tup_to_str
@@ -41,16 +42,17 @@ def add():
 @app.route("/register", methods = ["GET", "POST"])
 def register():
     error = None
+
+    # Opens database and creates a cursor
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    
     if request.method == "POST":
-        # Opens database and creates a cursor
-        con = sqlite3.connect("database.db")
-        cur = con.cursor()
 
         # Gets informations from form and checks if them for faults
 
         # Checks username
         username = request.form.get("username")
-        print(username)
         
         if len(username) < 4 or len(username) > 16:
             error = "Username must be between 4 and 16 characters long!"
@@ -61,11 +63,9 @@ def register():
         cur.execute("SELECT username FROM users WHERE username = ?", (username, ))
         if username == conv_tup_to_str(cur.fetchone()):
             error = "Username already taken!"
-
-        
+  
         # Checks email
         email = request.form.get("email")
-        print(email)
 
         if check_email(email) == False:
             error = "Incorrect email adress!"
@@ -74,18 +74,31 @@ def register():
         if email == conv_tup_to_str(email):
             error = "Email adress already taken!"
 
-
         # Checks password
         password = request.form.get("password")
-        passwordcon = request.form.get("passwordcon")
+        conpassword = request.form.get("conpassword")
 
-        if password != passwordcon:
+        if password != conpassword:
             error = "Passwords don't match!"
 
         if len(password) < 8 or len(password) > 20:
             error = "Password must be between 8 and 20 characters long"
 
-    
+        
+
+        # Creates a new user in database and returns to homepage if theres no error
+        if error == None:
+
+            # Sets password to hash password
+            password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
+
+            cur.execute("INSERT INTO users (username, email, password) VALUES (?, ?, ?)", (username, email, password))
+            con.commit()
+            con.close()
+
+            return render_template("index.html")
+        
+    con.close()    
     return render_template("register.html", error=error)
 
 

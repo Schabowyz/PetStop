@@ -10,5 +10,7 @@ def check_email(email):
     return True
 
 def conv_tup_to_str(tup):
-    string = ''.join(tup)
+    string = ''
+    if tup != None:
+        string.join(tup)
     return string
