@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+
+{% block title %}: Add{% endblock %}
+
+{% block body %}
+    <br>
+
+    <div class="container">
+        <h3>Register</h3>
+        <br>
+
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+            Register as shelter
+        </button>
+  
+        <!-- Modal -->
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">Register as shelter</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    
+                    <form action="/register" method="post">
+                        <div class="modal-body">
+                            <label for="nameInput">Shelter name</label>
+                            <input name="name" type="text" class="form-control" id="nameInput" placeholder="Shelter name">
+                            <br>
+
+                            <label for="emailInput">Email adress</label>
+                            <input name="email" type="email" class="form-control" id="emailInput" placeholder="Email adress">
+                            <br>
+
+                            <label for="passwordInput">Password</label>
+                            <input name="password" type="password" class="form-control" id="passwordInput" placeholder="Password">
+                            <br>
+
+                            <label for="cityInput">City</label>
+                            <input name="city" type="text" class="form-control" id="cityInput" placeholder="City">
+                            <br>
+
+                            <label for="adressInput">Adress</label>
+                            <input name="adress" type="text" class="form-control" id="adressInput" placeholder="Adress">
+                            <br>
+
+                            <label for="postalInput">Postal code</label>
+                            <input name="postal" type="text" class="form-control" id="postalInput" placeholder="Postal code">
+                            <br>
+
+                            <label for="phoneInput">Phone number</label>
+                            <input name="phone" type="text" class="form-control" id="phoneInput" placeholder="Phone number">
+                            <br>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Register</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
