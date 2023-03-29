@@ -5,12 +5,15 @@
 {% block body %}
 
     <!-- Error message -->
-    {% if error != None %}
+    {% if errors|count != 0 %}
         <div class="alert alert-primary" role="alert">
-            {{ error }}
+            {% for error in errors %}
+                {{ error }}<br>
+            {% endfor %}
         </div>
     {% endif %}
 
+    <!-- Register form content -->
     <br>
     <div class="container">
         <h3>Register a new user</h3>

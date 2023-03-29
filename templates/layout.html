@@ -32,12 +32,17 @@
                                 Profile
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="profile">Your Profile</a></li>
-                                <li><a class="dropdown-item" href="#">Your Animals</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="login">Log in</a></li>
-                                <li><a class="dropdown-item" href="logout">Log out</a></li>
-                                <li><a class="dropdown-item" href="register">Register</a></li>
+                                {% if login == True %}
+                                    <li><a class="dropdown-item" href="profile">Profile</a></li>
+                                    <li><a class="dropdown-item" href="#">Saved</a></li>
+                                    <li><a class="dropdown-item" href="#">Shelter</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="logout">Log out</a></li>
+                                {% endif %}
+                                {% if login == False %}
+                                    <li><a class="dropdown-item" href="login">Log in</a></li>
+                                    <li><a class="dropdown-item" href="register">Register</a></li>
+                                {% endif %}
                             </ul>
                         </li>
                         <li class="nav-item">
@@ -47,7 +52,7 @@
                             <a class="nav-link" href="#">Map</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link">About</a>
+                            <a class="nav-link" href="#">About</a>
                         </li>
                     </ul>
                 </div>

@@ -1,15 +1,9 @@
 from email_validator import validate_email, EmailNotValidError
-from flask import redirect, request, session
+from flask import redirect, session
 from functools import wraps
+import sqlite3
+from werkzeug.security import generate_password_hash, check_password_hash
 
-# Function to check if email is valid
-def check_email(email):
-    try:
-        validate = validate_email(email)
-        email = validate["email"]
-    except EmailNotValidError:
-        return False
-    return True
 
 # Function to convert tuple to string, if tuple is empty, it returns None
 def conv_tup_to_str(tup):
@@ -19,11 +13,123 @@ def conv_tup_to_str(tup):
     else:
         return None
 
+
 # Login requirement decorator for routs in app
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if session.get("user_id") is None:
+        if session.get("user") is None:
             return redirect("/login")
         return f(*args, **kwargs)
     return decorated_function
+
+
+# Checks if user is logged in 
+def login_check():
+    if "user" in session:
+        return True
+    else:
+        return False
+    
+
+# Check registriation parameters with other functions
+def registration_check(username, email, password, conpass):
+    errors = []
+    for error in username_check(username):
+        errors.append(error)
+    for error in email_check(email):
+        errors.append(error)
+    for error in password_check(password, conpass):
+        errors.append(error)
+    return errors
+
+# Username check
+def username_check(username): 
+    errors = []
+
+    if len(username) < 4 or len(username) > 20:
+        errors.append("Username lenght must be between 4 and 20 characters!")
+
+    if not username.isalnum():
+        errors.append("Username must contain only letters and numbers!")
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("SELECT username FROM users WHERE username = ?", (username,))
+    if username == conv_tup_to_str(cur.fetchone()):
+        errors.append("Username is already taken!")
+
+    return errors
+
+# Email check
+def email_check(email):
+    errors = []
+
+    try:
+        validate = validate_email(email)
+        email = validate["email"]
+    except EmailNotValidError:
+        errors.append("Incorrect email adress!")
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("SELECT email FROM users WHERE email = ?", (email,))
+    if email == conv_tup_to_str(cur.fetchone()):
+        errors.append("Email adress already taken!")
+
+    return errors
+
+#Password check
+def password_check(password, conpass):
+    errors = []
+
+    if password != conpass:
+        errors.append("Passwords don't match!")
+    
+    if len(password) < 3 or len(password) > 20:
+        errors.append("Password must be between 8 and 20 characters long!")
+
+    return errors
+
+
+# Register new user
+def register_user(username, email, password):
+    
+    # Create hash password form password
+    password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("INSERT INTO users (username, email, password) VALUES (?, ?, ?)", (username, email, password))
+    con.commit()
+    con.close()
+
+    session["user"] = username
+
+    return
+
+
+# Check login parameters
+def login_user(username, password):
+    # Connects to database, requesting for dictionaries instead of tuples
+    con = sqlite3.connect("database.db")
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+
+    # Checks if username is in database
+    cur.execute("SELECT username FROM users WHERE username = ?", (username,))
+    try:
+        username = cur.fetchone()["username"]
+    except TypeError:
+        con.close()
+        return "Wrong username or password!"
+    
+    # Checks if usrname fits password
+    cur.execute("SELECT password FROM users WHERE username = ?", (username,))
+    correct_password = cur.fetchone()["password"]
+    if not check_password_hash(correct_password, password):
+        con.close()
+        return "Wrong username or password!"
+    
+    con.close()
+    return
