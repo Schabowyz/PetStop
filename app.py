@@ -3,7 +3,7 @@ from flask_session import Session
 from datetime import timedelta
 import sqlite3
 
-from helpers import login_required, login_check, registration_check, register_user, login_user
+from helpers import login_required, login_check, registration_check, register_user, login_user, shelter_check
 
 # Configure application
 app = Flask(__name__)
@@ -81,22 +81,13 @@ def profile():
 
 @app.route("/yourshelter")
 def yourshelter():
-
-    con = sqlite3.connect("database.db")
-    con.row_factory = sqlite3.Row
-    cur = con.cursor()
-
-    try:
-        cur.execute("SELECT * FROM keepers WHERE username = ?", (session['user'],))
-        shelter_id = cur.fetchone()['shelter_id']
-        con.close()
+    # Gets id of users shelter via shelter_check and redirects to it, if user doesn't have one, redirects to yourshelter
+    shelter_id = shelter_check()
+    if shelter_id == False:
+        return render_template("yourshelter.html", login = login_check())
+    else:
         return redirect("/shelter{}".format(shelter_id))
-    except TypeError:
-        con.close()
-        return render_template("yourshelter.html", login = login_check())
-    except KeyError:
-        con.close()
-        return render_template("yourshelter.html", login = login_check())
+        
         
 
 

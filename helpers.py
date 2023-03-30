@@ -23,6 +23,15 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+# Keeper requirment decorator for routs in app
+def keeper_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if shelter_check() == False:
+            return redirect("/yourshelter")
+        return f(*args, **kwargs)
+    return decorated_function
+
 
 # Checks if user is logged in 
 def login_check():
@@ -133,3 +142,25 @@ def login_user(username, password):
     
     con.close()
     return
+
+
+# Check if legged person is a keeper
+def shelter_check():
+    # Connects to database, requesting for dictionaries instead of tuples
+    con = sqlite3.connect("database.db")
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+
+    # Try to get shelters id, if not possible return False
+    try:
+        cur.execute("SELECT * FROM keepers WHERE username = ?", (session['user'],))
+        shelter_id = cur.fetchone()['shelter_id']
+        con.close()
+        return shelter_id
+    except TypeError:
+        con.close()
+        return False
+    except KeyError:
+        con.close()
+        return False
+    
