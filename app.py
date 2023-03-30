@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, session
 from flask_session import Session
 from datetime import timedelta
+import sqlite3
 
 from helpers import login_required, login_check, registration_check, register_user, login_user
 
@@ -78,9 +79,55 @@ def profile():
     return render_template("profile.html", login = login_check())
 
 
-@app.route("/shelter")
-def profile():
-    return render_template("shelter.html")
+@app.route("/yourshelter")
+def yourshelter():
+
+    con = sqlite3.connect("database.db")
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+
+    try:
+        cur.execute("SELECT * FROM keepers WHERE username = ?", (session['user'],))
+        shelter_id = cur.fetchone()['shelter_id']
+        con.close()
+        return redirect("/shelter{}".format(shelter_id))
+    except TypeError:
+        con.close()
+        return render_template("yourshelter.html", login = login_check())
+    except KeyError:
+        con.close()
+        return render_template("yourshelter.html", login = login_check())
+        
+
+
+@app.route("/shelter<shelter_id>")
+def shelter(shelter_id):
+    
+    error = None
+    
+    # Get shelter info
+    con = sqlite3.connect("database.db")
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+    try:
+        cur.execute("SELECT * FROM shelters WHERE id = ?", (shelter_id,))
+        shelter_info = cur.fetchone()
+    except TypeError:
+        error = 404
+
+    # Check if logged person is shelters keeper
+    try:
+        cur.execute("SELECT * FROM keepers WHERE shelter_id = ? AND username = ?", (shelter_id, session['user']))
+        keeper = cur.fetchone()['username']
+    except TypeError:
+        keeper = None
+    except KeyError:
+        keeper = None
+    
+
+        
+    return render_template("shelter.html", login = login_check(), error=error, keeper = keeper, shelter_info = shelter_info)
+
 
 
 # @app.route("/registershelter", methods = ["GET", "POST"])
