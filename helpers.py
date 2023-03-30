@@ -164,3 +164,16 @@ def shelter_check():
         con.close()
         return False
     
+
+# Gets all shelter information in form of dictionary, using shelter id
+def get_shelter_info(shelter_id):
+    # Connects to database
+    con = sqlite3.connect("database.db")
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+    # Gets information and returns them
+    cur.execute("SELECT * FROM shelters WHERE id = ?", (shelter_id,))
+    shelter_info = cur.fetchone()
+    con.close()
+
+    return shelter_info

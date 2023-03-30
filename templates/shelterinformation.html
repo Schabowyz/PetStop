@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+
+{% block title %}: Edit information{% endblock %}
+
+{% block body %}
+    <br>
+    <div class="container">
+        <div class="row gy-1 gx-1">
+            <div class="col-8">
+                <div class="p-3">
+
+                    <!-- Panel for filtering animals in shelter -->
+                    <div class="container border bg-light p-3">
+                        <h3>Shelter control panel</h3><br>
+                        <p>Edit shelter information</p>
+                    </div>
+
+                    <!-- Panel for animals in shelter -->
+                    <div class="container border bg-light p-3">
+                        image<br>
+                        name<br>
+                        city<br>
+                        adress<br>
+                        postal<br>
+                        phone<br>
+                        email<br>
+                        description<br>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="col-4">
+
+                <!-- Panel for shelter keepers -->
+                {% if keeper != None %}
+                    <div class="p-3">
+                        <div class="container border bg-light p-3">
+                            Hello {{ keeper }}!<br>
+                            This is shelters control panel - visible only for shlter keepers after logging in.
+                            <div class="d-grid gap-2">
+                                <br>
+                                <a type="button" class="btn btn-secondary" href="shelterinformation">Edit shelter information</a>
+                                <a type="button" class="btn btn-secondary" href="#">Edit shelter needs</a>
+                                <a type="button" class="btn btn-secondary" href="#">Add an animal</a>
+                                <a type="button" class="btn btn-secondary" href="#">Add a keeper</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Panel for saving or discarding changes -->
+                <div class="p-3">
+                    <div class="container border bg-light p-3">
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-primary" href="#">Save changes</button>
+                            <button type="button" class="btn btn-secondary" href="#">Discard changes</button>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}

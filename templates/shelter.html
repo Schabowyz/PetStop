@@ -3,93 +3,102 @@
 {% block title %}: Shelter{% endblock %}
 
 {% block body %}
+    {% if errors == None %}
+        <br>
+        <div class="container">
+            <div class="row gy-1 gx-1">
+                <div class="col-8">
+                    <div class="p-3">
+
+                        <!-- Panel for filtering animals in shelter -->
+                        <div class="container border bg-light p-3">
+                            <h3>Animals in shelter</h3><br>
+                            <p>Search filters:</p>
+                        </div>
+
+                        <!-- Panel for animals in shelter -->
+                        <div class="container border bg-light p-3">
+
+                            {% for i in range(10) %}
+                                <div class="container border bg-black text-light p-3">
+                                    Dogs photo<br>
+                                    Dogs name<br>
+                                    Dogs race<br>
+                                    Dogs description<br>
+                                    Dogs adoptiopn urgency<br>
+                                </div>
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="col-4">
+
+                    <!-- Panel for shelter keepers -->
+                    {% if keeper != False %}
+                        <div class="p-3">
+                            <div class="container border bg-light p-3">
+                                Hello {{ keeper }}!<br>
+                                This is shelters control panel - visible only for shlter keepers after logging in.
+                                <div class="d-grid gap-2">
+                                    <br>
+                                    <a type="button" class="btn btn-secondary" href="shelterinformation">Edit shelter information</a>
+                                    <a type="button" class="btn btn-secondary" href="#">Edit shelter needs</a>
+                                    <a type="button" class="btn btn-secondary" href="#">Add an animal</a>
+                                    <a type="button" class="btn btn-secondary" href="#">Add a keeper</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Panel for shelter information -->
+                    <div class="p-3">
+                        <div class="container border bg-light p-3">
+                            Shelter information:<br>
+                            {{ shelter_info['image'] }}<br>
+                            {{ shelter_info['name'] }}<br>
+                            {{ shelter_info['loc_city'] }}<br>
+                            {{ shelter_info['loc_adress'] }}<br>
+                            {{ shelter_info['loc_postal'] }}<br>
+                            {{ shelter_info['con_phone'] }}<br>
+                            {{ shelter_info['con_email'] }}<br>
+                            {{ shelter_info['description'] }}<br>
+                        </div>
+                    </div>
+
+                    <!-- Panel for shelter supplies information -->
+                    <div class="p-3">
+                        <div class="container border bg-light p-3">
+                            Shelter supplies:<br>
+                            Displays<br>
+                            supplies<br>
+                            with<br>
+                            current<br>
+                            level<br>
+                            and<br>
+                            needs<br>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if errors != None %}
     <br>
     <div class="container">
         <div class="row gy-1 gx-1">
-            <div class="col-8">
                 <div class="p-3">
-
                     <!-- Panel for filtering animals in shelter -->
                     <div class="container border bg-light p-3">
-                        <h3>Animals in shelter</h3><br>
-                        <p>Search filters:</p>
-                    </div>
-
-                    <!-- Panel for animals in shelter -->
-                    <div class="container border bg-light p-3">
-
-                        <div class="container border bg-black text-light p-3">
-                            Dogs photo<br>
-                            Dogs name<br>
-                            Dogs race<br>
-                            Dogs description<br>
-                            Dogs adoptiopn urgency<br>
-                        </div>
-
-                        <div class="container border bg-black text-light p-3">
-                            Dogs photo<br>
-                            Dogs name<br>
-                            Dogs race<br>
-                            Dogs description<br>
-                            Dogs adoptiopn urgency<br>
-                        </div>
-
-                        <div class="container border bg-black text-light p-3">
-                            Dogs photo<br>
-                            Dogs name<br>
-                            Dogs race<br>
-                            Dogs description<br>
-                            Dogs adoptiopn urgency<br>
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-            <div class="col-4">
-
-                <!-- Panel for shelter keepers -->
-                {% if keeper != None %}
-                    <div class="p-3">
-                        <div class="container border bg-light p-3">
-                            Hello {{ keeper }}!<br>
-                            This is shelters control panel - visible only for shlter keepers after logging in.
-                        </div>
-                    </div>
-                {% endif %}
-
-                <!-- Panel for shelter information -->
-                <div class="p-3">
-                    <div class="container border bg-light p-3">
-                        Shelter information:<br>
-                        {{ shelter_info['image'] }}<br>
-                        {{ shelter_info['name'] }}<br>
-                        {{ shelter_info['loc_city'] }}<br>
-                        {{ shelter_info['loc_adress'] }}<br>
-                        {{ shelter_info['loc_postal'] }}<br>
-                        {{ shelter_info['con_phone'] }}<br>
-                        {{ shelter_info['con_email'] }}<br>
-                        {{ shelter_info['description'] }}<br>
+                        <h3>{{ errors }}</h3>
                     </div>
                 </div>
-
-                <!-- Panel for shelter supplies information -->
-                <div class="p-3">
-                    <div class="container border bg-light p-3">
-                        Shelter supplies:<br>
-                        Displays<br>
-                        supplies<br>
-                        with<br>
-                        current<br>
-                        level<br>
-                        and<br>
-                        needs<br>
-                    </div>
-                </div>
-                
-            </div>
         </div>
     </div>
-    
+    {% endif %}
+
 {% endblock %}
