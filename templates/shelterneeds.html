@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+
+{% block title %}: Edit needs{% endblock %}
+
+{% block body %}
+    <br>
+    <div class="container">
+        <div class="row gy-1 gx-1">
+            <div class="col-8">
+                <div class="p-3">
+
+                    <!-- Panel for filtering animals in shelter -->
+                    <div class="container border bg-light p-3">
+                        <h3>Control panel: edit shelter needs</h3><br>
+                        <p>You can change your shelter needs at any time. The application doesn't have any verification process so far, therefore I hope for your honesty.</p>
+                        <p>Changes will only apply to fields that were edited.</p>
+                        <p>Please remember to save your changes on the right.</p>
+                    </div>
+
+                    <!-- Panel for animals in shelter -->
+                    <div class="container border bg-light p-3">
+                        ware 1<br>
+                        ware 2<br>
+                        ware 3<br>
+                        ware 4<br>
+                        ware 5<br>
+                        ware 6<br>
+                        ware 7<br>
+                        ware 8<br>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="col-4">
+
+                <!-- Panel for shelter keepers -->
+                {% if keeper != None %}
+                    <div class="p-3">
+                        <div class="container border bg-light p-3">
+                            Hello {{ keeper }}!<br>
+                            This is shelters control panel - visible only for shlter keepers after logging in.
+                            <div class="d-grid gap-2">
+                                <br>
+                                <a type="button" class="btn btn-secondary" href="shelterinformation">Edit shelter information</a>
+                                <a type="button" class="btn btn-primary" href="shelterneeds">Edit shelter needs</a>
+                                <a type="button" class="btn btn-secondary" href="addanimal">Add an animal</a>
+                                <a type="button" class="btn btn-secondary" href="addkeeper">Add a keeper</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Panel for saving or discarding changes -->
+                <div class="p-3">
+                    <div class="container border bg-light p-3">
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-primary" href="#">Save changes</button>
+                            <a type="button" class="btn btn-secondary" href="shelter{{ shelter_id }}">Discard changes</a>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}
