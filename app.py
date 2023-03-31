@@ -85,10 +85,10 @@ def yourshelter():
     if shelter_id == False:
         return render_template("yourshelter.html", login = login_check())
     else:
-        return redirect("/shelter{}".format(shelter_id))
+        return redirect("/shelter/{}".format(shelter_id))
         
 
-@app.route("/shelter<shelter_id>")
+@app.route("/shelter/<shelter_id>")
 def shelter(shelter_id):
     
     # Gets shelter information in form of dictionary, if shelter doesnt exists, sets errors variable
@@ -101,47 +101,102 @@ def shelter(shelter_id):
     if shelter_check() == int(shelter_id):
         keeper = session["user"]
     else:
-        keeper = False  
+        keeper = False
 
     return render_template("shelter.html", login = login_check(), errors=errors, keeper = keeper, shelter_info = shelter_info)
 
 
 ### SHELTER INFORMATION EDIT ###
 @app.route("/shelterinformation")
+@login_required
+@keeper_required
 def shelter_information():
     # Gets id of users shelter via shelter_check and redirects to it, if user doesn't have one, redirects to yourshelter
     shelter_id = shelter_check()
     if shelter_id == False:
-        return render_template("yourshelter.html", login = login_check())
+        return redirect("/")
     else:
-        return redirect("/shelterinformation{}".format(shelter_id))
+        return redirect("/shelterinformation/{}".format(shelter_id))
 
-@app.route("/shelterinformation<shelter_id>")
+@app.route("/shelterinformation/<shelter_id>")
 @login_required
 @keeper_required
 def shelter_information_edit(shelter_id):
     shelter_info = get_shelter_info(shelter_id)
     keeper = session['user']
+    db = {1: 'disabled'}
 
-    return render_template("shelterinformation.html", login = login_check(), keeper=keeper, shelter_info = shelter_info)
+    return render_template("shelterinformation.html", login = login_check(), keeper=keeper, shelter_info=shelter_info, db=db)
 
 
 ### SHELTER NEEDS EDIT ###
 @app.route("/shelterneeds")
+@login_required
+@keeper_required
 def shelter_needs():
     # Gets id of users shelter via shelter_check and redirects to it, if user doesn't have one, redirects to yourshelter
     shelter_id = shelter_check()
     if shelter_id == False:
-        return render_template("yourshelter.html", login = login_check())
+        return redirect("/")
     else:
-        return redirect("/shelterneeds{}".format(shelter_id))
+        return redirect("/shelterneeds/{}".format(shelter_id))
     
-@app.route("/shelterneeds<shelter_id>")
+@app.route("/shelterneeds/<shelter_id>")
 @login_required
 @keeper_required
 def shelter_needs_edit(shelter_id):
+    shelter_info = get_shelter_info(shelter_id)
+    keeper = session['user']
+    db = {2: 'disabled'}
 
-    return render_template("shelterneeds.html", login = login_check(), shelter_id=shelter_id)
+    return render_template("shelterneeds.html", login = login_check(), keeper=keeper, shelter_info=shelter_info, db=db)
+
+
+### SHELTER EDIT KEEPERS ###
+@app.route("/shelterkeepers")
+@login_required
+@keeper_required
+def shelter_keepers():
+    # Gets id of users shelter via shelter_check and redirects to it, if user doesn't have one, redirects to yourshelter
+    shelter_id = shelter_check()
+    if shelter_id == False:
+        return redirect("/")
+    else:
+        return redirect("/shelterkeepers/{}".format(shelter_id))
+
+@app.route("/shelterkeepers/<shelter_id>")
+@login_required
+@keeper_required
+def shelter_keepers_edit(shelter_id):
+    shelter_info = get_shelter_info(shelter_id)
+    keeper = session['user']
+    db = {3: 'disabled'}
+
+    return render_template("shelterkeepers.html", login = login_check(), keeper=keeper, shelter_info=shelter_info, db=db)
+
+
+### SHELTER ADD AN ANIMAL ###
+@app.route("/shelteranimal")
+@login_required
+@keeper_required
+def shelter_animal():
+    # Gets id of users shelter via shelter_check and redirects to it, if user doesn't have one, redirects to yourshelter
+    shelter_id = shelter_check()
+    if shelter_id == False:
+        return redirect("/")
+    else:
+        return redirect("/shelteranimal/{}".format(shelter_id))
+
+@app.route("/shelteranimal/<shelter_id>")
+@login_required
+@keeper_required
+def shelter_add_animal(shelter_id):
+    shelter_info = get_shelter_info(shelter_id)
+    keeper = session['user']
+    db = {4: 'disabled'}
+
+    return render_template("shelteranimal.html", login = login_check(), keeper=keeper, shelter_info=shelter_info, db=db)
+
 
 
 

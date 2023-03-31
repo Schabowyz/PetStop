@@ -33,15 +33,15 @@
                             </a>
                             <ul class="dropdown-menu">
                                 {% if login == True %}
-                                    <li><a class="dropdown-item" href="profile">Profile</a></li>
-                                    <li><a class="dropdown-item" href="#">Saved</a></li>
-                                    <li><a class="dropdown-item" href="yourshelter">Your shelter</a></li>
+                                    <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                                    <li><a class="dropdown-item" href="/#">Saved</a></li>
+                                    <li><a class="dropdown-item" href="/yourshelter">Your shelter</a></li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="logout">Log out</a></li>
+                                    <li><a class="dropdown-item" href="/logout">Log out</a></li>
                                 {% endif %}
                                 {% if login == False %}
-                                    <li><a class="dropdown-item" href="login">Log in</a></li>
-                                    <li><a class="dropdown-item" href="register">Register</a></li>
+                                    <li><a class="dropdown-item" href="/login">Log in</a></li>
+                                    <li><a class="dropdown-item" href="/register">Register</a></li>
                                 {% endif %}
                             </ul>
                         </li>

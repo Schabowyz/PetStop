@@ -1,103 +1,54 @@
-{% extends "layout.html" %}
+{% extends "shelter_layout.html" %}
 
-{% block title %}: Edit information{% endblock %}
+{% block shelter_head_title %}
+    <h3>Control panel: edit shelter information</h3><br>
+    <p>You can change your shelter information at any time. The application doesn't have any verification process so far, therefore I hope for your honesty.</p>
+    <p>Changes will only apply to fields that were edited.</p>
+    <p>Please remember to save your changes on the right.</p>
+{% endblock %}
 
-{% block body %}
-    <br>
-    <div class="container">
-        <div class="row gy-1 gx-1">
-            <div class="col-8">
-                <div class="p-3">
+{% block shelter_head_content %}
+    <form action="/registershelter" method="post" id="shelterForm">
 
-                    <!-- Panel for filtering animals in shelter -->
-                    <div class="container border bg-light p-3">
-                        <h3>Control panel: edit shelter information</h3><br>
-                        <p>You can change your shelter information at any time. The application doesn't have any verification process so far, therefore I hope for your honesty.</p>
-                        <p>Changes will only apply to fields that were edited.</p>
-                        <p>Please remember to save your changes on the right.</p>
-                    </div>
-
-                    <!-- Panel for animals in shelter -->
-                    <div class="container border bg-light p-3">
-                        <form action="/registershelter" method="post" id="shelterInformation">
-
-                                <label for="nameInput">Shelter name</label>
-                                <input name="name" type="text" class="form-control" id="nameInput" placeholder="{{ shelter_info['name'] }}">
-                                <br>
+        <label for="nameInput">Shelter name</label>
+        <input name="name" type="text" class="form-control" id="nameInput" placeholder="{{ shelter_info['name'] }}">
+        <br>
     
-                                <label for="emailInput">Email adress</label>
-                                <input name="email" type="email" class="form-control" id="emailInput" placeholder="{{ shelter_info['con_email'] }}">
-                                <br>
+        <label for="emailInput">Email adress</label>
+        <input name="email" type="email" class="form-control" id="emailInput" placeholder="{{ shelter_info['con_email'] }}">
+        <br>
     
-                                <label for="passwordInput">Password</label>
-                                <input name="password" type="password" class="form-control" id="passwordInput">
-                                <br>
+        <label for="passwordInput">Password</label>
+        <input name="password" type="password" class="form-control" id="passwordInput">
+        <br>
     
-                                <label for="conpasInput">Confirm password</label>
-                                <input name="conpas" type="password" class="form-control" id="conpasInput">
-                                <br>
+        <label for="conpasInput">Confirm password</label>
+        <input name="conpas" type="password" class="form-control" id="conpasInput">
+        <br>
     
-                                <label for="cityInput">City</label>
-                                <input name="city" type="text" class="form-control" id="cityInput" placeholder="{{ shelter_info['loc_city'] }}">
-                                <br>
+        <label for="cityInput">City</label>
+        <input name="city" type="text" class="form-control" id="cityInput" placeholder="{{ shelter_info['loc_city'] }}">
+        <br>
     
-                                <label for="adressInput">Adress</label>
-                                <input name="adress" type="text" class="form-control" id="adressInput" placeholder="{{ shelter_info['loc_adress'] }}">
-                                <br>
+        <label for="adressInput">Adress</label>
+        <input name="adress" type="text" class="form-control" id="adressInput" placeholder="{{ shelter_info['loc_adress'] }}">
+        <br>
     
-                                <label for="postalInput">Postal code</label>
-                                <input name="postal" type="text" class="form-control" id="postalInput" placeholder="{{ shelter_info['loc_postal'] }}">
-                                <br>
+        <label for="postalInput">Postal code</label>
+        <input name="postal" type="text" class="form-control" id="postalInput" placeholder="{{ shelter_info['loc_postal'] }}">
+        <br>
     
-                                <label for="phoneInput">Phone number</label>
-                                <input name="phone" type="text" class="form-control" id="phoneInput" placeholder="{{ shelter_info['con_phone'] }}">
-                                <br>
+        <label for="phoneInput">Phone number</label>
+        <input name="phone" type="text" class="form-control" id="phoneInput" placeholder="{{ shelter_info['con_phone'] }}">
+        <br>
 
-                                <label for="descriptionInput">Description</label>
-                                <textarea name="description" type="text" class="form-control" id="descriptionInput" rows="5">{% if shelter_info['description'] != None %}{{ shelter_info['description'] }}{% endif %}</textarea>
-                                <br>
+        <label for="descriptionInput">Description</label>
+        <textarea name="description" type="text" class="form-control" id="descriptionInput" rows="5">{% if shelter_info['description'] != None %}{{ shelter_info['description'] }}{% endif %}</textarea>
+        <br>
 
-                                <label for="imageInput">Image</label>
-                                <input name="image" type="file" class="form-control" id="imageInput" onchange="preview()">
-                                <br>
+        <label for="imageInput">Image</label>
+        <input name="image" type="file" class="form-control" id="imageInput" onchange="preview()">
+        <br>
     
-                        </form>
-                    </div>
-
-                </div>
-
-            </div>
-            <div class="col-4">
-
-                <!-- Panel for shelter keepers -->
-                {% if keeper != None %}
-                    <div class="p-3">
-                        <div class="container border bg-light p-3">
-                            Hello {{ keeper }}!<br>
-                            This is shelters control panel - visible only for shlter keepers after logging in.
-                            <div class="d-grid gap-2">
-                                <br>
-                                <a type="button" class="btn btn-primary" href="shelterinformation">Edit shelter information</a>
-                                <a type="button" class="btn btn-secondary" href="shelterneeds">Edit shelter needs</a>
-                                <a type="button" class="btn btn-secondary" href="addanimal">Add an animal</a>
-                                <a type="button" class="btn btn-secondary" href="addkeeper">Add a keeper</a>
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
-
-                <!-- Panel for saving or discarding changes -->
-                <div class="p-3">
-                    <div class="container border bg-light p-3">
-                        <div class="d-grid gap-2">
-                            <a type="submit" form="shelterInformation" class="btn btn-primary" href="shelter{{ shelter_info['id'] }}">Save changes</a>
-                            <a type="button" class="btn btn-secondary" href="shelter{{ shelter_info['id'] }}">Discard changes</a>
-                        </div>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
-    </div>
-    
+    </form>
 {% endblock %}

@@ -144,7 +144,7 @@ def login_user(username, password):
     return
 
 
-# Check if legged person is a keeper
+# Check if logged person is a keeper
 def shelter_check():
     # Connects to database, requesting for dictionaries instead of tuples
     con = sqlite3.connect("database.db")
