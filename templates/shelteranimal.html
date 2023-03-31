@@ -8,12 +8,13 @@
 {% endblock %}
 
 {% block shelter_head_content %}
-    <form action="" method="post" id="shelterForm">
+    <form action="/shelteranimal/{{ shelter_info['id'] }}" method="post" id="shelterForm">
         <div class="form-group">
             <label for="nameInput">Name</label>
             <input name="name" type="text" class="form-control" id="nameInput" placeholder="Name">
         </div>
         <br>
+
         <div class="form-group">
             <label for="speciesSelect" class="form-label">Choose species</label>
             <select name="species" class="form-select">
@@ -23,22 +24,35 @@
             </select>
         </div>
         <br>
+
         <div class="form-group">
-            <label for="descriptionInput" class="form-label">Description</label>
-            <textarea name="description" class="form-control" id="descriptionInput" rows="7" placeholder="Description"></textarea>
+            <label for="sexSelect" class="form-label">Choose species</label>
+            <select name="sex" class="form-select">
+                <option selected value="male">Male</option>
+                <option value="female">Female</option>
+            </select>
         </div>
         <br>
+
         <div class="form-group">
             <label for="imageInput" class="form-label">Image</label>
             <input name="image" class="form-control" type="file" id="imageInput" onchange="preview()">
         </div>
         <br>
+
+        <div class="form-group">
+            <label for="descriptionInput" class="form-label">Description</label>
+            <textarea name="description" class="form-control" id="descriptionInput" rows="7" placeholder="Description"></textarea>
+        </div>
+        <br>
+
         <div class="form-group">
             <input name="urgency" class="form-check-input" type="checkbox" value="TRUE" id="urgencyCheck">
             <label class="form-check-label" for="urgencyCheck">
                 Urgent adoption needed
             </label>
         </div>
+
     </form>
 {% endblock %}
 

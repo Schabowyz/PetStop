@@ -216,3 +216,30 @@ def get_keepers_info(shelter_id):
     for keeper in shelter_keepers:
         keeper.update(get_profile_info(keeper['username']))
     return shelter_keepers
+
+
+# Checks if animal info is ok and puts it in database
+def insert_animal_info(animal):
+    errors = []
+    if len(animal['name']) < 1 or len(animal['name']) > 20:
+        errors.append("Animal's name must be between 1 and 20 characters long")
+    if not animal['name'].isalnum():
+        errors.append("Animal's name can contain only letters and numbers")
+
+    if len(animal['species']) < 1 or len(animal['species']) > 20:
+        errors.append("Animal's species must be between 1 and 20 characters long")
+
+    if animal['sex'] != 'male' and animal['sex'] != 'female':
+        errors.append("Animal's sex must be either male or female")
+
+    if len(animal['description']) > 500:
+        errors.append("Description must be shorter than 500 characters")
+
+
+
+    return errors
+
+    # con = sqlite3.connect("database.db")
+    # cur = con.cursor()
+
+

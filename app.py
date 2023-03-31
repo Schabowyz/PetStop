@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, session
 from flask_session import Session
 from datetime import timedelta
 
-from helpers import login_required, keeper_required, login_check, registration_check, register_user, login_user, shelter_check, get_shelter_info, get_keepers_info
+from helpers import login_required, keeper_required, login_check, registration_check, register_user, login_user, shelter_check, get_shelter_info, get_keepers_info, insert_animal_info
 
 # Configure application
 app = Flask(__name__)
@@ -101,7 +101,7 @@ def shelter(shelter_id):
     if shelter_check() == int(shelter_id):
         keeper = session["user"]
     else:
-        keeper = False
+        keeper = None
 
     return render_template("shelter.html", login = login_check(), errors=errors, keeper = keeper, shelter_info = shelter_info)
 
@@ -188,15 +188,31 @@ def shelter_animal():
     else:
         return redirect("/shelteranimal/{}".format(shelter_id))
 
-@app.route("/shelteranimal/<shelter_id>")
+@app.route("/shelteranimal/<shelter_id>", methods = ['GET', 'POST'])
 @login_required
 @keeper_required
 def shelter_add_animal(shelter_id):
-    shelter_info = get_shelter_info(shelter_id)
-    keeper = session['user']
-    db = {4: 'disabled'}
 
-    return render_template("shelteranimal.html", login = login_check(), keeper=keeper, shelter_info=shelter_info, db=db)
+    if request.method == 'GET':
+        shelter_info = get_shelter_info(shelter_id)
+        keeper = session['user']
+        db = {4: 'disabled'}
+
+        return render_template("shelteranimal.html", login = login_check(), keeper=keeper, shelter_info=shelter_info, db=db)
+    
+    else:
+        animal = {}
+        animal['name'] = request.form.get('name')
+        animal['species'] = request.form.get('species')
+        animal['sex'] = request.form.get('sex')
+        animal['image'] = request.form.get('image')
+        animal['description'] = request.form.get('description')
+        print(animal)
+
+        animal_info = insert_animal_info(animal)
+        print(animal_info)
+
+        return redirect("/")
 
 
 

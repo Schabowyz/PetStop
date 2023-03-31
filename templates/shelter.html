@@ -8,13 +8,31 @@
 
 {% block shelter_head_content %}
         {% for i in range(10) %}
-        <div class="container border bg-black text-light p-3">
-            Dogs photo<br>
-            Dogs name<br>
-            Dogs race<br>
-            Dogs description<br>
-            Dogs adoptiopn urgency<br>
-        </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="container">
+                        <div class="row gy-1 gx-1">
+                            <div class="col-2">
+                                <div class="d-grid gap-2">
+                                    <img src="#" class="img-thumbnail" alt="Chuuchuuuuuuuj">
+                                </div>
+                            </div>
+                            <div class="col-10">
+                                <h5 class="card-title">Testuś</h5>
+                                <p class="card-text">
+                                    Pies
+                                    <br>
+                                    Testuś to fajny pies do testów, zostaje u nas.
+                                    <br>
+                                    Niepilny
+                                </p>
+                            </div>
+                        </div>
+                    </div> 
+                    <a href="#" class="stretched-link"></a>
+                </div>
+            </div>
+            <br>
     {% endfor %}
 {% endblock %}
 
