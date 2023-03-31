@@ -17,3 +17,10 @@
     ware 7<br>
     ware 8<br>
 {% endblock %}
+
+{% block shelter_side %}
+    {% if keeper != None %}
+        {% include "side_panel_keepers_db.html" %}
+        {% include "side_panel_save.html" %}
+    {% endif %}
+{% endblock %}

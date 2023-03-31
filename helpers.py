@@ -5,6 +5,11 @@ import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
+def dict_factory(cursor, row):
+    fields = [column[0] for column in cursor.description]
+    return {key: value for key, value in zip(fields, row)}
+
+
 # Function to convert tuple to string, if tuple is empty, it returns None
 def conv_tup_to_str(tup):
     if tup != None:
@@ -122,7 +127,7 @@ def register_user(username, email, password):
 def login_user(username, password):
     # Connects to database, requesting for dictionaries instead of tuples
     con = sqlite3.connect("database.db")
-    con.row_factory = sqlite3.Row
+    con.row_factory = dict_factory
     cur = con.cursor()
 
     # Checks if username is in database
@@ -148,7 +153,7 @@ def login_user(username, password):
 def shelter_check():
     # Connects to database, requesting for dictionaries instead of tuples
     con = sqlite3.connect("database.db")
-    con.row_factory = sqlite3.Row
+    con.row_factory = dict_factory
     cur = con.cursor()
 
     # Try to get shelters id, if not possible return False
@@ -169,7 +174,7 @@ def shelter_check():
 def get_shelter_info(shelter_id):
     # Connects to database
     con = sqlite3.connect("database.db")
-    con.row_factory = sqlite3.Row
+    con.row_factory = dict_factory
     cur = con.cursor()
     # Gets information and returns them
     cur.execute("SELECT * FROM shelters WHERE id = ?", (shelter_id,))
@@ -177,3 +182,37 @@ def get_shelter_info(shelter_id):
     con.close()
 
     return shelter_info
+
+
+# Gets all shelter keepers using shelter id
+def get_shelter_keepers(shelter_id):
+    con = sqlite3.connect("database.db")
+    con.row_factory = dict_factory
+    cur = con.cursor()
+
+    cur.execute("SELECT username FROM keepers WHERE shelter_id = ?", (shelter_id,))
+    shelter_keepers = cur.fetchall()
+    con.close()
+
+    return shelter_keepers
+
+
+# Gets information about profile using username
+def get_profile_info(username):
+    con = sqlite3.connect("database.db")
+    con.row_factory = dict_factory
+    cur = con.cursor()
+
+    cur.execute("SELECT username, email, name, surname, phone FROM users WHERE username = ?", (username,))
+    profile_info = cur.fetchone()
+    con.close()
+
+    return profile_info
+
+
+# Creates a list of shelter keepers, together with all their info
+def get_keepers_info(shelter_id):
+    shelter_keepers = get_shelter_keepers(shelter_id)
+    for keeper in shelter_keepers:
+        keeper.update(get_profile_info(keeper['username']))
+    return shelter_keepers

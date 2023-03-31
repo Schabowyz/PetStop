@@ -8,12 +8,45 @@
 {% endblock %}
 
 {% block shelter_head_content %}
-    keeper 1<br>
-    keeper 2<br>
-    keeper 3<br>
-    keeper 4<br>
-    keeper 5<br>
-    keeper 6<br>
-    keeper 7<br>
-    keeper 8<br>
+    {% for keeper in shelter_keepers %}
+        <div class="card">
+            <div class="card-body">
+                <div class="container">
+                    <div class="row gy-1 gx-1">
+                        <div class="col-8">
+                            <h5 class="card-title">{{ keeper['username'] }}</h5>
+                            <p class="card-text">
+                                {% if keeper['name'] != None %}
+                                    {{ keeper['name'] }}
+                                {% endif %}
+                                {% if keeper['surname'] != None %}
+                                    {{ keeper['surname'] }}
+                                {% endif %}
+                                <br>
+                                {{ keeper['email'] }}
+                                <br>
+                                {% if keeper['surname'] != None %}
+                                    {{ keeper['phone'] }}
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-4">
+                            <div class="d-grid gap-2">
+                                <a type="button" class="btn btn-secondary" href="#">Remove keeper</a>
+                                <a type="button" class="btn btn-secondary" href="#">Make shelter owner</a>
+                            </div>
+                        </div>
+                    </div> 
+                </div> 
+            </div>
+        </div>
+        <br>
+    {% endfor %}
+{% endblock %}
+
+{% block shelter_side %}
+    {% if keeper != None %}
+        {% include "side_panel_keepers_db.html" %}
+        {% include "side_panel_save.html" %}
+    {% endif %}
 {% endblock %}

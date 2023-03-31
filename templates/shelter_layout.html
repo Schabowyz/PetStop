@@ -28,32 +28,9 @@
             </div>
             <div class="col-4">
 
-                <!-- Panel for shelter keepers -->
-                {% if keeper != None %}
-                    <div class="p-3">
-                        <div class="container border bg-light p-3">
-                            Hello {{ keeper }}!<br>
-                            This is shelters control panel - visible only for shlter keepers after logging in.
-                            <div class="d-grid gap-2">
-                                <br>
-                                <a type="button" class="btn btn-secondary {{ db[1] }}" href="/shelterinformation">Edit shelter information</a>
-                                <a type="button" class="btn btn-secondary {{ db[2] }}" href="/shelterneeds">Edit shelter needs</a>
-                                <a type="button" class="btn btn-secondary {{ db[3] }}" href="/shelterkeepers">Edit shelter keepers</a>
-                                <a type="button" class="btn btn-secondary {{ db[4] }}" href="/shelteranimal">Add an animal</a>
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
-
-                <!-- Panel for saving or discarding changes -->
-                <div class="p-3">
-                    <div class="container border bg-light p-3">
-                        <div class="d-grid gap-2">
-                            <a type="submit" form="shelterForm" class="btn btn-primary" href="shelter{{ shelter_info['id'] }}">Save</a>
-                            <a type="button" class="btn btn-secondary" href="shelter{{ shelter_info['id'] }}">Back</a>
-                        </div>
-                    </div>
-                </div>
+                {% block shelter_side %}
+                    <!-- Shelter side content -->
+                {% endblock %}
                 
             </div>
         </div>

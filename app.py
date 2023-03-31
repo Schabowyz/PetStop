@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, session
 from flask_session import Session
 from datetime import timedelta
 
-from helpers import login_required, keeper_required, login_check, registration_check, register_user, login_user, shelter_check, get_shelter_info
+from helpers import login_required, keeper_required, login_check, registration_check, register_user, login_user, shelter_check, get_shelter_info, get_keepers_info
 
 # Configure application
 app = Flask(__name__)
@@ -171,8 +171,9 @@ def shelter_keepers_edit(shelter_id):
     shelter_info = get_shelter_info(shelter_id)
     keeper = session['user']
     db = {3: 'disabled'}
+    shelter_keepers = get_keepers_info(shelter_id)
 
-    return render_template("shelterkeepers.html", login = login_check(), keeper=keeper, shelter_info=shelter_info, db=db)
+    return render_template("shelterkeepers.html", login = login_check(), keeper=keeper, shelter_info=shelter_info, db=db, shelter_keepers = shelter_keepers)
 
 
 ### SHELTER ADD AN ANIMAL ###
