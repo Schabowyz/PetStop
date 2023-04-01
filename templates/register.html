@@ -2,8 +2,7 @@
 
 {% block title %}: Register{% endblock %}
 
-{% block body %}
-
+{% block alert %}
     <!-- Error message -->
     {% if errors|count != 0 %}
         <div class="alert alert-primary" role="alert">
@@ -12,7 +11,9 @@
             {% endfor %}
         </div>
     {% endif %}
+{% endblock %}
 
+{% block body %}
     <!-- Register form content -->
     <br>
     <div class="container">

@@ -1,8 +1,13 @@
 from email_validator import validate_email, EmailNotValidError
-from flask import redirect, session
+from flask import redirect, session, request
 from functools import wraps
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
+import os
+import uuid
+
+UPLOAD_EXTENSIONS = ['.jpg', '.jpeg', '.png']
+ANIMAL_IMAGES_PATH = 'static/animal_images'
 
 
 def dict_factory(cursor, row):
@@ -219,8 +224,15 @@ def get_keepers_info(shelter_id):
 
 
 # Checks if animal info is ok and puts it in database
-def insert_animal_info(animal):
+def insert_animal_info(shelter_id):
     errors = []
+
+    animal = {}
+    animal['name'] = request.form.get('name')
+    animal['species'] = request.form.get('species')
+    animal['sex'] = request.form.get('sex')
+    animal['description'] = request.form.get('description')
+
     if len(animal['name']) < 1 or len(animal['name']) > 20:
         errors.append("Animal's name must be between 1 and 20 characters long")
     if not animal['name'].isalnum():
@@ -235,11 +247,46 @@ def insert_animal_info(animal):
     if len(animal['description']) > 500:
         errors.append("Description must be shorter than 500 characters")
 
+    # Checks if any errors occured
+    if not errors:
 
+        # Opens db and creates cursor
+        con = sqlite3.connect("database.db")
+        cur = con.cursor()
+
+        # Saves image
+        image = request.files['image']
+        if image.filename != '':
+            ext = os.path.splitext(image.filename)[1]
+            if ext not in UPLOAD_EXTENSIONS:
+                errors.append('Wrong file extension, your animal was added without image')
+            else:
+                image_id = str(uuid.uuid4())
+                animal['image'] = 'static/animal_images/' + image_id + ext
+                image.save(animal['image'])
+
+        # Creates db input
+        cur.execute("INSERT INTO animals (shelter_id, name, species, sex, description, image) VALUES (?, ?, ?, ?, ?, ?)", (
+            shelter_id,
+            animal['name'],
+            animal['species'],
+            animal['sex'],
+            animal['description'],
+            animal['image']
+        ))
+        con.commit()
+        con.close()
 
     return errors
 
-    # con = sqlite3.connect("database.db")
-    # cur = con.cursor()
+def get_shelter_animals(shelter_id):
 
+    con = sqlite3.connect("database.db")
+    con.row_factory = dict_factory
+    cur = con.cursor()
 
+    cur.execute("SELECT name, species, image, description FROM animals WHERE shelter_id = ?", (shelter_id,))
+    animals = cur.fetchall()
+    con.close()
+
+    return animals

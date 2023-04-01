@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, redirect, session
 from flask_session import Session
 from datetime import timedelta
+import os
 
-from helpers import login_required, keeper_required, login_check, registration_check, register_user, login_user, shelter_check, get_shelter_info, get_keepers_info, insert_animal_info
+from helpers import login_required, keeper_required, login_check, registration_check, register_user, login_user, shelter_check, get_shelter_info, get_keepers_info, insert_animal_info, get_shelter_animals
 
 # Configure application
 app = Flask(__name__)
@@ -12,6 +13,12 @@ app.config['SESSION_PERMAMENT'] = True
 app.config['PERMAMENT_SESSION_LIFETIME'] = timedelta(days=7)
 app.config['SECRET_KEY'] = 'key'
 app.config['SESSION_TYPE'] = 'filesystem'
+
+# Configure uploads settings
+app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024
+app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.jpeg', '.png']
+app.config['ANIMAL_IMAGES'] = 'static/animal_images'
+
 Session(app)
 
 
@@ -103,7 +110,10 @@ def shelter(shelter_id):
     else:
         keeper = None
 
-    return render_template("shelter.html", login = login_check(), errors=errors, keeper = keeper, shelter_info = shelter_info)
+    # Gets all animals that are currently in a shelter
+    animals = get_shelter_animals(shelter_id)
+
+    return render_template("shelter.html", login = login_check(), errors=errors, keeper = keeper, shelter_info = shelter_info, animals = animals)
 
 
 ### SHELTER INFORMATION EDIT ###
@@ -193,26 +203,18 @@ def shelter_animal():
 @keeper_required
 def shelter_add_animal(shelter_id):
 
-    if request.method == 'GET':
-        shelter_info = get_shelter_info(shelter_id)
-        keeper = session['user']
-        db = {4: 'disabled'}
+    errors = None
+    shelter_info = get_shelter_info(shelter_id)
+    keeper = session['user']
+    db = {4: 'disabled'}
 
-        return render_template("shelteranimal.html", login = login_check(), keeper=keeper, shelter_info=shelter_info, db=db)
-    
-    else:
-        animal = {}
-        animal['name'] = request.form.get('name')
-        animal['species'] = request.form.get('species')
-        animal['sex'] = request.form.get('sex')
-        animal['image'] = request.form.get('image')
-        animal['description'] = request.form.get('description')
-        print(animal)
+    # When form is filled and executed, creates a new db entry
+    if request.method == 'POST':
+        errors = insert_animal_info(shelter_id)
+        if not errors:
+            return redirect("/shelter/{}".format(shelter_id))
 
-        animal_info = insert_animal_info(animal)
-        print(animal_info)
-
-        return redirect("/")
+    return render_template("shelteranimal.html", login = login_check(), keeper=keeper, shelter_info=shelter_info, db=db, errors=errors)
 
 
 

@@ -1,5 +1,16 @@
 {% extends "shelter_layout.html" %}
 
+{% block alert %}
+    <!-- Error message -->
+    {% if errors is defined and errors != None and errors|length != 0 %}
+        <div class="alert alert-primary" role="alert">
+            {% for error in errors %}
+                {{ error }}<br>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}
+
 {% block shelter_head_title %}
     <h3>Control panel: add an animal to your shelter</h3><br>
     <p>You can add, edit and remove from your shelter at any time. The application doesn't have any verification process so far, therefore I hope for your honesty.</p>
@@ -8,7 +19,7 @@
 {% endblock %}
 
 {% block shelter_head_content %}
-    <form action="/shelteranimal/{{ shelter_info['id'] }}" method="post" id="shelterForm">
+    <form action="/shelteranimal/{{ shelter_info['id'] }}" method="post" id="shelterForm" enctype="multipart/form-data">
         <div class="form-group">
             <label for="nameInput">Name</label>
             <input name="name" type="text" class="form-control" id="nameInput" placeholder="Name">
