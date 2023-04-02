@@ -196,11 +196,19 @@ def shelter_check():
 # Adds new keeper to shelter
 def add_keeper(username, shelter_id):
     con = sqlite3.connect("database.db")
+    con.row_factory = dict_factory
     cur = con.cursor()
-    cur.execute("INSERT INTO keepers VALUES (?, ?)", (username, shelter_id))
+    cur.execute("SELECT username FROM keepers WHERE username = ?", (username,))
+    check = cur.fetchone()
+    if check != None:
+        if check['username'] == username:
+            return "{} is already a keeper in this shelter".format(username)
+        if check['username'] == None:
+            return "There's no user named {}".format(username)
+    cur.execute("INSERT INTO keepers VALUES (?, ?, 0)", (username, shelter_id))
     con.commit()
     con.close()
-    return
+    return None
     
 
 # Gets all shelter information in form of dictionary, using shelter id
@@ -443,3 +451,21 @@ def get_shelter_animals(shelter_id):
 
     return animals
 
+
+def remove_keeper(username, shelter_id):
+
+    con = sqlite3.connect("database.db")
+    con.row_factory = dict_factory
+    cur = con.cursor()
+    cur.execute("SELECT username FROM keepers WHERE shelter_id = ? AND owner = 1", (shelter_id))
+    if cur.fetchone()['username'] != session['user']:
+        con.close()
+        return "You have to be shelter owner to remove a keeper."
+    cur.execute("SELECT owner FROM keepers WHERE username = ? AND shelter_id = ?", (username, shelter_id))
+    if cur.fetchone()['owner'] == 1:
+        con.close()
+        return "You can't remove owner, you have to set different owner first."
+    cur.execute("DELETE FROM keepers WHERE username = ? AND shelter_id = ?", (username, shelter_id))
+    con.commit()
+    con.close()
+    return "You have succesfully removed {} from shelter keepers.".format(username)

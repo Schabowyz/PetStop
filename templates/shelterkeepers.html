@@ -2,6 +2,19 @@
 
 {% block title %}: {{ shelter_info['name'] }}{% endblock %}
 
+{% block alert %}
+    <!-- Error message -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-primary" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+{% endblock %}
+
 {% block shelter_head_title %}
     <h3>Control panel: edit shelter keepers</h3><br>
     <p>You can add and remove keepers from your shelter at any time. The application doesn't have any verification process so far, therefore I hope for your honesty.</p>
@@ -10,6 +23,25 @@
 {% endblock %}
 
 {% block shelter_head_content %}
+    <div class="card">
+        <div class="card-body">
+            <div class="container">
+                <div class="row gy-1 gx-1">
+                    <div class="col-8">
+                            <form action="/shelterkeepers/{{ shelter_info['id'] }}" method="post" id="addForm">
+                                <input name="username" type="text" class="form-control" id="usernameInput" placeholder="Username">
+                            </form>
+                    </div>
+                    <div class="col-4">
+                        <div class="d-grid gap-2 align-middle">
+                            <button type="submit" form="addForm" class="btn btn-secondary">Add keeper</button>
+                        </div>
+                    </div>
+                </div> 
+            </div> 
+        </div>
+    </div>
+    <br>
     {% for keeper in shelter_keepers %}
         <div class="card">
             <div class="card-body">
@@ -34,8 +66,8 @@
                         </div>
                         <div class="col-4">
                             <div class="d-grid gap-2">
-                                <a type="button" class="btn btn-secondary" href="#">Remove keeper</a>
-                                <a type="button" class="btn btn-secondary" href="#">Make shelter owner</a>
+                                <a type="button" class="btn btn-secondary" href="/shelterkeepers/{{ shelter_info['id'] }}/delete/{{ keeper['username'] }}">Remove keeper</a>
+                                <a type="button" class="btn btn-secondary" href="/shelterkeepers/{{ shelter_info['id'] }}/makeowner/{{ keeper['username'] }}">Make shelter owner</a>
                             </div>
                         </div>
                     </div> 
@@ -49,6 +81,5 @@
 {% block shelter_side %}
     {% if keeper != None %}
         {% include "side_panel_keepers_db.html" %}
-        {% include "side_panel_save.html" %}
     {% endif %}
 {% endblock %}

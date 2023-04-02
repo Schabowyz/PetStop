@@ -1,9 +1,9 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, flash
 from flask_session import Session
 from datetime import timedelta
 import os
 
-from helpers import login_required, keeper_required, login_check, registration_check, register_user, login_user, shelter_check, get_shelter_info, get_keepers_info, insert_animal_info, get_shelter_animals, edit_shelter_information, create_new_shelter
+from helpers import login_required, keeper_required, login_check, registration_check, register_user, login_user, shelter_check, get_shelter_info, get_keepers_info, insert_animal_info, get_shelter_animals, edit_shelter_information, create_new_shelter, remove_keeper, add_keeper
 
 # Configure application
 app = Flask(__name__)
@@ -198,7 +198,7 @@ def shelter_keepers():
     else:
         return redirect("/shelterkeepers/{}".format(shelter_id))
 
-@app.route("/shelterkeepers/<shelter_id>")
+@app.route("/shelterkeepers/<shelter_id>", methods = ['GET', 'POST'])
 @login_required
 @keeper_required
 def shelter_keepers_edit(shelter_id):
@@ -206,8 +206,26 @@ def shelter_keepers_edit(shelter_id):
     keeper = session['user']
     db = {3: 'disabled'}
     shelter_keepers = get_keepers_info(shelter_id)
-
+    if request.method == "POST":
+        username = request.form.get("username")
+        if not username:
+            flash("Please provide a username.")
+            return redirect("/shelterkeepers")
+        else:
+            result = add_keeper(username, shelter_id)
+        if result != None:
+            flash(result)
+            redirect("/shelterkeepers")
+        
     return render_template("shelterkeepers.html", login = login_check(), keeper=keeper, shelter_info=shelter_info, db=db, shelter_keepers = shelter_keepers)
+
+@app.route("/shelterkeepers/<shelter_id>/delete/<username>")
+@login_required
+@keeper_required
+def shelter_keeper_delete(username, shelter_id):
+    result = remove_keeper(username, shelter_id)
+    flash(result)
+    return redirect("/shelterkeepers")
 
 
 ### SHELTER ADD AN ANIMAL ###
@@ -239,7 +257,6 @@ def shelter_add_animal(shelter_id):
             return redirect("/shelter/{}".format(shelter_id))
 
     return render_template("shelteranimal.html", login = login_check(), keeper=keeper, shelter_info=shelter_info, db=db, errors=errors)
-
 
 
 
