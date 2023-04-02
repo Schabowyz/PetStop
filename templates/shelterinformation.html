@@ -1,5 +1,18 @@
 {% extends "shelter_layout.html" %}
 
+{% block title %}: {{ shelter_info['name'] }}{% endblock %}
+
+{% block alert %}
+    <!-- Error message -->
+    {% if errors|count != 0 %}
+        <div class="alert alert-primary" role="alert">
+            {% for error in errors %}
+                {{ error }}<br>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}
+
 {% block shelter_head_title %}
     <h3>Control panel: edit shelter information</h3><br>
     <p>You can change your shelter information at any time. The application doesn't have any verification process so far, therefore I hope for your honesty.</p>
@@ -8,38 +21,30 @@
 {% endblock %}
 
 {% block shelter_head_content %}
-    <form action="/registershelter" method="post" id="shelterForm">
+    <form action="/shelterinformation/{{ shelter_info['id'] }}" method="post" id="shelterForm" enctype="multipart/form-data">
 
         <label for="nameInput">Shelter name</label>
-        <input name="name" type="text" class="form-control" id="nameInput" placeholder="{{ shelter_info['name'] }}">
+        <input name="name" type="text" class="form-control" id="nameInput" value="{{ shelter_info['name'] }}">
         <br>
     
         <label for="emailInput">Email adress</label>
-        <input name="email" type="email" class="form-control" id="emailInput" placeholder="{{ shelter_info['con_email'] }}">
-        <br>
-    
-        <label for="passwordInput">Password</label>
-        <input name="password" type="password" class="form-control" id="passwordInput">
-        <br>
-    
-        <label for="conpasInput">Confirm password</label>
-        <input name="conpas" type="password" class="form-control" id="conpasInput">
+        <input name="con_email" type="email" class="form-control" id="emailInput" value="{{ shelter_info['con_email'] }}">
         <br>
     
         <label for="cityInput">City</label>
-        <input name="city" type="text" class="form-control" id="cityInput" placeholder="{{ shelter_info['loc_city'] }}">
+        <input name="loc_city" type="text" class="form-control" id="cityInput" value="{{ shelter_info['loc_city'] }}">
         <br>
     
         <label for="adressInput">Adress</label>
-        <input name="adress" type="text" class="form-control" id="adressInput" placeholder="{{ shelter_info['loc_adress'] }}">
+        <input name="loc_adress" type="text" class="form-control" id="adressInput" value="{{ shelter_info['loc_adress'] }}">
         <br>
     
         <label for="postalInput">Postal code</label>
-        <input name="postal" type="text" class="form-control" id="postalInput" placeholder="{{ shelter_info['loc_postal'] }}">
+        <input name="loc_postal" type="text" class="form-control" id="postalInput" value="{{ shelter_info['loc_postal'] }}">
         <br>
     
         <label for="phoneInput">Phone number</label>
-        <input name="phone" type="text" class="form-control" id="phoneInput" placeholder="{{ shelter_info['con_phone'] }}">
+        <input name="con_phone" type="text" class="form-control" id="phoneInput" value="{{ shelter_info['con_phone'] }}">
         <br>
 
         <label for="descriptionInput">Description</label>

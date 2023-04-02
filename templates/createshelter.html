@@ -1,0 +1,79 @@
+{% extends "shelter_layout.html" %}
+
+{% block title %}: Create shelter{% endblock %}
+
+{% block alert %}
+    {% if errors|count != 0 %}
+        <div class="alert alert-primary" role="alert">
+            {% for error in errors %}
+                {{ error }}<br>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block shelter_head_title %}
+    <h3>Create new shelter</h3><br>
+    <p>You can change your shelter information at any time. The application doesn't have any verification process so far, therefore I hope for your honesty.</p>
+{% endblock %}
+
+{% block shelter_head_content %}
+    <form action="/createshelter" method="post" id="shelterForm" enctype="multipart/form-data">
+
+        <label for="nameInput">Shelter name</label>
+        <input name="name" type="text" class="form-control" id="nameInput" placeholder="Name">
+        <br>
+    
+        <label for="emailInput">Email adress</label>
+        <input name="con_email" type="email" class="form-control" id="emailInput" placeholder="Email adress">
+        <br>
+    
+        <label for="cityInput">City</label>
+        <input name="loc_city" type="text" class="form-control" id="cityInput" placeholder="City">
+        <br>
+    
+        <label for="adressInput">Adress</label>
+        <input name="loc_adress" type="text" class="form-control" id="adressInput" placeholder="Adress">
+        <br>
+    
+        <label for="postalInput">Postal code</label>
+        <input name="loc_postal" type="text" class="form-control" id="postalInput" placeholder="Postal code">
+        <br>
+    
+        <label for="phoneInput">Phone number</label>
+        <input name="con_phone" type="text" class="form-control" id="phoneInput" placeholder="Phone number">
+        <br>
+
+        <label for="descriptionInput">Description</label>
+        <textarea name="description" type="text" class="form-control" id="descriptionInput" rows="5" placeholder="Description"></textarea>
+        <br>
+
+        <label for="imageInput">Image</label>
+        <input name="image" type="file" class="form-control" id="imageInput" onchange="preview()">
+        <br>
+    
+    </form>
+{% endblock %}
+
+{% block shelter_side %}
+    <!-- Panel with creation info -->
+    <div class="p-3">
+        <div class="container border bg-light p-3">
+            <h4>Information</h4>
+            <div class="d-grid gap-2">
+                <br>
+                <p>Please note that beeing a shelter keeper is a responsible job. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel for saving or discarding changes -->
+    <div class="p-3">
+        <div class="container border bg-light p-3">
+            <div class="d-grid gap-2">
+                <button type="submit" form="shelterForm" class="btn btn-primary">Save</button>
+                <a type="button" class="btn btn-secondary" href="yourshelter">Back</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

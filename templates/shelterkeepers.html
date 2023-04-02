@@ -1,5 +1,7 @@
 {% extends "shelter_layout.html" %}
 
+{% block title %}: {{ shelter_info['name'] }}{% endblock %}
+
 {% block shelter_head_title %}
     <h3>Control panel: edit shelter keepers</h3><br>
     <p>You can add and remove keepers from your shelter at any time. The application doesn't have any verification process so far, therefore I hope for your honesty.</p>
@@ -23,7 +25,7 @@
                                     {{ keeper['surname'] }}
                                 {% endif %}
                                 <br>
-                                {{ keeper['email'] }}
+                                {{ keeper['con_email'] }}
                                 <br>
                                 {% if keeper['surname'] != None %}
                                     {{ keeper['phone'] }}

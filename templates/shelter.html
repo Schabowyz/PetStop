@@ -51,9 +51,12 @@
     <!-- Panel for shelter information -->
     <div class="p-3">
         <div class="container border bg-light p-3">
-            Shelter information:<br>
-            {{ shelter_info['image'] }}<br>
-            {{ shelter_info['name'] }}<br>
+            {% if shelter_info['image'] != None %}
+                <img src="/{{ shelter_info['image'] }}" class="img-thumbnail" alt="{{ shelter_info['name'] }}">
+            {% else %}
+                <img src="/static/shelter_image.jpg" class="img-thumbnail" alt="{{ shelter_info['name'] }}">
+            {% endif %}
+            <h3>{{ shelter_info['name'] }}</h3>
             {{ shelter_info['loc_city'] }}<br>
             {{ shelter_info['loc_adress'] }}<br>
             {{ shelter_info['loc_postal'] }}<br>

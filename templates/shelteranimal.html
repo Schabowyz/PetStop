@@ -1,5 +1,7 @@
 {% extends "shelter_layout.html" %}
 
+{% block title %}: {{ shelter_info['name'] }}{% endblock %}
+
 {% block alert %}
     <!-- Error message -->
     {% if errors is defined and errors != None and errors|length != 0 %}

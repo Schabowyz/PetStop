@@ -7,7 +7,8 @@ import os
 import uuid
 
 UPLOAD_EXTENSIONS = ['.jpg', '.jpeg', '.png']
-ANIMAL_IMAGES_PATH = 'static/animal_images'
+ANIMAL_IMAGES_PATH = 'static/animal_images/'
+SHELTER_IMAGES_PATH = 'static/shelter_images/'
 
 
 def dict_factory(cursor, row):
@@ -43,6 +44,22 @@ def keeper_required(f):
     return decorated_function
 
 
+# Saves image from form, if theres no image returns False, else returns it's path
+def save_image(save_path):
+    image = request.files['image']
+    if image.filename != '':
+        ext = os.path.splitext(image.filename)[1].lower()
+        if ext not in UPLOAD_EXTENSIONS:
+            return 1
+        else:
+            image_id = str(uuid.uuid4())
+            image_path = save_path + image_id + ext
+            image.save(image_path)
+            return image_path
+    else:
+        return 2
+
+
 # Checks if user is logged in 
 def login_check():
     if "user" in session:
@@ -56,7 +73,7 @@ def registration_check(username, email, password, conpass):
     errors = []
     for error in username_check(username):
         errors.append(error)
-    for error in email_check(email):
+    for error in email_check('users', email):
         errors.append(error)
     for error in password_check(password, conpass):
         errors.append(error)
@@ -81,8 +98,9 @@ def username_check(username):
     return errors
 
 # Email check
-def email_check(email):
+def email_check(table, email):
     errors = []
+    print(table, email)
 
     try:
         validate = validate_email(email)
@@ -92,13 +110,13 @@ def email_check(email):
 
     con = sqlite3.connect("database.db")
     cur = con.cursor()
-    cur.execute("SELECT email FROM users WHERE email = ?", (email,))
+    cur.execute("SELECT con_email FROM " +table+ " WHERE con_email = ?", (email,))
     if email == conv_tup_to_str(cur.fetchone()):
         errors.append("Email adress already taken!")
 
     return errors
 
-#Password check
+# Password check
 def password_check(password, conpass):
     errors = []
 
@@ -119,7 +137,7 @@ def register_user(username, email, password):
 
     con = sqlite3.connect("database.db")
     cur = con.cursor()
-    cur.execute("INSERT INTO users (username, email, password) VALUES (?, ?, ?)", (username, email, password))
+    cur.execute("INSERT INTO users (username, con_email, password) VALUES (?, ?, ?)", (username, email, password))
     con.commit()
     con.close()
 
@@ -175,6 +193,16 @@ def shelter_check():
         return False
     
 
+# Adds new keeper to shelter
+def add_keeper(username, shelter_id):
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("INSERT INTO keepers VALUES (?, ?)", (username, shelter_id))
+    con.commit()
+    con.close()
+    return
+    
+
 # Gets all shelter information in form of dictionary, using shelter id
 def get_shelter_info(shelter_id):
     # Connects to database
@@ -188,6 +216,136 @@ def get_shelter_info(shelter_id):
 
     return shelter_info
 
+
+def check_shelter_form():
+    errors = []
+
+    # Gets all information from form
+    shelter = {}
+    shelter['name'] = request.form.get('name')
+    shelter['loc_city'] = request.form.get('loc_city')
+    shelter['loc_adress'] = request.form.get('loc_adress')
+    shelter['loc_postal'] = request.form.get('loc_postal')
+    shelter['con_phone'] = request.form.get('con_phone')
+    shelter['con_email'] = request.form.get('con_email')
+    shelter['description'] = request.form.get('description')
+
+    # Checks all the data
+    if shelter['name'].isalnum() == False:
+        errors.append("Shelter name can only contain letters and numbers")
+    if len(shelter['name']) < 4 or len(shelter['name']) > 20:
+        errors.append("Shlelter name must be between 4 and 20 character long")
+    
+    if shelter['loc_city'].isalnum() == False:
+        errors.append("Please provide right city name")
+
+    if not shelter['loc_adress']:
+        errors.append("Please provide right adress")
+
+    if not shelter['loc_postal']:
+        errors.append("Please provide right postal code")
+
+    if not shelter['con_phone']:
+        errors.append("Please provide right phone number")
+
+    if len(shelter['description']) > 1000:
+        errors.append("Description must be shorter than 1000 characters")
+
+    return shelter, errors
+
+
+# Create shelter
+def create_new_shelter():
+    # If there are any errors, returns errors list, else proceeds to put shelter in db
+    info = check_shelter_form()
+    errors = info[1]
+    errors = errors + email_check('shelters', info[0]['con_email'])
+    if errors:
+        return False, errors
+    
+    shelter = info[0]
+
+    image = save_image(SHELTER_IMAGES_PATH)
+    if image != 1 and image != 2:
+        shelter['image'] = image
+    else:
+        shelter['image'] = None
+
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("INSERT INTO shelters (name, loc_city, loc_adress, loc_postal, con_phone, con_email, description, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",(
+        shelter['name'],
+        shelter['loc_city'],
+        shelter['loc_adress'],
+        shelter['loc_postal'],
+        shelter['con_phone'],
+        shelter['con_email'],
+        shelter['description'],
+        shelter['image']
+    ))
+    con.commit()
+    shelter_id = cur.lastrowid
+    con.close()
+
+    add_keeper(session['user'], shelter_id)
+
+    return shelter_id, errors
+
+
+# Edits shelter information
+def edit_shelter_information(shelter_id):
+
+    # Gets info from shelter from and it's correctness
+    info = check_shelter_form()
+    shelter = info[0]
+    errors = info[1]
+
+    # Checks if email was changed, if so checks it's correctness
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+    cur.execute("SELECT con_email FROM shelters WHERE id = ?", (shelter_id,))
+    curr_email = conv_tup_to_str(cur.fetchone())
+    if curr_email != shelter['con_email']:
+        errors = errors + email_check('shelters', shelter['con_email'])
+
+    # If there are any errors returns False and errors list
+    if errors:
+        con.close()
+        return False, errors
+    
+    # If theres a new image in form and it's ok removes old one and repalaces it with new one, otherwise leaves old one
+    cur.execute("SELECT image FROM shelters WHERE id = ?", (shelter_id,))
+    curr_image = cur.fetchone()
+    if curr_image[0] != None:
+        curr_image = conv_tup_to_str(curr_image)
+    else:
+        curr_image = None
+    image = save_image(SHELTER_IMAGES_PATH)
+    if image != 1 and image != 2:
+        if curr_image != None:
+            os.remove(curr_image)
+        shelter['image'] = image
+    else:
+        shelter['image'] = curr_image
+
+    print(shelter)
+
+    cur.execute("UPDATE shelters SET name = ?, loc_city = ?, loc_adress = ?, loc_postal = ?, con_phone = ?, con_email = ?, description = ?, image = ? WHERE id = ?",(
+        shelter['name'],
+        shelter['loc_city'],
+        shelter['loc_adress'],
+        shelter['loc_postal'],
+        shelter['con_phone'],
+        shelter['con_email'],
+        shelter['description'],
+        shelter['image'],
+        shelter_id
+    ))
+    con.commit()
+    con.close()
+
+    return True, errors
+    
 
 # Gets all shelter keepers using shelter id
 def get_shelter_keepers(shelter_id):
@@ -208,7 +366,7 @@ def get_profile_info(username):
     con.row_factory = dict_factory
     cur = con.cursor()
 
-    cur.execute("SELECT username, email, name, surname, phone FROM users WHERE username = ?", (username,))
+    cur.execute("SELECT username, con_email, name, surname, phone FROM users WHERE username = ?", (username,))
     profile_info = cur.fetchone()
     con.close()
 
@@ -255,16 +413,12 @@ def insert_animal_info(shelter_id):
         cur = con.cursor()
 
         # Saves image
-        image = request.files['image']
-        if image.filename != '':
-            ext = os.path.splitext(image.filename)[1]
-            if ext not in UPLOAD_EXTENSIONS:
-                errors.append('Wrong file extension, your animal was added without image')
-            else:
-                image_id = str(uuid.uuid4())
-                animal['image'] = 'static/animal_images/' + image_id + ext
-                image.save(animal['image'])
-
+        image = save_image(ANIMAL_IMAGES_PATH) 
+        if image != 1 and image != 2:
+            animal['image'] = image
+        elif image == 2:
+            errors.append('Wrong file extension, your animal was added without image')
+         
         # Creates db input
         cur.execute("INSERT INTO animals (shelter_id, name, species, sex, description, image) VALUES (?, ?, ?, ?, ?, ?)", (
             shelter_id,
@@ -290,3 +444,4 @@ def get_shelter_animals(shelter_id):
     con.close()
 
     return animals
+

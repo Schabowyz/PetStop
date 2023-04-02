@@ -3,7 +3,7 @@ from flask_session import Session
 from datetime import timedelta
 import os
 
-from helpers import login_required, keeper_required, login_check, registration_check, register_user, login_user, shelter_check, get_shelter_info, get_keepers_info, insert_animal_info, get_shelter_animals
+from helpers import login_required, keeper_required, login_check, registration_check, register_user, login_user, shelter_check, get_shelter_info, get_keepers_info, insert_animal_info, get_shelter_animals, edit_shelter_information, create_new_shelter
 
 # Configure application
 app = Flask(__name__)
@@ -116,6 +116,21 @@ def shelter(shelter_id):
     return render_template("shelter.html", login = login_check(), errors=errors, keeper = keeper, shelter_info = shelter_info, animals = animals)
 
 
+@app.route("/createshelter", methods = ['GET', 'POST'])
+@login_required
+def create_shelter():
+    errors = []
+    if request.method == "POST":
+        info = create_new_shelter()
+        shelter_id = info[0]
+        print(shelter_id)
+        errors = info[1]
+        print(errors)
+        if shelter_id != False:
+            return redirect("shelter/{}".format(shelter_id))
+    return render_template("createshelter.html", login = login_check(), errors=errors)
+
+
 ### SHELTER INFORMATION EDIT ###
 @app.route("/shelterinformation")
 @login_required
@@ -128,15 +143,24 @@ def shelter_information():
     else:
         return redirect("/shelterinformation/{}".format(shelter_id))
 
-@app.route("/shelterinformation/<shelter_id>")
+@app.route("/shelterinformation/<shelter_id>", methods = ['GET', 'POST'])
 @login_required
 @keeper_required
 def shelter_information_edit(shelter_id):
+    errors = []
     shelter_info = get_shelter_info(shelter_id)
     keeper = session['user']
     db = {1: 'disabled'}
 
-    return render_template("shelterinformation.html", login = login_check(), keeper=keeper, shelter_info=shelter_info, db=db)
+    if request.method == 'POST':
+        info = edit_shelter_information(shelter_id)
+        print(info)
+        if info[0] == True:
+            return redirect("/shelter/{}".format(shelter_id))
+        else:
+            errors = info[1]
+
+    return render_template("shelterinformation.html", login = login_check(), keeper=keeper, shelter_info=shelter_info, db=db, errors=errors)
 
 
 ### SHELTER NEEDS EDIT ###
@@ -215,9 +239,6 @@ def shelter_add_animal(shelter_id):
             return redirect("/shelter/{}".format(shelter_id))
 
     return render_template("shelteranimal.html", login = login_check(), keeper=keeper, shelter_info=shelter_info, db=db, errors=errors)
-
-
-
 
 
 
