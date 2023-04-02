@@ -328,8 +328,6 @@ def edit_shelter_information(shelter_id):
     else:
         shelter['image'] = curr_image
 
-    print(shelter)
-
     cur.execute("UPDATE shelters SET name = ?, loc_city = ?, loc_adress = ?, loc_postal = ?, con_phone = ?, con_email = ?, description = ?, image = ? WHERE id = ?",(
         shelter['name'],
         shelter['loc_city'],
