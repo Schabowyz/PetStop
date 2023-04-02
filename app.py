@@ -3,7 +3,7 @@ from flask_session import Session
 from datetime import timedelta
 import os
 
-from helpers import login_required, keeper_required, login_check, registration_check, register_user, login_user, shelter_check, get_shelter_info, get_keepers_info, insert_animal_info, get_shelter_animals, edit_shelter_information, create_new_shelter, remove_keeper, add_keeper
+from helpers import login_required, keeper_required, login_check, registration_check, register_user, login_user, shelter_check, get_shelter_info, get_keepers_info, insert_animal_info, get_shelter_animals, edit_shelter_information, create_new_shelter, remove_keeper, add_keeper, make_owner
 
 # Configure application
 app = Flask(__name__)
@@ -215,7 +215,10 @@ def shelter_keepers_edit(shelter_id):
             result = add_keeper(username, shelter_id)
         if result != None:
             flash(result)
-            redirect("/shelterkeepers")
+            return redirect("/shelterkeepers")
+        else:
+            flash("{} was succesfully added as shelter keeper".format(username))
+            return redirect("/shelterkeepers")
         
     return render_template("shelterkeepers.html", login = login_check(), keeper=keeper, shelter_info=shelter_info, db=db, shelter_keepers = shelter_keepers)
 
@@ -224,6 +227,15 @@ def shelter_keepers_edit(shelter_id):
 @keeper_required
 def shelter_keeper_delete(username, shelter_id):
     result = remove_keeper(username, shelter_id)
+    flash(result)
+    return redirect("/shelterkeepers")
+
+
+@app.route("/shelterkeepers/<shelter_id>/owner/<username>")
+@login_required
+@keeper_required
+def shelter_owner_make(username, shelter_id):
+    result = make_owner(username, shelter_id)
     flash(result)
     return redirect("/shelterkeepers")
 

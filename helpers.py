@@ -198,17 +198,44 @@ def add_keeper(username, shelter_id):
     con = sqlite3.connect("database.db")
     con.row_factory = dict_factory
     cur = con.cursor()
+    cur.execute("SELECT username FROM users WHERE username = ?", (username,))
+    check = cur.fetchone()
+    if not check:
+        return "There's no user named {}".format(username)
     cur.execute("SELECT username FROM keepers WHERE username = ?", (username,))
     check = cur.fetchone()
     if check != None:
         if check['username'] == username:
             return "{} is already a keeper in this shelter".format(username)
-        if check['username'] == None:
-            return "There's no user named {}".format(username)
     cur.execute("INSERT INTO keepers VALUES (?, ?, 0)", (username, shelter_id))
     con.commit()
     con.close()
     return None
+
+
+# Makes new shelter owner
+def make_owner(username, shelter_id):
+    con = sqlite3.connect("database.db")
+    con.row_factory = dict_factory
+    cur = con.cursor()
+    cur.execute("SELECT username FROM keepers WHERE shelter_id = ? AND owner = 1", (shelter_id,))
+    check = cur.fetchone()
+    if not check:
+        return "There's no such user"
+    if check['username'] != session['user']:
+        return "Only shelter owner can make a new owner"
+    if check['username'] == username:
+        return "{} is already a shelter owner".format(username)
+    cur.execute("SELECT username FROM keepers WHERE username = ? AND shelter_id = ?", (username, shelter_id))
+    check = cur.fetchone()
+    if not check:
+        return "{} is not keeper of this shelter and can't be made an owner".format(username)
+    
+    cur.execute("UPDATE keepers SET owner = 0 WHERE shelter_id = ? AND owner = 1", (shelter_id,))
+    cur.execute("UPDATE keepers SET owner = 1 WHERE username = ? AND shelter_id = ?", (username, shelter_id))
+    con.commit()
+    con.close()
+    return "{} is a new shelter owner".format(username)
     
 
 # Gets all shelter information in form of dictionary, using shelter id
