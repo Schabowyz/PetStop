@@ -266,7 +266,7 @@ def check_shelter_form():
     shelter['description'] = request.form.get('description')
 
     # Checks all the data
-    if shelter['name'].isalnum() == False:
+    if shelter['name'].replace(' ','').isalnum() == False:
         errors.append("Shelter name can only contain letters and numbers")
     if len(shelter['name']) < 4 or len(shelter['name']) > 20:
         errors.append("Shlelter name must be between 4 and 20 character long")
@@ -426,7 +426,7 @@ def insert_animal_info(shelter_id):
 
     if len(animal['name']) < 1 or len(animal['name']) > 20:
         errors.append("Animal's name must be between 1 and 20 characters long")
-    if not animal['name'].isalnum():
+    if not animal['name'].replace(' ','').isalnum():
         errors.append("Animal's name can contain only letters and numbers")
 
     if len(animal['species']) < 1 or len(animal['species']) > 20:
