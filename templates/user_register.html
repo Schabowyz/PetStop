@@ -1,16 +1,18 @@
-{% extends "layout.html" %}
+{% extends "layout_main.html" %}
 
 {% block title %}: Register{% endblock %}
 
 {% block alert %}
     <!-- Error message -->
-    {% if errors|count != 0 %}
-        <div class="alert alert-primary" role="alert">
-            {% for error in errors %}
-                {{ error }}<br>
-            {% endfor %}
-        </div>
-    {% endif %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-primary" role="alert">
+                {% for message in messages %}
+                    {{ message }}<br>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
 {% endblock %}
 
 {% block body %}
@@ -18,6 +20,7 @@
     <br>
     <div class="container">
         <h3>Register a new user</h3>
+        <p>All fields below are required, you can later change them and add more information in your profile.</p>
         <br>
         <div class="row justify-content-center align-items-center">
             <form action="/register" method="post">
@@ -30,7 +33,7 @@
 
                 <div class="form-group">
                     <label for="emailInput">Email adress</label>
-                    <input name="email" type="text" class="form-control" id="emailInput" placeholder="Email">
+                    <input name="con_email" type="text" class="form-control" id="emailInput" placeholder="Email">
                 </div>
                 <br>
 
@@ -46,9 +49,8 @@
                 </div>
                 <br>
                 
-                <button type="submit" class="btn btn-outline-primary">Submit</button>
+                <button type="submit" class="btn btn-secondary">Submit</button>
             </form>
         </div>
     </div>
-    
 {% endblock %}

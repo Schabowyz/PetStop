@@ -1,15 +1,15 @@
-{% extends "shelter_layout.html" %}
+{% extends "layout_body.html" %}
 
-{% block title %}: {{ shelter_info['name'] }}{% endblock %}
+{% block title %}: {{ shelter['name'] }}{% endblock %}
 
-{% block shelter_head_title %}
+{% block body_header %}
     <h3>Edit shelter needs</h3><br>
     <p>You can change your shelter needs at any time. The application doesn't have any verification process so far, therefore I hope for your honesty.</p>
     <p>Changes will only apply to fields that were edited.</p>
     <p>Please remember to save your changes on the right.</p>
 {% endblock %}
 
-{% block shelter_head_content %}
+{% block body_content %}
     ware 1<br>
     ware 2<br>
     ware 3<br>
@@ -20,9 +20,9 @@
     ware 8<br>
 {% endblock %}
 
-{% block shelter_side %}
-    {% if keeper != None %}
-        {% include "side_panel_keepers_db.html" %}
-        {% include "side_panel_save.html" %}
+{% block body_sidebar %}
+    {% if user_status['keeper'] == True %}
+        {% include "sidebar_nav.html" %}
+        {% include "sidebar_submit.html" %}
     {% endif %}
 {% endblock %}

@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "layout_main.html" %}
 
 {% block body %}
     <br>
@@ -6,28 +6,26 @@
         <div class="row gy-1 gx-1">
             <div class="col-8">
                 <div class="p-3">
-
-                    <!-- Panel for filtering animals in shelter -->
                     <div class="container border bg-light p-3">
-                        {% block shelter_head_title %}
-                            <!-- shelter_head_title -->
-                        {% endblock %}
-                    </div>
 
-                    <!-- Panel for animals in shelter -->
+                        {% block body_header %}
+                            <!-- Body header -->
+                        {% endblock %}
+
+                    </div>
                     <div class="container border bg-light p-3">
-                        {% block shelter_head_content %}
-                            <!-- shelter_head_content -->
-                        {% endblock %}
-                    </div>
 
+                        {% block body_content %}
+                            <!-- Body content -->
+                        {% endblock %}
+
+                    </div>
                 </div>
-
             </div>
             <div class="col-4">
 
-                {% block shelter_side %}
-                    <!-- Shelter side content -->
+                {% block body_sidebar %}
+                    <!-- Body sidebar -->
                 {% endblock %}
                 
             </div>

@@ -1,24 +1,27 @@
-{% extends "shelter_layout.html" %}
+{% extends "layout_body.html" %}
 
-{% block title %}: Create shelter{% endblock %}
+{% block title %}: Create new shelter{% endblock %}
 
 {% block alert %}
-    {% if errors|count != 0 %}
-        <div class="alert alert-primary" role="alert">
-            {% for error in errors %}
-                {{ error }}<br>
+    <!-- Error message -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-primary" role="alert">
+                    {{ message }}
+                </div>
             {% endfor %}
-        </div>
-    {% endif %}
+        {% endif %}
+    {% endwith %}
 {% endblock %}
 
-{% block shelter_head_title %}
+{% block body_header %}
     <h3>Create new shelter</h3><br>
     <p>You can change your shelter information at any time. The application doesn't have any verification process so far, therefore I hope for your honesty.</p>
 {% endblock %}
 
-{% block shelter_head_content %}
-    <form action="/createshelter" method="post" id="shelterForm" enctype="multipart/form-data">
+{% block body_content %}
+    <form action="/createshelter" method="post" id="body_contentForm" enctype="multipart/form-data">
 
         <label for="nameInput">Shelter name</label>
         <input name="name" type="text" class="form-control" id="nameInput" placeholder="Name">
@@ -55,7 +58,7 @@
     </form>
 {% endblock %}
 
-{% block shelter_side %}
+{% block body_sidebar %}
     <!-- Panel with creation info -->
     <div class="p-3">
         <div class="container border bg-light p-3">
@@ -71,8 +74,8 @@
     <div class="p-3">
         <div class="container border bg-light p-3">
             <div class="d-grid gap-2">
-                <button type="submit" form="shelterForm" class="btn btn-primary">Save</button>
-                <a type="button" class="btn btn-secondary" href="yourshelter">Back</a>
+                <button type="submit" form="body_contentForm" class="btn btn-primary">Save</button>
+                <a type="button" class="btn btn-secondary" href="/yourshelter">Back</a>
             </div>
         </div>
     </div>

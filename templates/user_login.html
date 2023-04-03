@@ -1,14 +1,18 @@
-{% extends "layout.html" %}
+{% extends "layout_main.html" %}
 
-{% block title %}: Login{% endblock %}
+{% block head_title %}: Login{% endblock %}
 
 {% block alert %}
     <!-- Error message -->
-    {% if errors != None %}
-        <div class="alert alert-primary" role="alert">
-            {{ errors }}
-        </div>
-    {% endif %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-primary" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 {% endblock %}
 
 
@@ -32,9 +36,8 @@
                 </div>
                 <br>
                 
-                <button type="submit" class="btn btn-outline-primary">Log in</button>
+                <button type="submit" class="btn btn-secondary">Log in</button>
             </form>
         </div>
     </div>
-    
 {% endblock %}

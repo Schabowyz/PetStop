@@ -1,0 +1,68 @@
+{% extends "layout_body.html" %}
+
+{% block title %}: {{ shelter['name'] }}{% endblock %}
+
+{% block alert %}
+    <!-- Error message -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-primary" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+{% endblock %}
+
+{% block body_header %}
+    <h3>Edit shelter information</h3><br>
+    <p>You can change your shelter information at any time. The application doesn't have any verification process so far, therefore I hope for your honesty.</p>
+    <p>Changes will only apply to fields that were edited.</p>
+    <p>Please remember to save your changes on the right.</p>
+{% endblock %}
+
+{% block body_content %}
+    <form action="/shelterinformation/{{ shelter['id'] }}" method="post" id="body_contentForm" enctype="multipart/form-data">
+
+        <label for="nameInput">Shelter name</label>
+        <input name="name" type="text" class="form-control" id="nameInput" value="{{ shelter['name'] }}">
+        <br>
+    
+        <label for="emailInput">Email adress</label>
+        <input name="con_email" type="email" class="form-control" id="emailInput" value="{{ shelter['con_email'] }}">
+        <br>
+    
+        <label for="cityInput">City</label>
+        <input name="loc_city" type="text" class="form-control" id="cityInput" value="{{ shelter['loc_city'] }}">
+        <br>
+    
+        <label for="adressInput">Adress</label>
+        <input name="loc_adress" type="text" class="form-control" id="adressInput" value="{{ shelter['loc_adress'] }}">
+        <br>
+    
+        <label for="postalInput">Postal code</label>
+        <input name="loc_postal" type="text" class="form-control" id="postalInput" value="{{ shelter['loc_postal'] }}">
+        <br>
+    
+        <label for="phoneInput">Phone number</label>
+        <input name="con_phone" type="text" class="form-control" id="phoneInput" value="{{ shelter['con_phone'] }}">
+        <br>
+
+        <label for="descriptionInput">Description</label>
+        <textarea name="description" type="text" class="form-control" id="descriptionInput" rows="5">{% if shelter['description'] != None %}{{ shelter['description'] }}{% endif %}</textarea>
+        <br>
+
+        <label for="imageInput">Image</label>
+        <input name="image" type="file" class="form-control" id="imageInput" onchange="preview()">
+        <br>
+    
+    </form>
+{% endblock %}
+
+{% block body_sidebar %}
+    {% if user_status['keeper'] == True %}
+        {% include "sidebar_nav.html" %}
+        {% include "sidebar_submit.html" %}
+    {% endif %}
+{% endblock %}
