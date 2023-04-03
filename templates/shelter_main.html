@@ -2,58 +2,47 @@
 
 {% block head_title %}: {{ shelter['name'] }}{% endblock %}
 
-{% block alert %}
-    <!-- Error message -->
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-primary" role="alert">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-{% endblock %}
-
 {% block body_header %}
     <h3>Animals in shelter</h3><br>
     <p>Search filters:</p>
 {% endblock %}
 
 {% block body_content %}
-    {% for animal in animals %}
-        <div class="card">
-            <div class="card-body">
-                <div class="container">
-                    <div class="row gy-1 gx-1">
-                        <div class="col-3">
-                            <div class="d-grid gap-2">
-                                {% if animal['image'] != None %}
-                                    <img src="/{{ animal['image'] }}" class="img-thumbnail" alt="{{ animal['name'] }}">
-                                {% else %}
-                                    <img src="/static/animal_image.jpg" class="img-thumbnail" alt="{{ animal['name'] }}">
-                                {% endif %}
+    {% if animals %}
+        {% for animal in animals %}
+            <div class="card">
+                <div class="card-body">
+                    <div class="container">
+                        <div class="row gy-1 gx-1">
+                            <div class="col-3">
+                                <div class="d-grid gap-2">
+                                    {% if animal['image'] != None %}
+                                        <img src="/{{ animal['image'] }}" class="img-thumbnail" alt="{{ animal['name'] }}">
+                                    {% else %}
+                                        <img src="/static/animal_image.jpg" class="img-thumbnail" alt="{{ animal['name'] }}">
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-8">
+                                <h5 class="card-title">{{ animal['name'] }}</h5>
+                                <p class="card-text">
+                                    {{ animal['species'] }}
+                                    <br>
+                                    {% if animal['description'] != None %}
+                                        {{ animal['description'] }}
+                                    {% else %}
+                                        {{ animal['name'] }} has no description.
+                                    {% endif %}
+                                </p>
                             </div>
                         </div>
-                        <div class="col-8">
-                            <h5 class="card-title">{{ animal['name'] }}</h5>
-                            <p class="card-text">
-                                {{ animal['species'] }}
-                                <br>
-                                {% if animal['description'] != None %}
-                                    {{ animal['description'] }}
-                                {% else %}
-                                    {{ animal['name'] }} has no description.
-                                {% endif %}
-                            </p>
-                        </div>
-                    </div>
-                </div> 
-                <a href="#" class="stretched-link"></a>
+                    </div> 
+                    <a href="#" class="stretched-link"></a>
+                </div>
             </div>
-        </div>
-        <br>
-    {% endfor %}
+            <br>
+        {% endfor %}
+    {% endif %}
 {% endblock %}
 
 {% block body_sidebar %}

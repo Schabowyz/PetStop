@@ -2,19 +2,6 @@
 
 {% block title %}: {{ shelter['name'] }}{% endblock %}
 
-{% block alert %}
-    <!-- Error message -->
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-primary" role="alert">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-{% endblock %}
-
 {% block body_header %}
     <h3>Add an animal to your shelter</h3><br>
     <p>You can add, edit and remove from your shelter at any time. The application doesn't have any verification process so far, therefore I hope for your honesty.</p>
@@ -23,7 +10,7 @@
 {% endblock %}
 
 {% block body_content %}
-    <form action="/shelteranimal/{{ shelter['id'] }}" method="post" id="body_contentForm" enctype="multipart/form-data">
+    <form action="/shelter/{{ shelter['id'] }}/addanimal" method="post" id="body_contentForm" enctype="multipart/form-data">
         <div class="form-group">
             <label for="nameInput">Name</label>
             <input name="name" type="text" class="form-control" id="nameInput" placeholder="Name">

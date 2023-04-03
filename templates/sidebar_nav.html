@@ -4,10 +4,10 @@
         This is shelters control panel - visible only for shlter keepers after logging in.
         <div class="d-grid gap-2">
             <br>
-                <a type="button" class="btn btn-secondary {{ db['info'] }}" href="/shelterinformation">Shelter information</a>
-                <a type="button" class="btn btn-secondary {{ db['needs'] }}" href="/shelterneeds">Shelter needs</a>
-                <a type="button" class="btn btn-secondary {{ db['keepers'] }}" href="/shelterkeepers">Shelter keepers</a>
-                <a type="button" class="btn btn-secondary {{ db['animal'] }}" href="/shelteranimal">Add an animal</a>
+                <a type="button" class="btn btn-secondary {{ db['info'] }}" href="/shelter/{{ shelter['id'] }}/information">Shelter information</a>
+                <a type="button" class="btn btn-secondary {{ db['needs'] }}" href="/shelter/{{ shelter['id'] }}/needs">Shelter needs</a>
+                <a type="button" class="btn btn-secondary {{ db['keepers'] }}" href="/shelter/{{ shelter['id'] }}/keepers">Shelter keepers</a>
+                <a type="button" class="btn btn-secondary {{ db['animal'] }}" href="/shelter/{{ shelter['id'] }}/addanimal">Add an animal</a>
         </div>
     </div>
 </div>

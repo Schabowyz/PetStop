@@ -2,19 +2,6 @@
 
 {% block title %}: Register{% endblock %}
 
-{% block alert %}
-    <!-- Error message -->
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <div class="alert alert-primary" role="alert">
-                {% for message in messages %}
-                    {{ message }}<br>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
-{% endblock %}
-
 {% block body %}
     <!-- Register form content -->
     <br>

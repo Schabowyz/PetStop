@@ -2,19 +2,6 @@
 
 {% block title %}: {{ shelter['name'] }}{% endblock %}
 
-{% block alert %}
-    <!-- Error message -->
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-primary" role="alert">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-{% endblock %}
-
 {% block body_header %}
     <h3>Edit shelter information</h3><br>
     <p>You can change your shelter information at any time. The application doesn't have any verification process so far, therefore I hope for your honesty.</p>
@@ -23,7 +10,7 @@
 {% endblock %}
 
 {% block body_content %}
-    <form action="/shelterinformation/{{ shelter['id'] }}" method="post" id="body_contentForm" enctype="multipart/form-data">
+    <form action="/shelter/{{ shelter['id'] }}/information" method="post" id="body_contentForm" enctype="multipart/form-data">
 
         <label for="nameInput">Shelter name</label>
         <input name="name" type="text" class="form-control" id="nameInput" value="{{ shelter['name'] }}">
