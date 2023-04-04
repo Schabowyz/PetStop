@@ -16,7 +16,7 @@
                         <div class="row gy-1 gx-1">
                             <div class="col-3">
                                 <div class="d-grid gap-2">
-                                    {% if animal['image'] != None %}
+                                    {% if animal['image'] != 0 %}
                                         <img src="/{{ animal['image'] }}" class="img-thumbnail" alt="{{ animal['name'] }}">
                                     {% else %}
                                         <img src="/static/animal_image.jpg" class="img-thumbnail" alt="{{ animal['name'] }}">

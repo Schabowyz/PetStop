@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block body_content %}
-    <form action="/animal/{{ animal['id'] }}/#" method="post" id="body_contentForm" enctype="multipart/form-data">
+    <form action="/animal/{{ animal['id'] }}/edit" method="post" id="body_contentForm" enctype="multipart/form-data">
         <div class="form-group">
             <label for="nameInput">Name*</label>
             <input name="name" type="text" class="form-control" id="nameInput" placeholder="Name">
@@ -76,51 +76,10 @@
         </div>
         <br>
 
-        <div class="form-group">
-            <label for="statusSelect" class="form-label">Choose current status</label>
-            <select name="status" class="form-select">
-                <option value="free">Free</option>
-                <option value="reserved">Reserved</option>
-                <option value="adopted">Adopted</option>
-            </select>
-        </div>
-        <br>
-
-        <div class="form-group">
-            <input name="status_visibility" class="form-check-input" type="checkbox" value="True" selected id="status_visibilityCheck">
-            <label class="form-check-label" for="status_visibilityCheck">
-                Visible to everyone
-            </label>
-        </div>
-        <br>
-
-        <div class="form-group">
-            <input name="status_visitability" class="form-check-input" type="checkbox" value="True" selected id="status_visitabilityCheck">
-            <label class="form-check-label" for="status_visitabilityCheck">
-                Allowed to have visitors
-            </label>
-        </div>
-        <br>
-
-        <div class="form-group">
-            <input name="status_walkability" class="form-check-input" type="checkbox" value="True" selected id="status_walkabilityCheck">
-            <label class="form-check-label" for="status_walkabilityCheck">
-                Allowed to have walks
-            </label>
-        </div>
-        <br>
-
     </form>
 {% endblock %}
 
 {% block body_sidebar %}
-    <!-- Panel for saving or discarding changes -->
-    <div class="p-3">
-        <div class="container border bg-light p-3">
-            <div class="d-grid gap-2">
-                <button type="submit" form="body_contentForm" class="btn btn-primary">Submit</button>
-                <a type="button" class="btn btn-secondary" href="/animal/{{ animal['id'] }}">Back</a>
-            </div>
-        </div>
-    </div>
+    {% include "sidebar_animal_keeper.html" %}
+    {% include "sidebar_animal_submit.html" %}
 {% endblock %}

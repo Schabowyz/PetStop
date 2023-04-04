@@ -457,3 +457,48 @@ def add_animal(shelter_id):
     con.close()
 
     return True
+
+
+# Changes animal status
+def update_animal_status(animal_id):
+
+    pos_status = ['free', 'reserved', 'adopted']
+    status = {}
+    status['status'] = request.form.get('status')
+    status['visibility'] = request.form.get('status_visibility')
+    status['visitability'] = request.form.get('status_visitability')
+    status['walkability'] = request.form.get('status_walkability')
+
+    if status['status'] not in pos_status:
+        return False
+
+    if status['visibility'] == 'True':
+        status['visibility'] = True
+    else:
+        status['visibility'] = False
+    
+    if status['visitability'] == 'True':
+        status['visitability'] = True
+    else:
+        status['visitability'] = False
+
+    if status['walkability'] == 'True':
+        status['walkability'] = True
+    else:
+        status['walkability'] = False
+
+
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute("UPDATE animals SET status = ?, status_visibility = ?, status_visitability = ?, status_walkability = ? WHERE id = ?", (
+        status['status'],
+        status['visibility'],
+        status['visitability'],
+        status['walkability'],
+        animal_id
+    ))
+    con.commit()
+    con.close()
+
+    flash('Animal status was succesfully updated!')
+    return True

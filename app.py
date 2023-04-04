@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, session, flash
 from flask_session import Session
 from datetime import timedelta
 
-from f_helpers import login_required, logout_required, get_user_status, login_user, register_user, get_shelter_info, get_animals_info, add_shelter, edit_shelter_info, get_keepers, delete_keeper, add_keeper, add_owner, add_animal, get_animal_info
+from f_helpers import login_required, logout_required, get_user_status, login_user, register_user, get_shelter_info, get_animals_info, add_shelter, edit_shelter_info, get_keepers, delete_keeper, add_keeper, add_owner, add_animal, get_animal_info, update_animal_status
 from f_checks import keeper_check, owner_check, check_user_shelter
 
 
@@ -263,10 +263,30 @@ def animal_main(animal_id):
 
 
 # Edit animal info
-@app.route('/animal/<animal_id>/edit')
+@app.route('/animal/<animal_id>/edit', methods = ['GET', 'POST'])
 @login_required
 def animal_info_edit(animal_id):
 
     animal = get_animal_info(animal_id)
+    if keeper_check(animal['shelter_id']) != True:
+        flash('You have to be animal keeper to acces this page!')
+        return redirect('/animal/{}'.format(animal_id))
 
     return render_template('animal_info.html', user_status=get_user_status(animal['shelter_id']), animal=animal)
+
+
+# Change animal status
+@app.route('/animal/<animal_id>/status', methods = ['GET', 'POST'])
+@login_required
+def animal_status_update(animal_id):
+
+    animal = get_animal_info(animal_id)
+    if keeper_check(animal['shelter_id']) != True:
+        flash('You have to be animal keeper to acces this page!')
+        return redirect('/animal/{}'.format(animal_id))
+    
+    if request.method == 'POST':
+        update_animal_status(animal_id)
+        animal = get_animal_info(animal_id)        
+    
+    return render_template('animal_status.html', user_status=get_user_status(animal['shelter_id']), animal=animal)
