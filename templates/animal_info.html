@@ -1,0 +1,126 @@
+{% extends "layout_body.html" %}
+
+{% block title %}: {{ animal['name'] }}{% endblock %}
+
+{% block body_header %}
+    <h3>Change {{ animal['name'] }} information</h3><br>
+    <p>You can change information about an animal at any time. The application doesn't have any verification process so far, therefore I hope for your honesty.</p>
+    <p>Changes will only apply to fields that were edited.</p>
+    <p>Please remember to save your changes on the right.</p>
+{% endblock %}
+
+{% block body_content %}
+    <form action="/animal/{{ animal['id'] }}/#" method="post" id="body_contentForm" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="nameInput">Name*</label>
+            <input name="name" type="text" class="form-control" id="nameInput" placeholder="Name">
+        </div>
+        <br>
+
+        <div class="form-group">
+            <label for="speciesSelect" class="form-label">Choose species*</label>
+            <select name="species" class="form-select">
+                <option selected value="dog">Dog</option>
+                <option value="cat">Cat</option>
+                <option value="stara">Twoja stara</option>
+            </select>
+        </div>
+        <br>
+
+        <div class="form-group">
+            <label for="sexSelect" class="form-label">Choose sex*</label>
+            <select name="sex" class="form-select">
+                <option selected value="male">Male</option>
+                <option value="female">Female</option>
+            </select>
+        </div>
+        <br>
+
+        <div class="form-group">
+            <label for="imageInput" class="form-label">Image</label>
+            <input name="image" class="form-control" type="file" id="imageInput" onchange="preview()">
+        </div>
+        <br>
+
+        <div class="form-group">
+            <label for="descriptionInput" class="form-label">Description</label>
+            <textarea name="description" class="form-control" id="descriptionInput" rows="7" placeholder="Description"></textarea>
+        </div>
+        <br>
+
+        <div class="form-group">
+            <input name="urgent" class="form-check-input" type="checkbox" value="True" id="urgencyCheck">
+            <label class="form-check-label" for="urgencyCheck">
+                Urgent adoption needed
+            </label>
+        </div>
+        <br>
+
+        <div class="form-group">
+            <input name="castrated" class="form-check-input" type="checkbox" value="True" id="castratedCheck">
+            <label class="form-check-label" for="castratedCheck">
+                Castrated/setilized
+            </label>
+        </div>
+        <br>
+
+        <div class="form-group">
+            <label for="dat_birthInput">Birth year</label>
+            <input name="date_birth" type="text" class="form-control" id="dat_birthInput" placeholder="Birth year">
+        </div>
+        <br>
+
+        <div class="form-group">
+            <label for="dat_shelterInput">Shelter admission year</label>
+            <input name="date_shelter" type="text" class="form-control" id="dat_shelterInput" placeholder="Admission year">
+        </div>
+        <br>
+
+        <div class="form-group">
+            <label for="statusSelect" class="form-label">Choose current status</label>
+            <select name="status" class="form-select">
+                <option value="free">Free</option>
+                <option value="reserved">Reserved</option>
+                <option value="adopted">Adopted</option>
+            </select>
+        </div>
+        <br>
+
+        <div class="form-group">
+            <input name="status_visibility" class="form-check-input" type="checkbox" value="True" selected id="status_visibilityCheck">
+            <label class="form-check-label" for="status_visibilityCheck">
+                Visible to everyone
+            </label>
+        </div>
+        <br>
+
+        <div class="form-group">
+            <input name="status_visitability" class="form-check-input" type="checkbox" value="True" selected id="status_visitabilityCheck">
+            <label class="form-check-label" for="status_visitabilityCheck">
+                Allowed to have visitors
+            </label>
+        </div>
+        <br>
+
+        <div class="form-group">
+            <input name="status_walkability" class="form-check-input" type="checkbox" value="True" selected id="status_walkabilityCheck">
+            <label class="form-check-label" for="status_walkabilityCheck">
+                Allowed to have walks
+            </label>
+        </div>
+        <br>
+
+    </form>
+{% endblock %}
+
+{% block body_sidebar %}
+    <!-- Panel for saving or discarding changes -->
+    <div class="p-3">
+        <div class="container border bg-light p-3">
+            <div class="d-grid gap-2">
+                <button type="submit" form="body_contentForm" class="btn btn-primary">Submit</button>
+                <a type="button" class="btn btn-secondary" href="/animal/{{ animal['id'] }}">Back</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

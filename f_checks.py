@@ -48,6 +48,19 @@ def owner_check(shelter_id):
     else:
         con.close()
         return False
+    
+# Checks if logged user is keeper in a shelter and if so returns it's id
+def check_user_shelter():
+    con = sqlite3.connect('database.db')
+    con.row_factory = dict_factory
+    cur = con.cursor()
+    cur.execute("SELECT shelter_id FROM keepers WHERE username = ?", (session['user'],))
+    shelter_id = cur.fetchone()
+    con.close()
+    if not shelter_id:
+        return False
+    else:
+        return shelter_id['shelter_id']
 
 # Checks if username is ok
 def username_check(username):

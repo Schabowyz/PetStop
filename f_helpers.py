@@ -119,20 +119,6 @@ def register_user():
         session['user'] = username
         flash('You were successfully registered!')
         return True
-
-
-# Checks if logged user is keeper in a shelter and if so returns it's id
-def check_user_shelter():
-    con = sqlite3.connect('database.db')
-    con.row_factory = dict_factory
-    cur = con.cursor()
-    cur.execute("SELECT shelter_id FROM keepers WHERE username = ?", (session['user'],))
-    shelter_id = cur.fetchone()
-    con.close()
-    if not shelter_id:
-        return False
-    else:
-        return shelter_id['shelter_id']
     
 
 # Gets info about shelter based on provided id
@@ -414,6 +400,7 @@ def add_animal(shelter_id):
     animal['species'] = request.form.get('species')
     animal['sex'] = request.form.get('sex')
     animal['description'] = request.form.get('description')
+    animal['urgent'] = request.form.get('urgent')
  
     # Checks for any errors with form
     errors = []
@@ -433,6 +420,9 @@ def add_animal(shelter_id):
     if len(animal['description']) > 500:
         errors.append("Description must be shorter than 500 characters")
 
+    if animal['urgent'] != True:
+        animal['urgent'] = False
+
     # If there are any errors returns false
     if errors:
         for error in errors:
@@ -448,19 +438,20 @@ def add_animal(shelter_id):
     if image != 1 and image != 2:
         animal['image'] = image
     elif image == 2:
-        animal['image'] = None
+        animal['image'] = 0
         flash('Wrong file extension, your animal was added without image')
     else:
-        animal['image'] = None
+        animal['image'] = 0
      
     # Creates db input
-    cur.execute("INSERT INTO animals (shelter_id, name, species, sex, description, image) VALUES (?, ?, ?, ?, ?, ?)", (
+    cur.execute("INSERT INTO animals (shelter_id, name, species, sex, description, image, urgent) VALUES (?, ?, ?, ?, ?, ?, ?)", (
         shelter_id,
         animal['name'],
         animal['species'],
         animal['sex'],
         animal['description'],
-        animal['image']
+        animal['image'],
+        animal['urgent']
     ))
     con.commit()
     con.close()
