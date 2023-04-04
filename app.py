@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, session, flash
 from flask_session import Session
 from datetime import timedelta
 
-from f_helpers import login_required, logout_required, get_user_status, login_user, register_user, check_user_shelter, get_shelter_info, get_animals_info, add_shelter, edit_shelter_info, get_keepers, delete_keeper, add_keeper, add_owner, add_animal
+from f_helpers import login_required, logout_required, get_user_status, login_user, register_user, check_user_shelter, get_shelter_info, get_animals_info, add_shelter, edit_shelter_info, get_keepers, delete_keeper, add_keeper, add_owner, add_animal, get_animal_info
 from f_checks import keeper_check, owner_check
 
 
@@ -91,10 +91,6 @@ def user_profile():
     return render_template("user_profile.html", user_status=get_user_status(None), username=session['user'])
 
 
-
-#################### SHELTER ####################
-
-
 # User's shelter page
 @app.route('/yourshelter')
 @login_required
@@ -124,6 +120,10 @@ def shelter_create():
     return render_template('shelter_create.html', user_status = get_user_status(None))
    
 
+
+#################### SHELTER ####################
+
+
 # AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA                     ZROBIĆ REDIRECT NA 404 SHELTER NOT FOUND
 # Shelter page
 @app.route('/shelter/<shelter_id>')
@@ -137,9 +137,6 @@ def shelter_main(shelter_id):
 
     return render_template('shelter_main.html', user_status=get_user_status(shelter_id), shelter=shelter, animals=animals, db={})
 
-
-
-#################### SHELTER CONTROL PANEL ####################
 
 # Edit information
 @app.route('/shelter/<shelter_id>/information', methods = ['GET', 'POST'])
@@ -157,6 +154,7 @@ def shelter_edit_information(shelter_id):
 
     return render_template('shelter_info.html', user_status=get_user_status(shelter_id), shelter=get_shelter_info(shelter_id), db={'info': 'disabled'})
 
+
 # Edit needs
 @app.route('/shelter/<shelter_id>/needs')
 @login_required
@@ -167,6 +165,7 @@ def shelter_edit_needs(shelter_id):
         return redirect('/shelter/{}'.format(shelter_id))
     
     return render_template('shelter_needs.html', user_status=get_user_status(shelter_id), shelter=get_shelter_info(shelter_id), db={'needs': 'disabled'})
+
 
 # Edit keepers
 @app.route('/shelter/<shelter_id>/keepers', methods = ['GET', 'POST'])
@@ -183,6 +182,7 @@ def eshelter_edit_keepers(shelter_id):
 
     return render_template('shelter_keepers.html', user_status=get_user_status(shelter_id), shelter=get_shelter_info(shelter_id), keepers=get_keepers(shelter_id), db={'keepers': 'disabled'})
 
+
 # Delete keeper
 @app.route('/shelter/<shelter_id>/delete/<username>')
 @login_required
@@ -196,6 +196,7 @@ def shelter_remove_keeper(shelter_id, username):
         return redirect('/shelter/{}/keepers'.format(shelter_id))
     
     return render_template('shelter_keepers.html', user_status=get_user_status(shelter_id), shelter=get_shelter_info(shelter_id), keepers=get_keepers(shelter_id), db={'keepers': 'disabled'})
+
 
 # Make owner
 @app.route('/shelter/<shelter_id>/owner/<username>')
@@ -211,6 +212,7 @@ def shelter_make_owner(username, shelter_id):
     
     return render_template('shelter_keepers.html', user_status=get_user_status(shelter_id), shelter=get_shelter_info(shelter_id), keepers=get_keepers(shelter_id), db={'keepers': 'disabled'})
 
+
 # Add new animal to shelter
 @app.route('/shelter/<shelter_id>/addanimal', methods = ['GET', 'POST'])
 @login_required
@@ -225,3 +227,36 @@ def shelter_add_animal(shelter_id):
             return redirect('/shelter/{}'.format(shelter_id))
         
     return render_template('shelter_animal.html', user_status=get_user_status(shelter_id), shelter=get_shelter_info(shelter_id), keepers=get_keepers(shelter_id), db={'animal': 'disabled'})
+
+
+
+#################### SEARCH ####################
+
+
+# Search animals
+@app.route('/search/animals')
+def search_animals():
+
+    return render_template('search_animals.html', user_status=get_user_status(None), animals=get_animals_info(None))
+
+
+# Search shelters
+@app.route('/search/shelters')
+def search_shelters():
+
+    return render_template('search_shelters.html', user_status=get_user_status(None), shelters=get_shelter_info(None))
+
+
+
+#################### ANIMAL ####################
+
+
+# AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA                     ZROBIĆ REDIRECT NA 404 ANIAL NOT FOUND
+@app.route('/animal/<animal_id>')
+def animal_main(animal_id):
+
+    animal = get_animal_info(animal_id)
+    if not animal:
+        return redirect('/')
+    
+    return render_template('animal_main.html', user_status=get_user_status(animal['shelter_id']), animal=animal, shelter=get_shelter_info(animal['shelter_id']))

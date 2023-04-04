@@ -140,8 +140,12 @@ def get_shelter_info(shelter_id):
     con = sqlite3.connect('database.db')
     con.row_factory = dict_factory
     cur = con.cursor()
-    cur.execute("SELECT * FROM shelters WHERE id = ?", (shelter_id,))
-    shelter = cur.fetchone()
+    if shelter_id != None:
+        cur.execute("SELECT * FROM shelters WHERE id = ?", (shelter_id,))
+        shelter = cur.fetchone()
+    else:
+        cur.execute("SELECT * FROM shelters")
+        shelter = cur.fetchall()
     con.close()
     if not shelter:
         flash('Shelter does not exist')
@@ -155,12 +159,37 @@ def get_animals_info(shelter_id):
     con = sqlite3.connect('database.db')
     con.row_factory = dict_factory
     cur = con.cursor()
-    cur.execute("SELECT * FROM animals WHERE shelter_id = ?", (shelter_id,))
+    if shelter_id != None:
+        cur.execute("SELECT * FROM animals WHERE shelter_id = ?", (shelter_id,))
+    else:
+        cur.execute("SELECT * FROM animals")
     animals = cur.fetchall()
     if not animals:
+        con.close()
         return False
-    else:
-        return animals
+    if shelter_id == None:
+        for animal in animals:
+            cur.execute("SELECT name FROM shelters WHERE id = ?", (animal['shelter_id'],))
+            animal['shelter'] = cur.fetchone()['name']
+    con.close()
+    return animals
+
+
+# Gets information about single animal based on its id
+def get_animal_info(animal_id):
+    if not animal_id:
+        return False
+    con = sqlite3.connect('database.db')
+    con.row_factory = dict_factory
+    cur = con.cursor()
+    cur.execute("SELECT * FROM animals WHERE id = ?", (animal_id,))
+    animal = cur.fetchone()
+    con.close()
+    if not animal:
+        flash('Animal does not exist!')
+        return False
+    return animal
+    
     
 
 # Gets information about keepers of shelter

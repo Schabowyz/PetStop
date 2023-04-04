@@ -1,0 +1,74 @@
+{% extends "layout_body.html" %}
+
+{% block head_title %}: {{ animal['name'] }}{% endblock %}
+
+{% block body_header %}
+    <h3>{{ animal['name'] }}</h3><br>
+{% endblock %}
+
+{% block body_content %}
+    Sheltered in {{ animal['shelter'] }}
+    <br>
+    {{ animal['species'] }}
+    <br>
+    {% if animal['description'] != None %}
+        {{ animal['description'] }}
+    {% else %}
+        {{ animal['name'] }} has no description.
+    {% endif %}
+    Animal information:<br>
+            Sex<br>
+            Castrated<br>
+            Vaccinated for:<br>
+            - vacc 1<br>
+            - vacc 2<br>
+            - vacc 3<br>
+            Birth day<br>
+            Shelter accept day<br>
+{% endblock %}
+
+{% block body_sidebar %}
+    <!-- Panel for keepers -->
+    {% if user_status['keeper'] == True %}
+        {% include "sidebar_animal.html" %}
+    {% endif %}
+
+    <!-- Panel with animal photo -->
+    <div class="p-3">
+        <div class="container border bg-light p-3">
+            {% if animal['image'] != None %}
+                <img src="/{{ animal['image'] }}" class="img-thumbnail" alt="{{ animal['name'] }}">
+            {% else %}
+                <img src="/static/animal_profile_image.jpg" class="img-thumbnail" alt="{{ animal['name'] }}">
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Panel with shelter info -->
+    <div class="p-3">
+        <div class="container border bg-light p-3">
+            {{ animal['name'] }} is sheltered in {{ shelter['name'] }} shelter.
+            <br>
+            {{ shelter['loc_city'] }}
+            <br>
+            {{ shelter['loc_adress'] }} {{ shelter['loc_postal'] }}
+            <br>
+            <div class="d-grid gap-2">
+                <br>
+                    <a type="button" class="btn btn-secondary" href="/shelter/{{ animal['shelter_id'] }}">Visit shelter page</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel with animal schedule -->
+    <div class="p-3">
+        <div class="container border bg-light p-3">
+            This is {{ animal['name'] }} schedule panel - you can schedule your visit or walk with {{ animal['name'] }} here.
+            <div class="d-grid gap-2">
+                <br>
+                    <a type="button" class="btn btn-secondary" href="#">Schedule a visit</a>
+                    <a type="button" class="btn btn-secondary" href="#">Schedule a walk</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "layout_body.html" %}
+
+{% block head_title %}: Search shelters{% endblock %}
+
+{% block body_header %}
+    <h3>Shelters</h3><br>
+    <p>Search filters:</p>
+{% endblock %}
+
+{% block body_content %}
+    {% if shelters %}
+        {% for shelter in shelters %}
+            <div class="card">
+                <div class="card-body">
+                    <div class="container">
+                        <div class="row gy-1 gx-1">
+                            <div class="col-3">
+                                <div class="d-grid gap-2">
+                                    {% if shelter['image'] != None %}
+                                        <img src="/{{ shelter['image'] }}" class="img-thumbnail" alt="{{ shelter['name'] }}">
+                                    {% else %}
+                                        <img src="/static/shelter_image.jpg" class="img-thumbnail" alt="{{ shelter['name'] }}">
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-8">
+                                <h5 class="card-title">{{ shelter['name'] }}</h5>
+                                <p class="card-text">
+                                    {{ shelter['loc_adress'] }}
+                                    <br>
+                                    {{ shelter['loc_city'] }} {{ shelter['loc_postal'] }}
+                                    <br>
+                                    {{ shelter['con_phone'] }}
+                                    <br>
+                                    {{ shelter['con_email'] }}
+                                    <br>
+                                    {% if shelter['description'] != None %}
+                                        {{ shelter['description'] }}
+                                    {% else %}
+                                        {{ shelter['name'] }} has no description.
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div> 
+                    <a href="/shelter/{{ shelter['id'] }}" class="stretched-link"></a>
+                </div>
+            </div>
+            <br>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
+{% block body_sidebar %}
+<div class="p-3">
+    <div class="container border bg-light p-3">
+        <div class="d-grid gap-2">
+            Hello!<br>
+            This is shelter search page. If you would like to search for animals, please go to animals search page.
+        </div>
+</div>
+
+</div>
+    <div class="p-3">
+        <div class="container border bg-light p-3">
+            <div class="d-grid gap-2">
+                    <a type="button" class="btn btn-secondary" href="/search/animals">Search for animals</a>
+                    <a type="button" class="btn btn-secondary" href="/">Index page</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,9 +1,9 @@
 {% extends "layout_body.html" %}
 
-{% block head_title %}: {{ shelter['name'] }}{% endblock %}
+{% block head_title %}: Search animals{% endblock %}
 
 {% block body_header %}
-    <h3>Animals in shelter</h3><br>
+    <h3>Animals</h3><br>
     <p>Search filters:</p>
 {% endblock %}
 
@@ -26,6 +26,8 @@
                             <div class="col-8">
                                 <h5 class="card-title">{{ animal['name'] }}</h5>
                                 <p class="card-text">
+                                    Sheltered in {{ animal['shelter'] }}
+                                    <br>
                                     {{ animal['species'] }}
                                     <br>
                                     {% if animal['description'] != None %}
@@ -46,38 +48,21 @@
 {% endblock %}
 
 {% block body_sidebar %}
-    <!-- Panel for keepers/owner -->
-    {% if user_status['keeper'] == True %}
-        {% include "sidebar_nav.html" %}
-    {% endif %}
-    <!-- Panel with shelter information -->
-    <div class="p-3">
-        <div class="container border bg-light p-3">
-            {% if shelter['image'] != None %}
-                <img src="/{{ shelter['image'] }}" class="img-thumbnail" alt="{{ shelter['name'] }}">
-            {% else %}
-                <img src="/static/shelter_image.jpg" class="img-thumbnail" alt="{{ shelter['name'] }}">
-            {% endif %}
-            <h3>{{ shelter['name'] }}</h3>
-            {{ shelter['loc_city'] }}<br>
-            {{ shelter['loc_adress'] }}<br>
-            {{ shelter['loc_postal'] }}<br>
-            {{ shelter['con_phone'] }}<br>
-            {{ shelter['con_email'] }}<br>
-            {{ shelter['description'] }}<br>
+<div class="p-3">
+    <div class="container border bg-light p-3">
+        <div class="d-grid gap-2">
+            Hello!<br>
+            This is animal search page. If you would like to search for shelters, please go to shelter search page.
         </div>
-    </div>
-    <!-- Panel with shelter supplies -->
+</div>
+
+</div>
     <div class="p-3">
         <div class="container border bg-light p-3">
-            Shelter supplies:<br>
-            Displays<br>
-            supplies<br>
-            with<br>
-            current<br>
-            level<br>
-            and<br>
-            needs<br>
+            <div class="d-grid gap-2">
+                    <a type="button" class="btn btn-secondary" href="/search/shelters">Search for shelters</a>
+                    <a type="button" class="btn btn-secondary" href="/">Index page</a>
+            </div>
         </div>
     </div>
 {% endblock %}
