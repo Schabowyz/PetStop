@@ -5,7 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import uuid
 from email_validator import validate_email, EmailNotValidError
-from f_checks import username_check, email_check, password_check, shelter_form_check, login_check, keeper_check, owner_check
+from f_checks import username_check, email_check, password_check, shelter_form_check, login_check, keeper_check, owner_check, date_check
 
 UPLOAD_EXTENSIONS = ['.jpg', '.jpeg', '.png']
 ANIMAL_IMAGES_PATH = 'static/animal_images/'
@@ -420,8 +420,10 @@ def add_animal(shelter_id):
     if len(animal['description']) > 500:
         errors.append("Description must be shorter than 500 characters")
 
-    if animal['urgent'] != True:
+    if animal['urgent'] != 'True':
         animal['urgent'] = False
+    else:
+        animal['urgent'] = True
 
     # If there are any errors returns false
     if errors:
@@ -439,7 +441,7 @@ def add_animal(shelter_id):
         animal['image'] = image
     elif image == 2:
         animal['image'] = 0
-        flash('Wrong file extension, your animal was added without image')
+        flash('Wrong file extension, no image was added!')
     else:
         animal['image'] = 0
      
@@ -502,3 +504,215 @@ def update_animal_status(animal_id):
 
     flash('Animal status was succesfully updated!')
     return True
+
+
+# AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA           ZROBIĆ CHECK DLA LAT
+# Updates animal info
+def update_animal_info(animal_id):
+    animal = {}
+    animal['name'] = request.form.get('name')
+    animal['species'] = request.form.get('species')
+    animal['sex'] = request.form.get('sex')
+    animal['description'] = request.form.get('description')
+    animal['urgent'] = request.form.get('urgent')
+    animal['castrated'] = request.form.get('castrated')
+    animal['date_birth'] = request.form.get('date_birth')
+    animal['date_shelter'] = request.form.get('date_shelter')
+
+    # Checks for any errors with form
+    errors = []
+    if len(animal['name']) < 1 or len(animal['name']) > 20:
+        errors.append("Animal's name must be between 1 and 20 characters long!")
+    if not animal['name'].replace(' ','').isalnum():
+        errors.append("Animal's name can contain only letters and numbers!")
+
+    if len(animal['species']) < 1 or len(animal['species']) > 20:
+        errors.append("Animal's species must be between 1 and 20 characters long!")
+    if not animal['species'].replace(' ','').isalnum():
+        errors.append("Animal's species can contain only letters and numbers!")
+
+    if animal['sex'] != 'male' and animal['sex'] != 'female':
+        errors.append("Animal's sex must be either male or female!")
+
+    if len(animal['description']) > 500:
+        errors.append("Description must be shorter than 500 characters!")
+
+    if animal['urgent'] != 'True':
+        animal['urgent'] = False
+    else:
+        animal['urgent'] = True
+
+    if animal['castrated'] != 'True':
+        animal['castrated'] = False
+    else:
+        animal['castrated'] = True
+
+    if errors:
+        for error in errors:
+            flash(error)
+        return False
+    
+    # Opens db and creates cursor
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
+
+    # Saves image
+    image = save_image(ANIMAL_IMAGES_PATH) 
+    if image != 1 and image != 2:
+        animal['image'] = image
+    elif image == 2:
+        animal['image'] = 0
+        flash('Wrong file extension, no image was added!')
+    else:
+        animal['image'] = 0
+
+    # Creates db input
+    cur.execute("UPDATE animals SET name = ?, species = ?, sex = ?, description = ?, image = ?, urgent = ?, castrated = ?, date_birth = ?, date_shelter = ? WHERE id = ?", (
+        animal['name'],
+        animal['species'],
+        animal['sex'],
+        animal['description'],
+        animal['image'],
+        animal['urgent'],
+        animal['castrated'],
+        animal['date_birth'],
+        animal['date_shelter'],
+        animal_id
+    ))
+    con.commit()
+    con.close()
+
+    flash('Animal information were succesfully updated!')
+    return True
+
+
+# Gets animal vaccinations with animal id
+def get_animal_vaccinations(animal_id):
+    con = sqlite3.connect('database.db')
+    con.row_factory = dict_factory
+    cur = con.cursor()
+    cur.execute("SELECT * FROM vaccinations WHERE animal_id = ?", (animal_id,))
+    vaccinations = cur.fetchall()
+    if not vaccinations:
+        return False
+    return vaccinations
+
+
+# Adds new vaccine to animal
+def add_animal_vaccine(animal_id):
+    vac = {}
+    vac['vac_name'] = request.form.get('vac_name')
+    vac['vac_for'] = request.form.get('vac_for')
+    vac['vac_series'] = request.form.get('vac_series')
+    vac['vac_date'] = request.form.get('vac_date')
+    vac['vac_exp'] = request.form.get('vac_exp')
+
+    # AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA             DODAĆ TESTY
+
+    con = sqlite3.connect('database.db')
+    con.row_factory = dict_factory
+    cur = con.cursor()
+    cur.execute("INSERT INTO vaccinations (animal_id, vac_name, vac_for, vac_series, vac_date, vac_exp) VALUES (?, ?, ?, ?, ?, ?)", (
+        animal_id,
+        vac['vac_name'],
+        vac['vac_for'],
+        vac['vac_series'],
+        vac['vac_date'],
+        vac['vac_exp']
+    ))
+    con.commit()
+    con.close()
+
+    flash('Vaccine was successfully added!')
+    return True
+
+
+# Deletes vaccine with vaccine id
+def delete_animal_vaccine(vac_id):
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute("SELECT id FROM vaccinations WHERE id = ?", (vac_id,))
+    if not cur.fetchone():
+        con.close()
+        return False
+    cur.execute("DELETE FROM vaccinations WHERE id = ?", (vac_id,))
+    con.commit()
+    con.close()
+    return True
+
+
+# Get users saved
+def get_user_saved(username):
+     con = sqlite3.connect('database.db')
+     con.row_factory = dict_factory
+     cur = con.cursor()
+     cur.execute("SELECT * FROM animals WHERE id IN (SELECT animal_id FROM saved WHERE username = ?)", (username,))
+     animals = cur.fetchall()
+     con.close()
+     if not animals:
+         return False
+     return animals
+
+
+# Save animal in users saved
+def save_user_animal(animal_id):
+    con = sqlite3.connect('database.db')
+    con.row_factory = dict_factory
+    cur = con.cursor()
+    cur.execute("SELECT id FROM animals WHERE id = ?", (animal_id,))
+    if not cur.fetchone():
+        flash('Animal does not exist!')
+        con.close()
+        return False
+    cur.execute("SELECT animal_id FROM saved WHERE username = ? AND animal_id = ?", (session['user'], animal_id))
+    if cur.fetchone():
+        flash('Animal already in saved list!')
+        con.close()
+        return False
+    cur.execute('INSERT INTO saved VALUES (?, ?)', (session['user'], animal_id))
+    con.commit()
+    con.close()
+    flash('Animal was saved!')
+    return True
+
+
+# Delete animal in users saved
+def delete_user_animal(animal_id):
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM saved WHERE username = ? AND animal_id = ?", (session['user'], animal_id))
+    if not cur.fetchone():
+        flash('Animal is not saved!')
+        con.close()
+        return False
+    cur.execute("DELETE FROM saved WHERE username = ? AND animal_id = ?", (session['user'], animal_id))
+    con.commit()
+    con.close()
+    flash('Animal was succesfully deleted from saved!')
+    return True
+
+
+# Schedules visit
+def schedule_visit(animal_id):
+    date = request.form.get('visit')
+    if not date_check(date):
+        flash('Incorrect date!')
+        return False
+    con = sqlite3.connect('database.db')
+    con.row_factory = dict_factory
+    cur = con.cursor()
+    cur.execute("SELECT COUNT username FROM schedule WHERE username = ?", (session['user']))
+    times = cur.fetchone()
+    print(times)
+
+    cur.execute("SELECT username FROM schedule WHERE animal_id = ? AND username = ? AND type = 'visit' AND date = ?", (animal_id, session['user'], date))
+    if cur.fetchone():
+        con.close()
+        flash('You already have a visit with this animal scheduled for that day!')
+        return False
+    cur.execute("INSERT INTO schedule (animal_id, username, type, date) VALUES (?, ?, 'visit', ?)", (animal_id, session['user'], date))
+    con.commit()
+    con.close()
+    flash('Visit was scheduled for {}!'.format(date))
+    return True
+

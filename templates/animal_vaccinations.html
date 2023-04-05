@@ -1,0 +1,58 @@
+{% extends "layout_body.html" %}
+
+{% block head_title %}: {{ animal['name'] }}{% endblock %}
+
+{% block body_header %}
+    <h3>{{ animal['name'] }} vaccinations:</h3>
+{% endblock %}
+
+{% block body_content %}
+    {% if vaccinations %}
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Vaccination</th>
+                <th scope="col">Disease</th>
+                <th scope="col">Serial no.</th>
+                <th scope="col">Date</th>
+                <th scope="col">Exp. time</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vac in vaccinations %}
+            <tr>
+                <td class="align-middle">{{ vac['vac_name'] }}</td>
+                <td class="align-middle">{{ vac['vac_for'] }}</td>
+                <td class="align-middle">{{ vac['vac_series'] }}</td>
+                <td class="align-middle">{{ vac['vac_date'] }}</td>
+                <td class="align-middle">{{ vac['vac_exp'] }} year/years</td>
+                <td class="align-middle"><div class="d-grid gap-2"><a type="button" class="btn btn-secondary" href="/animal/{{ animal['id'] }}/vaccinations/delete/{{ vac['id'] }}">Delete</a></div></td>
+            </tr>
+            {% endfor %}
+            <br>
+            <form action="/animal/{{ animal['id'] }}/vaccinations" method="post">
+                <td><input name="vac_name" type="text" class="form-control align-middle" placeholder="Vaccination"></td>
+                <td><input name="vac_for" type="text" class="form-control align-middle" placeholder="Disease"></td>
+                <td><input name="vac_series" type="text" class="form-control align-middle" placeholder="Serial no."></td>
+                <td><input name="vac_date" type="text" class="form-control align-middle" placeholder="Date"></td>
+                <td><input name="vac_exp" type="text" class="form-control align-middle" placeholder="Exp. time"></td>
+                <td><div class="d-grid gap-2"><button type="submit" class="btn btn-secondary">Submit</button></div></td>
+            </form>
+        </tbody>
+    </table>
+    {% else %}
+    There is no vaccination information provided yet.<br>
+    {% endif %}
+{% endblock %}
+
+{% block body_sidebar %}
+    {% include "sidebar_animal_keeper.html" %}
+    <div class="p-3">
+        <div class="container border bg-light p-3">
+            <div class="d-grid gap-2">
+                <a type="button" class="btn btn-secondary" href="/animal/{{ animal['id'] }}">Back</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -4,8 +4,9 @@
         This is animal control panel - visible only for shlter keepers after logging in.
         <div class="d-grid gap-2">
             <br>
-            <a type="button" class="btn btn-secondary" href="/animal/{{ animal['id'] }}/status">Change status</a>
+            <a type="button" class="btn btn-secondary" href="/animal/{{ animal['id'] }}/status">Edit status</a>
             <a type="button" class="btn btn-secondary" href="/animal/{{ animal['id'] }}/edit">Edit information</a>
+            <a type="button" class="btn btn-secondary" href="/animal/{{ animal['id'] }}/vaccinations">Edit vaccinations</a>
             <a type="button" class="btn btn-secondary" href="#">Remove animal</a>
         </div>
     </div>

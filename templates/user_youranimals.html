@@ -1,10 +1,9 @@
 {% extends "layout_body.html" %}
 
-{% block head_title %}: Search animals{% endblock %}
+{% block head_title %}: Your animals{% endblock %}
 
 {% block body_header %}
-    <h3>Animals</h3><br>
-    <p>Search filters:</p>
+    <h3>Saved animals</h3>
 {% endblock %}
 
 {% block body_content %}
@@ -18,14 +17,15 @@
                                 <div class="col-3">
                                     <div class="d-grid gap-2">
                                         {% if animal['image'] != 0 %}
-                                            <img src="/{{ animal['image'] }}" class="img-thumbnail" alt="{{ animal['name'] }}">
+                                            <a href="/animal/{{ animal['id'] }}"><img src="/{{ animal['image'] }}" class="img-thumbnail" alt="{{ animal['name'] }}"></a>
                                         {% else %}
-                                            <img src="/static/animal_image.jpg" class="img-thumbnail" alt="{{ animal['name'] }}">
+                                            <a href="/animal/{{ animal['id'] }}"><img src="/static/animal_image.jpg" class="img-thumbnail" alt="{{ animal['name'] }}"></a>
                                         {% endif %}
+                                        <a type="button" class="btn btn-secondary" href="/youranimals/{{ animal['id'] }}/delete">Delete from saved</a>
                                     </div>
                                 </div>
-                                <div class="col-8">
-                                    <h5 class="card-title">{{ animal['name'] }}</h5>
+                                <div class="col-9">
+                                    <h5 class="card-title"><a href="/animal/{{ animal['id'] }}" class="text-reset text-decoration-none">{{ animal['name'] }}</a></h5>
                                     <p class="card-text">
                                         Sheltered in {{ animal['shelter'] }}
                                         <br>
@@ -40,7 +40,6 @@
                                 </div>
                             </div>
                         </div> 
-                        <a href="/animal/{{ animal['id'] }}" class="stretched-link"></a>
                     </div>
                 </div>
                 <br>
@@ -50,20 +49,11 @@
 {% endblock %}
 
 {% block body_sidebar %}
-<div class="p-3">
-    <div class="container border bg-light p-3">
-        <div class="d-grid gap-2">
-            Hello!<br>
-            This is animal search page. If you would like to search for shelters, please go to shelter search page.
-        </div>
-</div>
-
-</div>
     <div class="p-3">
         <div class="container border bg-light p-3">
             <div class="d-grid gap-2">
-                    <a type="button" class="btn btn-secondary" href="/search/shelters">Search for shelters</a>
-                    <a type="button" class="btn btn-secondary" href="/">Index page</a>
+                Hello!<br>
+                This is your animals page. You can browese saved animals here.
             </div>
         </div>
     </div>

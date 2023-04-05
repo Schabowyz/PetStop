@@ -13,16 +13,20 @@
     <form action="/animal/{{ animal['id'] }}/edit" method="post" id="body_contentForm" enctype="multipart/form-data">
         <div class="form-group">
             <label for="nameInput">Name*</label>
-            <input name="name" type="text" class="form-control" id="nameInput" placeholder="Name">
+            <input name="name" type="text" class="form-control" id="nameInput" value="{{ animal['name'] }}">
         </div>
         <br>
 
         <div class="form-group">
             <label for="speciesSelect" class="form-label">Choose species*</label>
             <select name="species" class="form-select">
-                <option selected value="dog">Dog</option>
-                <option value="cat">Cat</option>
-                <option value="stara">Twoja stara</option>
+                {% for species in pos_species %}
+                    {% if animal['species'] == species %}
+                        <option selected value="{{ species }}">{{ species }}</option>
+                    {% else %}
+                        <option value="{{ species }}">{{ species }}</option>
+                    {% endif %}
+                {% endfor %}
             </select>
         </div>
         <br>
@@ -30,8 +34,13 @@
         <div class="form-group">
             <label for="sexSelect" class="form-label">Choose sex*</label>
             <select name="sex" class="form-select">
-                <option selected value="male">Male</option>
-                <option value="female">Female</option>
+                {% if animal['sex'] == 'male' %}
+                    <option selected value="male">Male</option>
+                    <option value="female">Female</option>
+                {% else %}
+                    <option value="male">Male</option>
+                    <option selected value="female">Female</option>
+                {% endif %}
             </select>
         </div>
         <br>
@@ -44,12 +53,20 @@
 
         <div class="form-group">
             <label for="descriptionInput" class="form-label">Description</label>
-            <textarea name="description" class="form-control" id="descriptionInput" rows="7" placeholder="Description"></textarea>
+            {% if animal['description'] %}
+                <textarea name="description" class="form-control" id="descriptionInput" rows="7">{{ animal['description'] }}</textarea>
+            {% else %}
+                <textarea name="description" class="form-control" id="descriptionInput" rows="7" placeholder="Description"></textarea>
+            {% endif %}
         </div>
         <br>
 
         <div class="form-group">
-            <input name="urgent" class="form-check-input" type="checkbox" value="True" id="urgencyCheck">
+            {% if animal['urgent'] %}
+                <input name="urgent" class="form-check-input" type="checkbox" value="True" checked id="urgencyCheck">
+            {% else %}
+                <input name="urgent" class="form-check-input" type="checkbox" value="True" id="urgencyCheck">
+            {% endif %}
             <label class="form-check-label" for="urgencyCheck">
                 Urgent adoption needed
             </label>
@@ -57,7 +74,11 @@
         <br>
 
         <div class="form-group">
-            <input name="castrated" class="form-check-input" type="checkbox" value="True" id="castratedCheck">
+            {% if animal['castrated'] %}
+                <input name="castrated" class="form-check-input" type="checkbox" value="True" checked id="castratedCheck">
+            {% else %}
+                <input name="castrated" class="form-check-input" type="checkbox" value="True" id="castratedCheck">
+            {% endif %}
             <label class="form-check-label" for="castratedCheck">
                 Castrated/setilized
             </label>
@@ -66,13 +87,21 @@
 
         <div class="form-group">
             <label for="dat_birthInput">Birth year</label>
-            <input name="date_birth" type="text" class="form-control" id="dat_birthInput" placeholder="Birth year">
+            {% if animal['date_birth'] %}
+                <input name="date_birth" type="text" class="form-control" id="dat_birthInput" value="{{ animal['date_birth'] }}">
+            {% else %}
+                <input name="date_birth" type="text" class="form-control" id="dat_birthInput" placeholder="Birth year">
+            {% endif %}
         </div>
         <br>
 
         <div class="form-group">
             <label for="dat_shelterInput">Shelter admission year</label>
-            <input name="date_shelter" type="text" class="form-control" id="dat_shelterInput" placeholder="Admission year">
+            {% if animal['date_shelter'] %}
+                <input name="date_shelter" type="text" class="form-control" id="dat_shelterInput" value="{{ animal['date_shelter'] }}">
+            {% else %}
+                <input name="date_shelter" type="text" class="form-control" id="dat_shelterInput" placeholder="Admission year">
+            {% endif %}
         </div>
         <br>
 

@@ -1,6 +1,7 @@
 from flask import session
 from email_validator import validate_email, EmailNotValidError
 import sqlite3
+import datetime
 
 # Let's for creating dictionares of database content
 def dict_factory(cursor, row):
@@ -135,3 +136,12 @@ def shelter_form_check(shelter):
         errors.append('Description must be shorter than 1000 characters!')
 
     return errors
+
+
+# Checks if date is correct
+def date_check(date):
+    try:
+        datetime.date.fromisoformat(date)
+        return True
+    except ValueError:
+        return False

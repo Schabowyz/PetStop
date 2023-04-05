@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, session, flash
 from flask_session import Session
 from datetime import timedelta
 
-from f_helpers import login_required, logout_required, get_user_status, login_user, register_user, get_shelter_info, get_animals_info, add_shelter, edit_shelter_info, get_keepers, delete_keeper, add_keeper, add_owner, add_animal, get_animal_info, update_animal_status
+from f_helpers import login_required, logout_required, get_user_status, login_user, register_user, get_shelter_info, get_animals_info, add_shelter, edit_shelter_info, get_keepers, delete_keeper, add_keeper, add_owner, add_animal, get_animal_info, update_animal_status, update_animal_info, get_animal_vaccinations, add_animal_vaccine, delete_animal_vaccine, get_user_saved, save_user_animal, delete_user_animal, schedule_visit
 from f_checks import keeper_check, owner_check, check_user_shelter
 
 
@@ -22,6 +22,7 @@ app.config['ANIMAL_IMAGES'] = 'static/animal_images'
 
 Session(app)
 
+POS_SPECIES = ['dog', 'cat', 'stara']
 
 
 
@@ -88,7 +89,26 @@ def user_register():
 @login_required
 def user_profile():
 
-    return render_template("user_profile.html", user_status=get_user_status(None), username=session['user'])
+    return render_template('user_profile.html', user_status=get_user_status(None), username=session['user'])
+
+
+# User saved animals
+@app.route('/youranimals')
+@login_required
+def user_animals():
+
+    return render_template('user_youranimals.html', user_status=get_user_status(None), animals=get_user_saved(session['user']))
+
+
+# User saved animals remove
+@app.route('/youranimals/<animal_id>/delete')
+@login_required
+def user_animals_delete(animal_id):
+
+    delete_user_animal(animal_id)
+
+    return redirect('/youranimals')
+
 
 
 # User's shelter page
@@ -259,7 +279,7 @@ def animal_main(animal_id):
     if not animal:
         return redirect('/')
     
-    return render_template('animal_main.html', user_status=get_user_status(animal['shelter_id']), animal=animal, shelter=get_shelter_info(animal['shelter_id']))
+    return render_template('animal_main.html', user_status=get_user_status(animal['shelter_id']), animal=animal, shelter=get_shelter_info(animal['shelter_id']), vaccinations=get_animal_vaccinations(animal_id))
 
 
 # Edit animal info
@@ -271,8 +291,12 @@ def animal_info_edit(animal_id):
     if keeper_check(animal['shelter_id']) != True:
         flash('You have to be animal keeper to acces this page!')
         return redirect('/animal/{}'.format(animal_id))
+    
+    if request.method == 'POST':
+        update_animal_info(animal_id)
+        animal = get_animal_info(animal_id)
 
-    return render_template('animal_info.html', user_status=get_user_status(animal['shelter_id']), animal=animal)
+    return render_template('animal_info.html', user_status=get_user_status(animal['shelter_id']), animal=animal, pos_species=POS_SPECIES)
 
 
 # Change animal status
@@ -287,6 +311,60 @@ def animal_status_update(animal_id):
     
     if request.method == 'POST':
         update_animal_status(animal_id)
-        animal = get_animal_info(animal_id)        
+        animal = get_animal_info(animal_id) 
     
     return render_template('animal_status.html', user_status=get_user_status(animal['shelter_id']), animal=animal)
+
+
+# Add new vaccine
+@app.route('/animal/<animal_id>/vaccinations', methods = ['GET', 'POST'])
+@login_required
+def animal_vaccination_update(animal_id):
+
+    animal = get_animal_info(animal_id)
+    if keeper_check(animal['shelter_id']) != True:
+        flash('You have to be animal keeper to acces this page!')
+        return redirect('/animal/{}'.format(animal_id))
+    
+    if request.method == 'POST':
+        add_animal_vaccine(animal_id)
+
+    return render_template('animal_vaccinations.html', user_status=get_user_status(animal['shelter_id']), animal=animal, vaccinations=get_animal_vaccinations(animal_id))
+
+
+# Remove vaccine
+@app.route('/animal/<animal_id>/vaccinations/delete/<vac_id>')
+@login_required
+def animal_vaccination_delete(animal_id, vac_id):
+
+    animal = get_animal_info(animal_id)
+    if keeper_check(animal['shelter_id']) != True:
+        flash('You have to be animal keeper to do that!')
+        return redirect('/animal/{}'.format(animal_id))
+    else:
+        if delete_animal_vaccine(vac_id):
+            flash('Vaccine was successfully deleted!')
+        else:
+            flash('This vaccine does not exist!')
+    
+    return redirect ('/animal/{}/vaccinations'.format(animal_id))
+
+
+# Saves animal in users saved
+@app.route('/animal/<animal_id>/save')
+@login_required
+def user_animal_save(animal_id):
+
+    save_user_animal(animal_id)
+
+    return redirect('/animal/{}'.format(animal_id))
+
+
+# Set animal visit day
+@app.route('/animal/<animal_id>/visit', methods = ['POST'])
+@login_required
+def user_animal_visit(animal_id):
+
+    schedule_visit(animal_id)
+
+    return redirect('/animal/{}'.format(animal_id))
