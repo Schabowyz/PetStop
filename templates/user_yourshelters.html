@@ -1,0 +1,69 @@
+{% extends "layout_body.html" %}
+
+{% block title %}: Your shelters{% endblock %}
+
+{% block body_header %}
+    <!-- Panel for filtering animals in shelter -->
+    <h3>Your shelters:</h3>
+{% endblock %}
+
+{% block body_content %}
+    {% if shelters %}
+        {% for shelter in shelters %}
+            <div class="card">
+                <div class="card-body">
+                    <div class="container">
+                        <div class="row gy-1 gx-1">
+                            <div class="col-3">
+                                <div class="d-grid gap-2">
+                                    {% if shelter['image'] != None %}
+                                        <img src="/{{ shelter['image'] }}" class="img-thumbnail" alt="{{ shelter['name'] }}">
+                                    {% else %}
+                                        <img src="/static/shelter_image.jpg" class="img-thumbnail" alt="{{ shelter['name'] }}">
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <h5 class="card-title">{{ shelter['name'] }} - {{ shelter['role'] }}</h5>
+                                <p class="card-text">
+                                    {{ shelter['loc_adress'] }}
+                                    <br>
+                                    {{ shelter['loc_city'] }} {{ shelter['loc_postal'] }}
+                                    <br>
+                                    {{ shelter['con_phone'] }}
+                                    <br>
+                                    {{ shelter['con_email'] }}
+                                    <br>
+                                    {% if shelter['description'] != None %}
+                                        {{ shelter['description'] }}
+                                    {% else %}
+                                        {{ shelter['name'] }} has no description.
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div> 
+                    <a href="/shelter/{{ shelter['id'] }}" class="stretched-link"></a>
+                </div>
+            </div>
+            <br>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
+{% block body_sidebar %}
+    <div class="container border bg-light p-3">
+        <h4>Information</h4>
+        <div class="d-grid gap-2">
+            <br>
+            Please note that beeing a shelter keeper or volunteer is a responsible job.<br>
+            As for now this page doesn't have any verification process so I hope for your honesty and good will with your declarations.<br>
+        </div>
+    </div><br>
+
+    <div class="container border bg-light p-3">
+        <div class="d-grid gap-2">
+            <a type="button" class="btn btn-secondary" href="/createshelter">Create a new shelter</a>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends "layout_body.html" %}
+
+{% block title %}: {{ shelter['name'] }}{% endblock %}
+
+{% block body_header %}
+    <h3>Menage shelter volunteers</h3><br>
+    <p>You can add and remove volunteers from your shelter at any time. The application doesn't have any verification process so far, therefore I hope for your honesty.</p>
+{% endblock %}
+
+{% block body_content %}
+    <div class="card">
+        <div class="card-body">
+            <div class="container">
+                <div class="row gy-1 gx-1">
+                    <div class="col-8">
+                            <form action="/shelter/{{ shelter['id'] }}/volunteers" method="post" id="addForm">
+                                <input name="username" type="text" class="form-control" id="usernameInput" placeholder="Username">
+                            </form>
+                    </div>
+                    <div class="col-4">
+                        <div class="d-grid gap-2 align-middle">
+                            <button type="submit" form="addForm" class="btn btn-secondary">Add keeper</button>
+                        </div>
+                    </div>
+                </div> 
+            </div> 
+        </div>
+    </div>
+    <br>
+    {% if volunteers %}
+        {% for volunteer in volunteers %}
+            <div class="card">
+                <div class="card-body">
+                    <div class="container">
+                        <div class="row gy-1 gx-1">
+                            <div class="col-8">
+                                <h5 class="card-title">{{ volunteer['username'] }}</h5>
+                                <p class="card-text">
+                                    {% if volunteer['name'] != None %}
+                                        {{ volunteer['name'] }}
+                                    {% endif %}
+                                    {% if volunteer['surname'] != None %}
+                                        {{ volunteer['surname'] }}
+                                    {% endif %}
+                                    <br>
+                                    {{ volunteer['con_email'] }}
+                                    <br>
+                                    {% if volunteer['con_phone'] != None %}
+                                        {{ volunteer['con_phone'] }}
+                                    {% endif %}
+                                </p>
+                            </div>
+                            {% if user_status['keeper'] == True %}
+                                <div class="col-4">
+                                    <div class="d-grid gap-2">
+                                        <a type="button" class="btn btn-secondary" href="/shelter/{{ shelter['id'] }}/volunteers/delete/{{ volunteer['username'] }}">Remove volunteer</a>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div> 
+                    </div> 
+                </div>
+            </div>
+            <br>
+        {% endfor %}
+    {% else %}
+        <div class="container">
+            <p>This shelter has no volunteers yet.</p>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block body_sidebar %}
+    {% if user_status['keeper'] == True %}
+        {% include "sidebar_nav.html" %}
+        <div class="p-3">
+            <div class="container border bg-light p-3">
+                <div class="d-grid gap-2">
+                    <a type="button" class="btn btn-secondary" href="/shelter/{{ shelter['id'] }}">Back</a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

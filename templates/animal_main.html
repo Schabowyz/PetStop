@@ -65,11 +65,13 @@
             {% else %}
                 <img src="/static/animal_profile_image.jpg" class="img-thumbnail" alt="{{ animal['name'] }}">
             {% endif %}
-            <br>
-            <div class="d-grid gap-2">
+            {% if user_status['login'] == True %}
                 <br>
-                <a type="button" class="btn btn-secondary" href="/animal/{{ animal['id'] }}/save">Save in your animals</a>
-            </div>
+                <div class="d-grid gap-2">
+                    <br>
+                    <a type="button" class="btn btn-secondary" href="/animal/{{ animal['id'] }}/save">Save in your animals</a>
+                </div>
+            {% endif %}
         </div>
     </div>
 
@@ -92,15 +94,23 @@
     <!-- Panel with animal schedule -->
     <div class="p-3">
         <div class="container border bg-light p-3">
-            This is {{ animal['name'] }} schedule panel - you can schedule your visit or walk with {{ animal['name'] }} here.
+            This is {{ animal['name'] }} schedule panel - you can schedule your visit or (if you're shelter keeper or volunteer) walk with {{ animal['name'] }} here.
             <div class="d-grid gap-2">
                 <br>
-                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#visitModal">
-                    Schedule a visit
-                </button>
-                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#walkModal">
-                    Schedule a walk
-                </button>
+                {% if user_status['login'] == True %}
+                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#visitModal">
+                        Schedule a visit
+                    </button>
+                {% else %}
+                    <a type="button" class="btn btn-secondary" href="/login">
+                        Schedule a visit
+                    </a>
+                {% endif %}
+                {% if user_status['volunteer'] == True or user_status['keeper'] == True %}
+                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#walkModal">
+                        Schedule a walk
+                    </button>
+                {% endif %}
             </div>
         </div>
     </div>

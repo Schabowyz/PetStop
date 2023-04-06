@@ -20,6 +20,22 @@ def login_check():
     else:
         return False
     
+# Checks if user is volunteer
+def volunteer_check(shelter_id):
+    if not login_check():
+        return False
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    print(session['user'])
+    print(shelter_id)
+    cur.execute("SELECT username FROM volunteers WHERE username = ? AND shelter_id = ?", (session['user'], shelter_id))
+    if cur.fetchone():
+        con.close()
+        return True
+    else:
+        con.close()
+        return False
+    
 # Checks if user is a keeper
 def keeper_check(shelter_id):
     if not login_check():
@@ -50,18 +66,21 @@ def owner_check(shelter_id):
         con.close()
         return False
     
-# Checks if logged user is keeper in a shelter and if so returns it's id
-def check_user_shelter():
+# Checks if user status allows for taking animal for a walk
+def walk_check(animal_id):
     con = sqlite3.connect('database.db')
     con.row_factory = dict_factory
     cur = con.cursor()
-    cur.execute("SELECT shelter_id FROM keepers WHERE username = ?", (session['user'],))
+    cur.execute("SELECT shelter_id FROM animals WHERE id = ?", (animal_id,))
     shelter_id = cur.fetchone()
     con.close()
     if not shelter_id:
         return False
-    else:
-        return shelter_id['shelter_id']
+    shelter_id = shelter_id['shelter_id']
+    if not volunteer_check(shelter_id) and not keeper_check(shelter_id):
+        return False
+    return True
+    
 
 # Checks if username is ok
 def username_check(username):

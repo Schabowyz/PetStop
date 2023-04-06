@@ -2,8 +2,8 @@ from flask import Flask, render_template, request, redirect, session, flash
 from flask_session import Session
 from datetime import timedelta
 
-from f_helpers import login_required, logout_required, get_user_status, login_user, register_user, get_shelter_info, get_animals_info, add_shelter, edit_shelter_info, get_keepers, delete_keeper, add_keeper, add_owner, add_animal, get_animal_info, update_animal_status, update_animal_info, get_animal_vaccinations, add_animal_vaccine, delete_animal_vaccine, get_user_saved, save_user_animal, delete_user_animal, schedule_visit, get_user_schedule
-from f_checks import keeper_check, owner_check, check_user_shelter
+from f_helpers import login_required, logout_required, get_user_status, login_user, register_user, get_shelter_info, get_animals_info, add_shelter, edit_shelter_info, get_keepers, delete_keeper, add_keeper, add_owner, add_animal, get_animal_info, update_animal_status, update_animal_info, get_animal_vaccinations, add_animal_vaccine, delete_animal_vaccine, get_user_saved, save_user_animal, delete_user_animal, schedule_visit, get_user_schedule, get_shelter_volunteers, add_volunteer, delete_volunteer, delete_animal_schedule, schedule_walk, get_user_info, get_user_shelters
+from f_checks import keeper_check, owner_check, walk_check
 
 
 # Configure application
@@ -89,7 +89,7 @@ def user_register():
 @login_required
 def user_profile():
 
-    return render_template('user_profile.html', user_status=get_user_status(None), username=session['user'])
+    return render_template('user_profile.html', user_status=get_user_status(None), user=get_user_info(session['user']), animals=get_user_saved(session['user']), shelters=get_user_shelters())
 
 
 # User saved animals
@@ -118,17 +118,24 @@ def user_schedule():
     return render_template('user_yourschedule.html', user_status=get_user_status(None), schedule=get_user_schedule())
 
 
+# Delete event from schedule
+@app.route('/yourschedule/delete/<event_id>')
+@login_required
+def animal_schedule_delete(event_id):
+
+    delete_animal_schedule(event_id)
+
+    return redirect('/yourschedule')
+
+
 # User's shelter page
-@app.route('/yourshelter')
+@app.route('/yourshelters')
 @login_required
 def shelter_yourshelter():
 
-    shelter_id = check_user_shelter()
+    print(get_user_shelters())
 
-    if not shelter_id:
-        return render_template('shelter_yourshelter.html', user_status=get_user_status(None))
-    else:
-        return redirect('/shelter/{}'.format(shelter_id))
+    return render_template('user_yourshelters.html', user_status=get_user_status(None), shelters=get_user_shelters())
     
 
 # Create new shelter
@@ -247,6 +254,7 @@ def shelter_add_animal(shelter_id):
 
     if not keeper_check(shelter_id):
         flash('Only shelter keepers can add a new animal to the shelter!')
+        return redirect('/shelter/{}'.format(shelter_id))
     
     if request.method == 'POST':
         if add_animal(shelter_id):
@@ -255,6 +263,34 @@ def shelter_add_animal(shelter_id):
         
     return render_template('shelter_animal.html', user_status=get_user_status(shelter_id), shelter=get_shelter_info(shelter_id), keepers=get_keepers(shelter_id), db={'animal': 'disabled'})
 
+
+# Edit volunteers
+@app.route('/shelter/<shelter_id>/volunteers', methods = ['GET', 'POST'])
+@login_required
+def shelter_edit_volunteers(shelter_id):
+    
+    if not keeper_check(shelter_id):
+        flash('Only shelter keepers can access this page!')
+        return redirect('/shelter/{}'.format(shelter_id))
+    
+    if request.method == 'POST':
+        add_volunteer(request.form.get('username'), shelter_id)
+
+    return render_template('shelter_volunteers.html', user_status=get_user_status(shelter_id), shelter=get_shelter_info(shelter_id), volunteers=get_shelter_volunteers(shelter_id), db={'volunteers': 'disabled'})
+
+
+# Delete volunteer
+@app.route('/shelter/<shelter_id>/volunteers/delete/<username>')
+@login_required
+def shelter_delete_volunteer(shelter_id, username):
+
+    if not keeper_check(shelter_id):
+        flash('Only shelter keepers can delete volunteers!')
+        return redirect('/shelter/{}/volunteers'.format(shelter_id))
+    
+    delete_volunteer(shelter_id, username)
+
+    return redirect('/shelter/{}/volunteers'.format(shelter_id))
 
 
 #################### SEARCH ####################
@@ -373,5 +409,18 @@ def user_animal_save(animal_id):
 def user_animal_visit(animal_id):
 
     schedule_visit(animal_id)
+
+    return redirect('/animal/{}'.format(animal_id))
+
+
+# Set animal walk day
+@app.route('/animal/<animal_id>/walk', methods = ['POST'])
+@login_required
+def user_animal_walk(animal_id):
+
+    if walk_check(animal_id):
+        schedule_walk(animal_id)
+    else:
+        flash('Only shelter keeper or volunteer can take an animal for a walk!')
 
     return redirect('/animal/{}'.format(animal_id))

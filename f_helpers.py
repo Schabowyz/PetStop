@@ -5,7 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import uuid
 from email_validator import validate_email, EmailNotValidError
-from f_checks import username_check, email_check, password_check, shelter_form_check, login_check, keeper_check, owner_check, date_check
+from f_checks import username_check, email_check, password_check, shelter_form_check, login_check, keeper_check, owner_check, date_check, volunteer_check
 
 UPLOAD_EXTENSIONS = ['.jpg', '.jpeg', '.png']
 ANIMAL_IMAGES_PATH = 'static/animal_images/'
@@ -63,6 +63,7 @@ def save_image(save_path):
 def get_user_status(shelter_id):
     user_status = {}
     user_status['login'] = login_check()
+    user_status['volunteer'] = volunteer_check(shelter_id)
     user_status['keeper'] = keeper_check(shelter_id)
     user_status['owner'] = owner_check(shelter_id)
     return user_status
@@ -692,7 +693,7 @@ def delete_user_animal(animal_id):
     return True
 
 
-# Schedules visit
+# Schedules a visit
 def schedule_visit(animal_id):
     date = request.form.get('visit')
     if not date_check(date):
@@ -701,6 +702,11 @@ def schedule_visit(animal_id):
     con = sqlite3.connect('database.db')
     con.row_factory = dict_factory
     cur = con.cursor()
+    cur.execute("SELECT id FROM animals WHERE id = ?", (animal_id,))
+    if not cur.fetchone():
+        con.close()
+        flash('Animal does not exist!')
+        return False
     cur.execute("SELECT username FROM schedule WHERE animal_id = ? AND username = ? AND type = 'visit' AND date = ?", (animal_id, session['user'], date))
     if cur.fetchone():
         con.close()
@@ -710,6 +716,32 @@ def schedule_visit(animal_id):
     con.commit()
     con.close()
     flash('Visit was scheduled for {}!'.format(date))
+    return True
+
+
+# Schedules a walk
+def schedule_walk(animal_id):
+    date = request.form.get('visit')
+    if not date_check(date):
+        flash('Incorrect date!')
+        return False
+    con = sqlite3.connect('database.db')
+    con.row_factory = dict_factory
+    cur = con.cursor()
+    cur.execute("SELECT id FROM animals WHERE id = ?", (animal_id,))
+    if not cur.fetchone():
+        con.close()
+        flash('Animal does not exist!')
+        return False
+    cur.execute("SELECT username FROM schedule WHERE animal_id = ? AND username = ? AND type = 'walk' AND date = ?", (animal_id, session['user'], date))
+    if cur.fetchone():
+        con.close()
+        flash('You already have a walk with this animal scheduled for that day!')
+        return False
+    cur.execute("INSERT INTO schedule (animal_id, username, type, date) VALUES (?, ?, 'walk', ?)", (animal_id, session['user'], date))
+    con.commit()
+    con.close()
+    flash('Walk was scheduled for {}!'.format(date))
     return True
 
 
@@ -727,7 +759,190 @@ def get_user_schedule():
         cur.execute("SELECT name, shelter_id FROM animals WHERE id = ?", (event['animal_id'],))
         animal = cur.fetchone()
         event['animal_name'] = animal['name']
-        cur.execute("SELECT name FROM shelters WHERE id = ?", (animal['shelter_id'],))
-        event['shelter_name'] = cur.fetchone()['name']
+        cur.execute("SELECT name, id FROM shelters WHERE id = ?", (animal['shelter_id'],))
+        shelter = cur.fetchone()
+        event['shelter_name'] = shelter['name']
+        event['shelter_id'] = shelter['id']
     con.close()
     return schedule
+
+
+# Gets shelter volunteers
+def get_shelter_volunteers(shelter_id):
+    if not shelter_id:
+        return False
+    con = sqlite3.connect('database.db')
+    con.row_factory = dict_factory
+    cur = con.cursor()
+    cur.execute("SELECT * FROM users WHERE username IN (SELECT username FROM volunteers WHERE shelter_id = ?)", (shelter_id,))
+    volunteers = cur.fetchall()
+    con.close()
+    if not volunteers:
+        return False
+    return volunteers
+
+
+# Add new volunteer to the shelter
+def add_volunteer(username, shelter_id):
+
+    # Checks if passed vriables have have value
+    if not username:
+        return False
+    if not shelter_id:
+        return False
+    
+    # Connects to database
+    con = sqlite3.connect("database.db")
+    con.row_factory = dict_factory
+    cur = con.cursor()
+
+    # Checks if there's user 'username'
+    cur.execute("SELECT username FROM users WHERE username = ?", (username,))
+    check = cur.fetchone()
+    if not check:
+        flash('There is no user named {}!'.format(username))
+        return False
+    
+    # Checks if person is already a keeper in sheter
+    cur.execute("SELECT username FROM keepers WHERE username = ? AND shelter_id = ?", (username, shelter_id))
+    check = cur.fetchone()
+    if check:
+        flash('{} is already a keeper in this shelter!'.format(username))
+        return False
+    
+    # Checks if user is already volunteer in the shelter
+    cur.execute("SELECT username FROM volunteers WHERE username = ? AND shelter_id = ?", (username, shelter_id))
+    check = cur.fetchone()
+    if check:
+        flash('{} is already a volunteer in this shelter!'.format(username))
+        return False
+    
+    # After passing all tests, puts new user as keeper
+    cur.execute("INSERT INTO volunteers VALUES (?, ?)", (username, shelter_id))
+    con.commit()
+    con.close()
+    flash('{} was successfully added as shelter volunteer!'.format(username))
+    return True
+
+
+# Deletes volunteer from shelter
+def delete_volunteer(shelter_id, username):
+    
+    # Open database and create cursor
+    con = sqlite3.connect("database.db")
+    con.row_factory = dict_factory
+    cur = con.cursor()
+    cur.execute("SELECT * FROM volunteers WHERE username = ? AND shelter_id = ?", (username, shelter_id))
+    if not cur.fetchone():
+        con.close()
+        flash('{} is not a volunteer in this shelter!'.format(username))
+        return False
+    cur.execute("DELETE FROM volunteers WHERE username = ? AND shelter_id = ?", (username, shelter_id))
+    con.commit()
+    con.close()
+    flash('You have succesfully removed {} from shelter volunteers.'.format(username))
+    return True
+
+
+# Deletes event from animals schedule
+def delete_animal_schedule(event_id):
+
+    # Open database and create cursor
+    con = sqlite3.connect("database.db")
+    con.row_factory = dict_factory
+    cur = con.cursor()
+    cur.execute("SELECT username FROM schedule WHERE id = ?", (event_id,))
+    event = cur.fetchone()
+    if not event:
+        con.close()
+        flash('There is no such event scheduled for this you!')
+        return False
+    if event['username'] != session['user']:
+        con.close()
+        flash('It is not your event, you can not delete it!')
+        return False
+    cur.execute("DELETE FROM schedule WHERE id = ?", (event_id,))
+    con.commit()
+    con.close()
+    flash('Event was successfully deleted from your schedule!')
+    return True
+
+
+# Get user info
+def get_user_info(username):
+
+    # Open database and create cursor
+    con = sqlite3.connect("database.db")
+    con.row_factory = dict_factory
+    cur = con.cursor()
+    cur.execute("SELECT username, con_email, name, surname, phone FROM users WHERE username = ?", (username,))
+    user = cur.fetchone()
+    con.close()
+    if not user:
+        return False
+    else:
+        return user
+    
+
+# Gets users shelters where user is an owner
+def get_user_owners():
+
+    con = sqlite3.connect("database.db")
+    con.row_factory = dict_factory
+    cur = con.cursor()
+    cur.execute("SELECT * FROM shelters WHERE id IN (SELECT shelter_id FROM keepers WHERE username = ? AND owner = 1)", (session['user'],))
+    owner_shelters = cur.fetchall()
+    con.close()
+    if not owner_shelters:
+        return None
+    else:
+        for shelter in owner_shelters:
+            shelter['role'] = 'Owner'
+        return owner_shelters
+    
+
+# Gets users shelters where user is a keeper
+def get_user_keepers():
+
+    con = sqlite3.connect("database.db")
+    con.row_factory = dict_factory
+    cur = con.cursor()
+    cur.execute("SELECT * FROM shelters WHERE id IN (SELECT shelter_id FROM keepers WHERE username = ? AND owner = 0)", (session['user'],))
+    keeper_shelters = cur.fetchall()
+    con.close()
+    if not keeper_shelters:
+        return []
+    else:
+        for shelter in keeper_shelters:
+            shelter['role'] = 'Keeper'
+        return keeper_shelters
+    
+
+# Gets users shelters where user is a volunteer
+def get_user_volunteers():
+ 
+    con = sqlite3.connect("database.db")
+    con.row_factory = dict_factory
+    cur = con.cursor()
+    cur.execute("SELECT * FROM shelters WHERE id IN (SELECT shelter_id FROM volunteers WHERE username = ?)", (session['user'],))
+    volunteer_shelters = cur.fetchall()
+    con.close()
+    if not volunteer_shelters:
+        return []
+    else:
+        for shelter in volunteer_shelters:
+            shelter['role'] = 'Volunteer'
+        return volunteer_shelters
+    
+
+# Gets users shelters where user is owner, keeper or volunteer in this order
+def get_user_shelters():
+
+    shelters = []
+    shelters += get_user_owners()
+    shelters += get_user_keepers()
+    shelters += get_user_volunteers()
+    if not shelters:
+        return False
+    else:
+        return shelters

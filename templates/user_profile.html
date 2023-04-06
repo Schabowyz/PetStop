@@ -1,9 +1,106 @@
-{% extends "layout_main.html" %}
+{% extends "layout_body.html" %}
 
-{% block title %}: Profile{% endblock %}
+{% block head_title %}: profile{% endblock %}
 
-{% block body %}
+{% block body_header %}
+    <h3>Your profile</h3>
+{% endblock %}
 
-    <h1>CHUUUUUUUUUUUJ</h1>
-    
+{% block body_content %}
+    {{ user['username'] }}<br>
+    {{ user['name'] }}<br>
+    {{ user['surname'] }}<br>
+    {{ user['con_email'] }}<br>
+    {{ user['phone'] }}<br>
+{% endblock %}
+
+{% block body_sidebar %}
+    <!-- Panel for user -->
+    <div class="p-3">
+        <div class="container border bg-light p-3">
+            Hello {{ keeper }}!<br>
+            This is your profile. Only you can enter this page.<br>
+            Your personal information like your name, surname, email and phone are shared with noone except shelter staff (owner and keepers) of shelter where you're owner, keeper or volunteer.
+            <div class="d-grid gap-2">
+                <br>
+                    <a type="button" class="btn btn-secondary" href="/profile/{{ user['username'] }}/edit">Edit profile</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel with user shelters -->
+    {% if shelters %}
+        <div class="p-3">
+            <div class="container border bg-light p-3">
+                <h5>Your shelters</h5><br>
+                {% for i in range(3) %}
+                    {% if shelters[i] %}
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="container">
+                                    <div class="row gy-1 gx-1">
+                                        <div class="col-8">
+                                            <h5 class="card-title"><a href="animal/{{ shelters[i]['id'] }}" class="text-reset text-decoration-none">{{ shelters[i]['name'] }}</h5></a>
+                                            <p class="card-text">
+                                                {{ shelters[i]['role'] }}
+                                            </p>  
+                                        </div>
+                                        <div class="col-4">
+                                            {% if shelters[i]['image'] != 0 %}
+                                                <a href="shelter/{{ shelters[i]['id'] }}"><img src="{{ shelters[i]['image'] }}" class="img-thumbnail" alt="{{ shelters[i]['name'] }}"></a>
+                                            {% else %}
+                                                <a href="shelter/{{ shelters[i]['id'] }}"><img src="/static/shelter_image.jpg" class="img-thumbnail" alt="{{ shelters[i]['name'] }}"></a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                    {% endif %}
+                {% endfor %}
+                <div class="d-grid gap-2">
+                    <a type="button" class="btn btn-secondary" href="/yourshelters">See all</a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Panel with saved animals -->
+    {% if animals %}
+        <div class="p-3">
+            <div class="container border bg-light p-3">
+                <h5>Saved animals</h5><br>
+                {% for i in range(3) %}
+                    {% if animals[i] %}
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="container">
+                                    <div class="row gy-1 gx-1">
+                                        <div class="col-8">
+                                            <h5 class="card-title"><a href="animal/{{ animals[i]['id'] }}" class="text-reset text-decoration-none">{{ animals[i]['name'] }}</h5></a>
+                                            <p class="card-text">
+                                                {{ animals[i]['species'] }}
+                                            </p>  
+                                        </div>
+                                        <div class="col-4">
+                                            {% if animals[i]['image'] != 0 %}
+                                                <a href="animal/{{ animals[i]['id'] }}"><img src="/{{ animals[i]['image'] }}" class="img-thumbnail" alt="{{ animals[i]['name'] }}"></a>
+                                            {% else %}
+                                                <a href="animal/{{ animals[i]['id'] }}"><img src="/static/animal_image.jpg" class="img-thumbnail" alt="{{ animals[i]['name'] }}"></a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                    {% endif %}
+                {% endfor %}
+                <div class="d-grid gap-2">
+                    <a type="button" class="btn btn-secondary" href="/youranimals">See all</a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

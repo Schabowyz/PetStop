@@ -15,19 +15,17 @@
                 <th scope="col">Shelter</th>
                 <th scope="col">Type</th>
                 <th scope="col">Date</th>
-                <th scope="col">Change</th>
-                <th scope="col">Delete</th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
             {% for event in schedule %}
             <tr>
-                <td class="align-middle">{{ event['animal_name'] }}</td>
-                <td class="align-middle">{{ event['shelter_name'] }}</td>
+                <td class="align-middle"><a href="/animal/{{ event['animal_id'] }}" class="text-reset">{{ event['animal_name'] }}</a></td>
+                <td class="align-middle"><a href="/shelter/{{ event['shelter_id'] }}" class="text-reset">{{ event['shelter_name'] }}</a></td>
                 <td class="align-middle text-capitalize">{{ event['type'] }}</td>
                 <td class="align-middle">{{ event['date'] }}</td>
-                <td class="align-middle"><div class="d-grid gap-2"><a type="button" class="btn btn-secondary" href="/animal/{{ event['animal_id'] }}/schedule/update/{{ event['id'] }}">Change</a></div></td>
-                <td class="align-middle"><div class="d-grid gap-2"><a type="button" class="btn btn-secondary" href="/animal/{{ event['animal_id'] }}/schedule/delete/{{ event['id'] }}">Delete</a></div></td>
+                <td class="align-middle"><div class="d-grid gap-2"><a type="button" class="btn btn-secondary" href="/yourschedule/delete/{{ event['id'] }}">Delete</a></div></td>
             </tr>
             {% endfor %}
         </tbody>
