@@ -701,10 +701,6 @@ def schedule_visit(animal_id):
     con = sqlite3.connect('database.db')
     con.row_factory = dict_factory
     cur = con.cursor()
-    cur.execute("SELECT COUNT username FROM schedule WHERE username = ?", (session['user']))
-    times = cur.fetchone()
-    print(times)
-
     cur.execute("SELECT username FROM schedule WHERE animal_id = ? AND username = ? AND type = 'visit' AND date = ?", (animal_id, session['user'], date))
     if cur.fetchone():
         con.close()
@@ -716,3 +712,22 @@ def schedule_visit(animal_id):
     flash('Visit was scheduled for {}!'.format(date))
     return True
 
+
+# Gets animals form users schedule
+def get_user_schedule():
+    con = sqlite3.connect('database.db')
+    con.row_factory = dict_factory
+    cur = con.cursor()
+    cur.execute("SELECT * FROM schedule WHERE username = ?", (session['user'],))
+    schedule = cur.fetchall()
+    if not schedule:
+        con.close()
+        return False
+    for event in schedule:
+        cur.execute("SELECT name, shelter_id FROM animals WHERE id = ?", (event['animal_id'],))
+        animal = cur.fetchone()
+        event['animal_name'] = animal['name']
+        cur.execute("SELECT name FROM shelters WHERE id = ?", (animal['shelter_id'],))
+        event['shelter_name'] = cur.fetchone()['name']
+    con.close()
+    return schedule

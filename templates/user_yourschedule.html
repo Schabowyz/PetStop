@@ -1,0 +1,42 @@
+{% extends "layout_body.html" %}
+
+{% block title %}: your schedule{% endblock %}
+
+{% block body_header %}
+    <h3>Menage your schedule</h3><br>
+{% endblock %}
+
+{% block body_content %}
+    {% if schedule %}
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Animal</th>
+                <th scope="col">Shelter</th>
+                <th scope="col">Type</th>
+                <th scope="col">Date</th>
+                <th scope="col">Change</th>
+                <th scope="col">Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in schedule %}
+            <tr>
+                <td class="align-middle">{{ event['animal_name'] }}</td>
+                <td class="align-middle">{{ event['shelter_name'] }}</td>
+                <td class="align-middle text-capitalize">{{ event['type'] }}</td>
+                <td class="align-middle">{{ event['date'] }}</td>
+                <td class="align-middle"><div class="d-grid gap-2"><a type="button" class="btn btn-secondary" href="/animal/{{ event['animal_id'] }}/schedule/update/{{ event['id'] }}">Change</a></div></td>
+                <td class="align-middle"><div class="d-grid gap-2"><a type="button" class="btn btn-secondary" href="/animal/{{ event['animal_id'] }}/schedule/delete/{{ event['id'] }}">Delete</a></div></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        You don't have anything scheduled yet.<br>
+    {% endif %}
+{% endblock %}
+
+{% block body_sidebar %}
+
+{% endblock %}

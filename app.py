@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, session, flash
 from flask_session import Session
 from datetime import timedelta
 
-from f_helpers import login_required, logout_required, get_user_status, login_user, register_user, get_shelter_info, get_animals_info, add_shelter, edit_shelter_info, get_keepers, delete_keeper, add_keeper, add_owner, add_animal, get_animal_info, update_animal_status, update_animal_info, get_animal_vaccinations, add_animal_vaccine, delete_animal_vaccine, get_user_saved, save_user_animal, delete_user_animal, schedule_visit
+from f_helpers import login_required, logout_required, get_user_status, login_user, register_user, get_shelter_info, get_animals_info, add_shelter, edit_shelter_info, get_keepers, delete_keeper, add_keeper, add_owner, add_animal, get_animal_info, update_animal_status, update_animal_info, get_animal_vaccinations, add_animal_vaccine, delete_animal_vaccine, get_user_saved, save_user_animal, delete_user_animal, schedule_visit, get_user_schedule
 from f_checks import keeper_check, owner_check, check_user_shelter
 
 
@@ -109,6 +109,13 @@ def user_animals_delete(animal_id):
 
     return redirect('/youranimals')
 
+
+# Users schedule
+@app.route('/yourschedule')
+@login_required
+def user_schedule():
+
+    return render_template('user_yourschedule.html', user_status=get_user_status(None), schedule=get_user_schedule())
 
 
 # User's shelter page
