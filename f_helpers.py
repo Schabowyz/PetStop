@@ -894,7 +894,7 @@ def get_user_owners():
     owner_shelters = cur.fetchall()
     con.close()
     if not owner_shelters:
-        return None
+        return []
     else:
         for shelter in owner_shelters:
             shelter['role'] = 'Owner'
@@ -946,3 +946,27 @@ def get_user_shelters():
         return False
     else:
         return shelters
+
+
+# Deletes users account
+def delete_user():
+
+    if request.form.get('username') != session['user']:
+        flash('Wrong username provided!')
+        return False
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute("SELECT username FROM keepers WHERE username = ? AND owner = 1", (session['user'],))
+    if cur.fetchone():
+        con.close()
+        flash('You can not delete your account as long as you are a shelter owner!')
+        return False
+    cur.execute("DELETE FROM saved WHERE username = ?", (session['user'],))
+    cur.execute("DELETE FROM schedule WHERE username = ?", (session['user'],))
+    cur.execute("DELETE FROM volunteers WHERE username = ?", (session['user'],))
+    cur.execute("DELETE FROM keepers WHERE username = ?", (session['user'],))
+    con.commit()
+    con.close()
+    session.clear()
+    flash('Your account was successfully deleted!')
+    return True

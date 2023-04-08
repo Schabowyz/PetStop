@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, session, flash
 from flask_session import Session
 from datetime import timedelta
 
-from f_helpers import login_required, logout_required, get_user_status, login_user, register_user, get_shelter_info, get_animals_info, add_shelter, edit_shelter_info, get_keepers, delete_keeper, add_keeper, add_owner, add_animal, get_animal_info, update_animal_status, update_animal_info, get_animal_vaccinations, add_animal_vaccine, delete_animal_vaccine, get_user_saved, save_user_animal, delete_user_animal, schedule_visit, get_user_schedule, get_shelter_volunteers, add_volunteer, delete_volunteer, delete_animal_schedule, schedule_walk, get_user_info, get_user_shelters
+from f_helpers import login_required, logout_required, get_user_status, login_user, register_user, get_shelter_info, get_animals_info, add_shelter, edit_shelter_info, get_keepers, delete_keeper, add_keeper, add_owner, add_animal, get_animal_info, update_animal_status, update_animal_info, get_animal_vaccinations, add_animal_vaccine, delete_animal_vaccine, get_user_saved, save_user_animal, delete_user_animal, schedule_visit, get_user_schedule, get_shelter_volunteers, add_volunteer, delete_volunteer, delete_animal_schedule, schedule_walk, get_user_info, get_user_shelters, delete_user
 from f_checks import keeper_check, owner_check, walk_check
 
 
@@ -90,6 +90,17 @@ def user_register():
 def user_profile():
 
     return render_template('user_profile.html', user_status=get_user_status(None), user=get_user_info(session['user']), animals=get_user_saved(session['user']), shelters=get_user_shelters())
+
+
+# User profile delete
+@app.route('/profile/delete', methods = ['POST'])
+@login_required
+def user_delete():
+
+    if delete_user():
+        return redirect('/')
+    else:
+        return redirect('/profile')    
 
 
 # User saved animals
