@@ -7,7 +7,31 @@
             <a type="button" class="btn btn-secondary" href="/animal/{{ animal['id'] }}/status">Edit status</a>
             <a type="button" class="btn btn-secondary" href="/animal/{{ animal['id'] }}/edit">Edit information</a>
             <a type="button" class="btn btn-secondary" href="/animal/{{ animal['id'] }}/vaccinations">Edit vaccinations</a>
-            <a type="button" class="btn btn-secondary" href="#">Remove animal</a>
+            <a type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#deleteModal" href="/animal/{{ animal['id'] }}/delete">Delete animal</a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for animal delete -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">Are you sure?</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Deleting an animal is permament and can't be reversed.<br>
+                Please take a note that you can only delete animal that is taken care of by you.</p>
+                <p>To delete the animal please enter it's name below and click "Delete" button.</p>
+                <form action="/animal/{{ animal['id'] }}/delete" method="post" id="deleteForm">
+                    <input name="name" type="text" class="form-control" id="nameInput" placeholder="Name">
+                </form>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" form="deleteForm" class="btn btn-primary">Delete</button>
+            </div>
         </div>
     </div>
 </div>

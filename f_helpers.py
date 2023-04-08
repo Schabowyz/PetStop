@@ -970,3 +970,29 @@ def delete_user():
     session.clear()
     flash('Your account was successfully deleted!')
     return True
+
+
+# Deletes an animal
+def delete_animal(animal_id):
+
+    con = sqlite3.connect('database.db')
+    con.row_factory = dict_factory
+    cur = con.cursor()
+    cur.execute("SELECT name FROM animals WHERE id = ?", (animal_id,))
+    name = cur.fetchone()
+    if not name:
+        con.close()
+        flash('Animal does not exist!')
+        return False
+    if request.form.get('name') != name['name']:
+        con.close()
+        flash('Wrong name provided!')
+        return False
+    cur.execute("DELETE FROM schedule WHERE animal_id = ?", (animal_id,))
+    cur.execute("DELETE FROM saved WHERE animal_id = ?", (animal_id,))
+    cur.execute("DELETE FROM vaccinations WHERE animal_id = ?", (animal_id,))
+    cur.execute("DELETE FROM animals WHERE id = ?", (animal_id,))
+    con.commit()
+    con.close()
+    flash('Animal was successfully deleted!')
+    return True
