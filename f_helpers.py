@@ -218,7 +218,7 @@ def add_shelter():
     if image != False:
         shelter['image'] = image
     else:
-        shelter['image'] = None
+        shelter['image'] = 0
 
     con = sqlite3.connect("database.db")
     cur = con.cursor()
@@ -278,7 +278,6 @@ def edit_shelter_info(shelter_id):
     cur = con.cursor()
     cur.execute('SELECT image FROM shelters WHERE id = ?', (shelter_id,))
     curr_image = cur.fetchone()
-    print(curr_image)
 
     image = save_image(SHELTER_IMAGES_PATH)
     if image != False:

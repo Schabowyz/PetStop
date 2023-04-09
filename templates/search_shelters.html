@@ -16,7 +16,7 @@
                         <div class="row gy-1 gx-1">
                             <div class="col-3">
                                 <div class="d-grid gap-2">
-                                    {% if shelter['image'] != None %}
+                                    {% if shelter['image'] != 0 %}
                                         <img src="/{{ shelter['image'] }}" class="img-thumbnail" alt="{{ shelter['name'] }}">
                                     {% else %}
                                         <img src="/static/shelter_image.jpg" class="img-thumbnail" alt="{{ shelter['name'] }}">
