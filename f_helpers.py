@@ -987,6 +987,10 @@ def delete_animal(animal_id):
         con.close()
         flash('Wrong name provided!')
         return False
+    cur.execute("SELECT image FROM animals WHERE id = ?", (animal_id,))
+    image = cur.fetchone()
+    if image['image'] != 0:
+        os.remove(image['image'])
     cur.execute("DELETE FROM schedule WHERE animal_id = ?", (animal_id,))
     cur.execute("DELETE FROM saved WHERE animal_id = ?", (animal_id,))
     cur.execute("DELETE FROM vaccinations WHERE animal_id = ?", (animal_id,))
