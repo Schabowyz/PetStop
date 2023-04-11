@@ -2,8 +2,11 @@ from flask import Flask, render_template, request, redirect, session, flash
 from flask_session import Session
 from datetime import timedelta
 
-from f_helpers import login_required, logout_required, get_user_status, login_user, register_user, get_shelter_info, get_animals_info, add_shelter, edit_shelter_info, get_keepers, delete_keeper, add_keeper, add_owner, add_animal, get_animal_info, update_animal_status, update_animal_info, get_animal_vaccinations, add_animal_vaccine, delete_animal_vaccine, get_user_saved, save_user_animal, delete_user_animal, schedule_visit, get_user_schedule, get_shelter_volunteers, add_volunteer, delete_volunteer, delete_animal_schedule, schedule_walk, get_user_info, get_user_shelters, delete_user, delete_animal
-from f_checks import keeper_check, owner_check, walk_check
+from main_helpers import login_required, logout_required, get_user_status, get_shelter_info, get_animals_info, get_keepers, get_animal_info, get_animal_vaccinations, get_user_saved, get_user_schedule, get_shelter_volunteers, get_user_info, get_user_shelters
+from main_user import login_user, register_user, save_user_animal, delete_user_animal, delete_user, user_edit_info, user_edit_pass
+from main_shelter import add_shelter, edit_shelter_info, delete_keeper, add_keeper, add_owner, add_volunteer, delete_volunteer, search_shelters
+from main_animal import add_animal, update_animal_status, update_animal_info, add_animal_vaccine, delete_animal_vaccine, schedule_visit, delete_animal_schedule, schedule_walk, delete_animal
+from main_checks import keeper_check, owner_check, walk_check
 
 
 # Configure application
@@ -100,7 +103,31 @@ def user_delete():
     if delete_user():
         return redirect('/')
     else:
-        return redirect('/profile')    
+        return redirect('/profile')  
+
+
+# User profile edit
+@app.route('/profile/information', methods = ['GET', 'POST'])
+@login_required
+def user_edit_information():
+
+    if request.method == 'POST':
+        if user_edit_info():
+            return redirect('/profile')
+
+    return render_template('user_info.html', user_status=get_user_status(None), user=get_user_info(session['user']))
+
+
+# User password change
+@app.route('/profile/information/password', methods = ['GET', 'POST'])
+@login_required
+def user_edit_password():
+
+    if request.method == 'POST':
+        if user_edit_pass():
+            return redirect('/profile')
+        
+    return render_template('user_password.html', user_status=get_user_status(None))
 
 
 # User saved animals
@@ -143,8 +170,6 @@ def animal_schedule_delete(event_id):
 @app.route('/yourshelters')
 @login_required
 def shelter_yourshelter():
-
-    print(get_user_shelters())
 
     return render_template('user_yourshelters.html', user_status=get_user_status(None), shelters=get_user_shelters())
     
@@ -304,23 +329,6 @@ def shelter_delete_volunteer(shelter_id, username):
     return redirect('/shelter/{}/volunteers'.format(shelter_id))
 
 
-#################### SEARCH ####################
-
-
-# Search animals
-@app.route('/search/animals')
-def search_animals():
-
-    return render_template('search_animals.html', user_status=get_user_status(None), animals=get_animals_info(None))
-
-
-# Search shelters
-@app.route('/search/shelters')
-def search_shelters():
-
-    return render_template('search_shelters.html', user_status=get_user_status(None), shelters=get_shelter_info(None))
-
-
 
 #################### ANIMAL ####################
 
@@ -446,3 +454,24 @@ def animal_delete(animal_id):
         return redirect('/')
     else:
         return redirect('/animal/{}'.format(animal_id))
+    
+
+
+#################### SEARCH ####################
+
+
+# Search animals
+@app.route('/search/animals')
+def search_animals():
+
+    return render_template('search_animals.html', user_status=get_user_status(None), animals=get_animals_info(None))
+
+
+# Search shelters
+@app.route('/search/shelters', methods = ['GET', 'POST'])
+def search_shelters():
+
+    if request.method == 'POST':
+        print(search_shelters())
+
+    return render_template('search_shelters.html', user_status=get_user_status(None), shelters=get_shelter_info(None))

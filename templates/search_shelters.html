@@ -3,8 +3,7 @@
 {% block head_title %}: Search shelters{% endblock %}
 
 {% block body_header %}
-    <h3>Shelters</h3><br>
-    <p>Search filters:</p>
+    
 {% endblock %}
 
 {% block body_content %}
@@ -52,15 +51,35 @@
 {% endblock %}
 
 {% block body_sidebar %}
-<div class="p-3">
-    <div class="container border bg-light p-3">
-        <div class="d-grid gap-2">
-            Hello!<br>
-            This is shelter search page. If you would like to search for animals, please go to animals search page.
+    <div class="p-3">
+        <div class="container border bg-light p-3">
+            <div class="d-grid gap-2">
+                <form action="/search/shelters" method="post">
+                    <div class="form-group">
+                        <input name="keywords" type="text" class="form-control" id="keywordsInput" placeholder="Search for a shelter">
+                    </div><br>
+                    Search by:                   
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="name" id="name" value="True" checked>
+                        <label class="form-check-label" for="name">Shelter name</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="location" id="location" value="True">
+                        <label class="form-check-label" for="location">Shelter location</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="description" id="description" value="True">
+                        <label class="form-check-label" for="description">Shelter description</label>
+                    </div>
+                    <br>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-secondary">Search</button>
+                    </div>  
+                </form>
+            </div>
         </div>
-</div>
+    </div>
 
-</div>
     <div class="p-3">
         <div class="container border bg-light p-3">
             <div class="d-grid gap-2">

@@ -1,0 +1,64 @@
+{% extends "layout_body.html" %}
+
+{% block title %}: Profile infromation{% endblock %}
+
+{% block body_header %}
+    <h3>Edit profile information</h3><br>
+    <p>You can change your profile information at any time. The application doesn't have any verification process so far, therefore I hope for your honesty.</p>
+    <p>Changes will only apply to fields that were edited.</p>
+    <p>Please remember to save your changes on the right.</p>
+{% endblock %}
+
+{% block body_content %}
+    <form action="/profile/information" method="post" id="body_contentForm">
+
+        <div class="form-group">
+            <label for="emailInput">Email adress</label>
+            <input name="con_email" type="text" class="form-control" id="emailInput" value="{{ user['con_email'] }}">
+        </div>
+        <br>
+        
+        <div class="form-group">
+            <label for="nameInput">Name</label>
+            {% if user['name'] != None %}
+                <input name="name" type="text" class="form-control" id="nameInput" placeholder="Name" value="{{ user['name'] }}">
+            {% else %}
+                <input name="name" type="text" class="form-control" id="nameInput" placeholder="Name">
+            {% endif %}
+        </div>
+        <br>
+        
+        <div class="form-group">
+            <label for="surnameInput">Surname</label>
+            {% if user['name'] != None %}
+                <input name="surname" type="text" class="form-control" id="surnameInput" placeholder="Surname" value="{{ user['surname'] }}">
+            {% else %}
+                <input name="surname" type="text" class="form-control" id="surnameInput" placeholder="Surname">
+            {% endif %}
+        </div>
+        <br>
+        
+        <div class="form-group">
+            <label for="phoneInput">Phone</label>
+            {% if user['name'] != None %}
+                <input name="phone" type="text" class="form-control" id="phoneInput" placeholder="Phone" value="{{ user['phone'] }}">
+            {% else %}
+                <input name="phone" type="text" class="form-control" id="phoneInput" placeholder="Phone">
+            {% endif %}
+        </div>
+        <br>
+
+    </form>
+{% endblock %}
+
+{% block body_sidebar %}
+    <div class="p-3">
+        <div class="container border bg-light p-3">
+            <div class="d-grid gap-2">
+                <button type="submit" form="body_contentForm" class="btn btn-primary">Submit</button>
+                <a type="button" class="btn btn-secondary" href="/profile/information/password">Change password</a>
+                <a type="button" class="btn btn-secondary" href="/profile">Back</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
