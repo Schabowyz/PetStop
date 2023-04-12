@@ -4,8 +4,8 @@ from datetime import timedelta
 
 from main_helpers import login_required, logout_required, get_user_status, get_shelter_info, get_animals_info, get_keepers, get_animal_info, get_animal_vaccinations, get_user_saved, get_user_schedule, get_shelter_volunteers, get_user_info, get_user_shelters
 from main_user import login_user, register_user, save_user_animal, delete_user_animal, delete_user, user_edit_info, user_edit_pass
-from main_shelter import add_shelter, edit_shelter_info, delete_keeper, add_keeper, add_owner, add_volunteer, delete_volunteer, search_shelters
-from main_animal import add_animal, update_animal_status, update_animal_info, add_animal_vaccine, delete_animal_vaccine, schedule_visit, delete_animal_schedule, schedule_walk, delete_animal
+from main_shelter import add_shelter, edit_shelter_info, delete_keeper, add_keeper, add_owner, add_volunteer, delete_volunteer, search_for_shelters
+from main_animal import add_animal, update_animal_status, update_animal_info, add_animal_vaccine, delete_animal_vaccine, schedule_visit, delete_animal_schedule, schedule_walk, delete_animal, search_for_animals
 from main_checks import keeper_check, owner_check, walk_check
 
 
@@ -461,17 +461,26 @@ def animal_delete(animal_id):
 
 
 # Search animals
-@app.route('/search/animals')
+@app.route('/search/animals', methods = ['GET', 'POST'])
 def search_animals():
+    animals = get_animals_info(None)
 
-    return render_template('search_animals.html', user_status=get_user_status(None), animals=get_animals_info(None))
+    if request.method == 'POST':
+        results = search_for_animals()
+        if results:
+            animals = results
+
+    return render_template('search_animals.html', user_status=get_user_status(None), animals=animals)
 
 
 # Search shelters
 @app.route('/search/shelters', methods = ['GET', 'POST'])
 def search_shelters():
+    shelters = get_shelter_info(None)
 
     if request.method == 'POST':
-        print(search_shelters())
+        results = search_for_shelters()
+        if results:
+            shelters = results
 
-    return render_template('search_shelters.html', user_status=get_user_status(None), shelters=get_shelter_info(None))
+    return render_template('search_shelters.html', user_status=get_user_status(None), shelters=shelters)

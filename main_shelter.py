@@ -259,51 +259,59 @@ def delete_volunteer(shelter_id, username):
 
 ##################################################    SHELTER SEARCH    ##################################################
 
-# Search filters for shelters
-# By name
-# By location
-# By description
-def search_shelters():
-
-    # Gets search keywords from the form
+# Search for shelters using filters and keywords
+def search_for_shelters():
+    # Gets search keywords from the form and checks correctness
     keywords = request.form.get('keywords')
-
-    # Splits keywords to list of words and adds %% OR to each of them for sql purposes
+    if not keywords:
+        return False
+    if keywords.replace(' ','').isalnum() == False:
+        flash('You can only use letters and numbers!')
+        return False
     keywords = keywords.split()
-    for i in range(len(keywords)):
-        keywords[i] = " '%{}%' OR".format(keywords[i])
-
-    # Gets search parameters from the form    
-    parameters = []
-    if request.form.get('name') == 'True':
-        parameters.append(' name ')
-    if request.form.get('location') == 'True':
-        parameters.append(' loc_city ')
-        parameters.append(' loc_adress ')
-    if request.form.get('description') == 'True':
-        parameters.append(' description ')
-
-    # Creates variable query that will store sql query for search    
+    if len(keywords) > 5:
+        flash('Please provide up to 5 words!')
+        return False
+    # Creates a search query based on checked parameters
     query = ''
-
-    # For each parameter that was selected expands query with: parameter LIKE %search_keyword% OR
-    for parameter in parameters:
-        for keyword in keywords:
-            query += '{}LIKE{}'.format(parameter, keyword)
-
-    # Deletes ' OR' at the end of query
-    query = query[:-3]
-
-    # Connects to database and fetches all the results for the query
+    filters = 0
+    if request.form.get('name') == 'True':
+        query += ' name LIKE ?'
+        filters += 1
+    if request.form.get('location') == 'True':
+        if filters != 0:
+            query += ' OR'
+        query += ' loc_city LIKE ? OR loc_adress LIKE ?'
+        filters += 2
+    if request.form.get('description') == 'True':
+        if filters != 0:
+            query += ' OR'
+        query += ' description LIKE ?'
+        filters += 1
+    # Checks if there are any search parameters
+    if query == '':
+        flash('No shelters were found!')
+        return False
+    # Adds 1 query for each keyword
+    bu_query = query
+    if len(keywords) > 1:
+        for i in range(len(keywords) - 1):
+            query = query + ' OR' + bu_query
+    # Creates tuple with search parameters
+    params = ()
+    for keyword in keywords:
+        for i in range(filters):
+            params += (f'%{keyword}%',)
+    # Connects to database and prompts it for query with ?, providing the right amount of parameters
     con = sqlite3.connect('database.db')
     con.row_factory = dict_factory
     cur = con.cursor()
-    cur.execute("SELECT * FROM shelters WHERE{}".format(query))
+    cur.execute(f"SELECT * FROM shelters WHERE{query}", params)
     shelters = cur.fetchall()
     con.close()
-    
-    # If there are no results returns false, otherwise returns the results
-    if not shelters:
-        return False
-    else:
+    # Returns search results
+    if shelters:
         return shelters
+    else:
+        flash('No shelters were found!')
+        return False

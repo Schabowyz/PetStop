@@ -1,64 +1,85 @@
 {% extends "layout_body.html" %}
 
-{% block head_title %}: Search animals{% endblock %}
+{% block head_title %}: Search shelters{% endblock %}
 
 {% block body_header %}
-    <h3>Animals</h3><br>
-    <p>Search filters:</p>
+    <h3>Animals search:</h3>
 {% endblock %}
 
 {% block body_content %}
     {% if animals %}
         {% for animal in animals %}
-            {% if animal['status_visibility'] == True %}
-                <div class="card">
-                    <div class="card-body">
-                        <div class="container">
-                            <div class="row gy-1 gx-1">
-                                <div class="col-3">
-                                    <div class="d-grid gap-2">
-                                        {% if animal['image'] != 0 %}
-                                            <img src="/{{ animal['image'] }}" class="img-thumbnail" alt="{{ animal['name'] }}">
-                                        {% else %}
-                                            <img src="/static/animal_image.jpg" class="img-thumbnail" alt="{{ animal['name'] }}">
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-8">
-                                    <h5 class="card-title">{{ animal['name'] }}</h5>
-                                    <p class="card-text">
-                                        Sheltered in {{ animal['shelter'] }}
-                                        <br>
-                                        {{ animal['species'] }}
-                                        <br>
-                                        {% if animal['description'] != None %}
-                                            {{ animal['description'] }}
-                                        {% else %}
-                                            {{ animal['name'] }} has no description.
-                                        {% endif %}
-                                    </p>
+            <div class="card">
+                <div class="card-body">
+                    <div class="container">
+                        <div class="row gy-1 gx-1">
+                            <div class="col-3">
+                                <div class="d-grid gap-2">
+                                    {% if animal['image'] != 0 %}
+                                        <img src="/{{ animal['image'] }}" class="img-thumbnail" alt="{{ animal['name'] }}">
+                                    {% else %}
+                                        <img src="/static/animal_image.jpg" class="img-thumbnail" alt="{{ animal['name'] }}">
+                                    {% endif %}
                                 </div>
                             </div>
-                        </div> 
-                        <a href="/animal/{{ animal['id'] }}" class="stretched-link"></a>
-                    </div>
+                            <div class="col-8">
+                                <h5 class="card-title">{{ animal['name'] }}</h5>
+                                <p class="card-text">
+                                    Sheltered in {{ animal['shelter'] }}
+                                    <br>
+                                    {{ animal['species'] }}
+                                    <br>
+                                    {% if animal['description'] != None %}
+                                        {{ animal['description'] }}
+                                    {% else %}
+                                        {{ animal['name'] }} has no description.
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div> 
+                    <a href="/animal/{{ animal['id'] }}" class="stretched-link"></a>
                 </div>
-                <br>
-            {% endif %}
+            </div>
+            <br>
         {% endfor %}
     {% endif %}
 {% endblock %}
 
 {% block body_sidebar %}
-<div class="p-3">
-    <div class="container border bg-light p-3">
-        <div class="d-grid gap-2">
-            Hello!<br>
-            This is animal search page. If you would like to search for shelters, please go to shelter search page.
+    <div class="p-3">
+        <div class="container border bg-light p-3">
+            <div class="d-grid gap-2">
+                <form action="/search/animals" method="post">
+                    <div class="form-group">
+                        <input name="keywords" type="text" class="form-control" id="keywordsInput" placeholder="Search for an animal">
+                    </div><br>
+                    Search by:                   
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="name" id="name" value="True">
+                        <label class="form-check-label" for="name">Animal name</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="location" id="location" value="True" checked>
+                        <label class="form-check-label" for="location">Animal location</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="species" id="species" value="True" checked>
+                        <label class="form-check-label" for="species">Animal species</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="description" id="description" value="True">
+                        <label class="form-check-label" for="description">Animal description</label>
+                    </div>
+                    <br>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-secondary">Search</button>
+                    </div>  
+                </form>
+            </div>
         </div>
-</div>
+    </div>
 
-</div>
     <div class="p-3">
         <div class="container border bg-light p-3">
             <div class="d-grid gap-2">

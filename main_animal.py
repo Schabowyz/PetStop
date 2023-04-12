@@ -343,3 +343,68 @@ def delete_animal_schedule(event_id):
     con.close()
     flash('Event was successfully deleted from your schedule!')
     return True
+
+
+##################################################    SHELTER SEARCH    ##################################################
+
+# Search for animals using filters and keywords
+def search_for_animals():
+    # Gets search keywords from the form and checks correctness
+    keywords = request.form.get('keywords')
+    if not keywords:
+        return False
+    if keywords.replace(' ','').isalnum() == False:
+        flash('You can only use letters and numbers!')
+        return False
+    keywords = keywords.split()
+    if len(keywords) > 5:
+        flash('Please provide up to 5 words!')
+        return False
+    # Creates a search query based on checked parameters
+    query = ''
+    filters = 0
+    if request.form.get('name') == 'True':
+        query += ' name LIKE ?'
+        filters += 1
+    if request.form.get('species') == 'True':
+        if filters != 0:
+            query += ' OR'
+        query += ' species LIKE ?'
+        filters += 1
+    if request.form.get('description') == 'True':
+        if filters != 0:
+            query += ' OR'
+        query += ' description LIKE ?'
+        filters += 1
+    if request.form.get('location') == 'True':
+        if filters !=0:
+            query += ' OR'
+        query += ' shelter_id IN (SELECT shelter_id FROM shelters WHERE loc_city LIKE ?)'
+        filters += 1
+    # Checks if there are any search parameters
+    if query == '':
+        flash('No animals were found!')
+        return False
+    # Adds 1 query for each keyword
+    bu_query = query
+    if len(keywords) > 1:
+        for i in range(len(keywords) - 1):
+            query = query + ' OR' + bu_query
+    # Creates tuple with search parameters
+    params = ()
+    for keyword in keywords:
+        for i in range(filters):
+            params += (f'%{keyword}%',)
+    # Connects to database and prompts it for query with ?, providing the right amount of parameters
+    con = sqlite3.connect('database.db')
+    con.row_factory = dict_factory
+    cur = con.cursor()
+    cur.execute(f"SELECT * FROM animals WHERE{query}", params)
+    animals = cur.fetchall()
+    con.close()
+    # Returns search results
+    if animals:
+        return animals
+    else:
+        flash('No animals were found!')
+        return False
