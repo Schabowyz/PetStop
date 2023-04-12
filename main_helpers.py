@@ -3,9 +3,14 @@ from functools import wraps
 import sqlite3
 import os
 import uuid
+from urllib.parse import urlencode
+import requests
+
 from main_checks import login_check, keeper_check, owner_check, volunteer_check
 
 UPLOAD_EXTENSIONS = ['.jpg', '.jpeg', '.png']
+# AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA     WYKSPORTOWAĆ KLUCZ DO IGNORA
+API_KEY = 'AIzaSyASK5eDDB5YBc6q2bq8CErPY9mJy9-L8Vo'
 
 
 ####################################################################################################  HELPER FUNCTIONS  ####################################################################################################
@@ -52,6 +57,44 @@ def save_image(save_path):
             return image_path
     return False
 
+# Gets geocode of shelter
+def get_geocode(city, adress, postal):
+    # Creates adress to access geocode API
+    address = postal + city + adress
+    data_type = 'json'
+    endpoint = f'https://maps.googleapis.com/maps/api/geocode/{data_type}'
+    params = {'address': address, 'key': API_KEY}
+    url_params = urlencode(params)
+    url = f'{endpoint}?{url_params}'
+    # Requests for json file from geocode API
+    data = requests.get(url)
+    # Checks if data was retrived
+    if data.status_code not in range(200, 299):
+        return False
+    # Creates geocode from requested file and returns it
+    try:
+        geocode = (data.json()['results'][0]['geometry']['location']['lat'], data.json()['results'][0]['geometry']['location']['lng'])
+    except:
+        return False
+    return geocode
+    
+
+def geocoding():
+    con = sqlite3.connect('database.db')
+    con.row_factory = dict_factory
+    cur = con.cursor()
+    cur.execute("SELECT loc_city, loc_adress, loc_postal FROM shelters WHERE id = 1")
+    shelter = cur.fetchone()
+    city = shelter['loc_city']
+    adress = shelter['loc_adress']
+    postal = shelter['loc_postal']
+
+    url = get_geocode(city, adress, postal)
+
+    if url:
+        return True
+    else:
+        return False
 
 ##################################################    INFORMATION RECIEVERS    ##################################################
 

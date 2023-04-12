@@ -4,7 +4,7 @@ import os
 from email_validator import validate_email, EmailNotValidError
 
 from main_checks import email_check, shelter_form_check
-from main_helpers import dict_factory, save_image
+from main_helpers import dict_factory, save_image, get_geocode
 
 SHELTER_IMAGES_PATH = 'static/shelter_images/'
 
@@ -39,10 +39,14 @@ def add_shelter():
         shelter['image'] = image
     else:
         shelter['image'] = 0
+    # Creates a geocode for the shelter
+    geocode = get_geocode(shelter['loc_city'], shelter['loc_adress'], shelter['loc_postal'])
+    shelter['geo_lat'] = geocode[0]
+    shelter['geo_lng'] = geocode[1]
     # Connects to db and creates new entry
     con = sqlite3.connect("database.db")
     cur = con.cursor()
-    cur.execute("INSERT INTO shelters (name, loc_city, loc_adress, loc_postal, con_phone, con_email, description, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",(
+    cur.execute("INSERT INTO shelters (name, loc_city, loc_adress, loc_postal, con_phone, con_email, description, image, geo_lat, geo_lng) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",(
         shelter['name'],
         shelter['loc_city'],
         shelter['loc_adress'],
@@ -50,7 +54,9 @@ def add_shelter():
         shelter['con_phone'],
         shelter['con_email'],
         shelter['description'],
-        shelter['image']
+        shelter['image'],
+        shelter['geo_lat'],
+        shelter['geo_lng']
     ))
     con.commit()
     shelter_id = cur.lastrowid
@@ -103,8 +109,12 @@ def edit_shelter_info(shelter_id):
             os.remove(curr_image['image'])
     else:
         shelter['image'] = curr_image['image']
+    # Creates a geocode for the shelter
+    geocode = get_geocode(shelter['loc_city'], shelter['loc_adress'], shelter['loc_postal'])
+    shelter['geo_lat'] = geocode[0]
+    shelter['geo_lng'] = geocode[1]
     # Db entry update
-    cur.execute("UPDATE shelters SET name = ?, loc_city = ?, loc_adress = ?, loc_postal = ?, con_phone = ?, con_email = ?, description = ?, image = ? WHERE id = ?",(
+    cur.execute("UPDATE shelters SET name = ?, loc_city = ?, loc_adress = ?, loc_postal = ?, con_phone = ?, con_email = ?, description = ?, image = ?, geo_lat = ?, geo_lng = ? WHERE id = ?",(
         shelter['name'],
         shelter['loc_city'],
         shelter['loc_adress'],
@@ -113,6 +123,8 @@ def edit_shelter_info(shelter_id):
         shelter['con_email'],
         shelter['description'],
         shelter['image'],
+        shelter['geo_lat'],
+        shelter['geo_lng'],
         shelter_id
     ))
     con.commit()

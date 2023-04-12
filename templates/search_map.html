@@ -1,0 +1,26 @@
+{% extends "layout_body.html" %}
+
+{% block head_title %}: map{% endblock %}
+
+{% block body_header %}
+    <h3>Map search</h3>
+{% endblock %}
+
+{% block body_content %}
+    <div id="map"></div>
+
+    <script>(g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})
+        ({key: "AIzaSyASK5eDDB5YBc6q2bq8CErPY9mJy9-L8Vo", v: "beta"});</script>
+{% endblock %}
+
+{% block body_sidebar %}
+    <div class="p-3">
+        <div class="container border bg-light p-3">
+            <div class="d-grid gap-2">
+                    <a type="button" class="btn btn-secondary" href="/search/animals">Search for animals</a>
+                    <a type="button" class="btn btn-secondary" href="/search/shelters">Search for shelters</a>
+                    <a type="button" class="btn btn-secondary" href="/">Index page</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
