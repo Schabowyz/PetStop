@@ -345,10 +345,10 @@ def delete_animal_schedule(event_id):
     return True
 
 
-##################################################    SHELTER SEARCH    ##################################################
+##################################################    ANIMAL SEARCH    ##################################################
 
 # Search for animals using filters and keywords
-def search_for_animals():
+def search_for_animals(shelter_id):
     # Gets search keywords from the form and checks correctness
     keywords = request.form.get('keywords')
     if not keywords:
@@ -399,7 +399,11 @@ def search_for_animals():
     con = sqlite3.connect('database.db')
     con.row_factory = dict_factory
     cur = con.cursor()
-    cur.execute(f"SELECT * FROM animals WHERE{query}", params)
+    if shelter_id == None:
+        cur.execute(f"SELECT * FROM animals WHERE{query}", params)
+    else:
+        params += (shelter_id,)
+        cur.execute(f"SELECT * FROM animals WHERE{query} AND shelter_id = ?", params)
     animals = cur.fetchall()
     con.close()
     # Returns search results

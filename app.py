@@ -196,7 +196,7 @@ def shelter_create():
 
 # AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA                     ZROBIĆ REDIRECT NA 404 SHELTER NOT FOUND
 # Shelter page
-@app.route('/shelter/<shelter_id>')
+@app.route('/shelter/<shelter_id>', methods = ['GET', 'POST'])
 def shelter_main(shelter_id):
 
     shelter = get_shelter_info(shelter_id)
@@ -204,6 +204,9 @@ def shelter_main(shelter_id):
         return redirect('/')
     
     animals = get_animals_info(shelter_id)
+
+    if request.method == 'POST':
+        animals = search_for_animals(shelter_id)
 
     return render_template('shelter_main.html', user_status=get_user_status(shelter_id), shelter=shelter, animals=animals, db={})
 
@@ -466,7 +469,7 @@ def search_animals():
     animals = get_animals_info(None)
 
     if request.method == 'POST':
-        results = search_for_animals()
+        results = search_for_animals(None)
         if results:
             animals = results
 

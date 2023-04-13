@@ -4,7 +4,6 @@
 
 {% block body_header %}
     <h3>Animals in shelter</h3><br>
-    <p>Search filters:</p>
 {% endblock %}
 
 {% block body_content %}
@@ -52,6 +51,41 @@
     {% if user_status['keeper'] == True %}
         {% include "sidebar_nav.html" %}
     {% endif %}
+
+    <div class="p-3">
+        <div class="container border bg-light p-3">
+            <div class="d-grid gap-2">
+                <h4>Search</h4>
+                <form action="/shelter/{{ shelter['id'] }}" method="post">
+                    <div class="form-group">
+                        <input name="keywords" type="text" class="form-control" id="keywordsInput" placeholder="Search in this shelter">
+                    </div><br>
+                    Search by:                   
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="name" id="name" value="True">
+                        <label class="form-check-label" for="name">Animal name</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="location" id="location" value="True" checked>
+                        <label class="form-check-label" for="location">Animal location</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="species" id="species" value="True" checked>
+                        <label class="form-check-label" for="species">Animal species</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="description" id="descript" value="True">
+                        <label class="form-check-label" for="descript">Animal description</label>
+                    </div>
+                    <br>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-secondary">Search</button>
+                    </div>  
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Panel with shelter information -->
     <div class="p-3">
         <div class="container border bg-light p-3">
