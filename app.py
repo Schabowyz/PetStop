@@ -491,14 +491,6 @@ def search_shelters():
     return render_template('search_shelters.html', user_status=get_user_status(None), shelters=shelters)
 
 
-# Search on a map
-@app.route('/search/map')
-def search_map():
-
-    return render_template('search_map.html', user_status = get_user_status(None))
-
-
-
 
 
 

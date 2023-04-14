@@ -360,12 +360,14 @@ def get_coords(shelter_id):
         return False
     # Connect to database and return coords
     con = sqlite3.connect('database.db')
+    con.row_factory = dict_factory
     cur = con.cursor()
-    cur.execute("SELECT geo_lat, geo_lng FROM shelters WHERE id = ?", (shelter_id,))
+    cur.execute("SELECT name, geo_lat, geo_lng FROM shelters WHERE id = ?", (shelter_id,))
     location = cur.fetchone()
     con.close()
     # If theres no coords return false
     if not location:
         flash('Could not generate map!')
         return False
+    location = {'geo_lat': float(location['geo_lat']), 'geo_lng': float(location['geo_lng']), 'name': location['name']}
     return location

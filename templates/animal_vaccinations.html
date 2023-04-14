@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block body_content %}
-    {% if vaccinations %}
+    
     <table class="table table-hover">
         <thead>
             <tr>
@@ -20,16 +20,20 @@
             </tr>
         </thead>
         <tbody>
-            {% for vac in vaccinations %}
-            <tr>
-                <td class="align-middle">{{ vac['vac_name'] }}</td>
-                <td class="align-middle">{{ vac['vac_for'] }}</td>
-                <td class="align-middle">{{ vac['vac_series'] }}</td>
-                <td class="align-middle">{{ vac['vac_date'] }}</td>
-                <td class="align-middle">{{ vac['vac_exp'] }} year/years</td>
-                <td class="align-middle"><div class="d-grid gap-2"><a type="button" class="btn btn-secondary" href="/animal/{{ animal['id'] }}/vaccinations/delete/{{ vac['id'] }}">Delete</a></div></td>
-            </tr>
-            {% endfor %}
+            {% if vaccinations %}
+                {% for vac in vaccinations %}
+                <tr>
+                    <td class="align-middle">{{ vac['vac_name'] }}</td>
+                    <td class="align-middle">{{ vac['vac_for'] }}</td>
+                    <td class="align-middle">{{ vac['vac_series'] }}</td>
+                    <td class="align-middle">{{ vac['vac_date'] }}</td>
+                    <td class="align-middle">{{ vac['vac_exp'] }} year/years</td>
+                    <td class="align-middle"><div class="d-grid gap-2"><a type="button" class="btn btn-secondary" href="/animal/{{ animal['id'] }}/vaccinations/delete/{{ vac['id'] }}">Delete</a></div></td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                There is no vaccination information provided yet.<br>
+            {% endif %}
             <br>
             <form action="/animal/{{ animal['id'] }}/vaccinations" method="post">
                 <td><input name="vac_name" type="text" class="form-control align-middle" placeholder="Vaccination"></td>
@@ -41,9 +45,6 @@
             </form>
         </tbody>
     </table>
-    {% else %}
-    There is no vaccination information provided yet.<br>
-    {% endif %}
 {% endblock %}
 
 {% block body_sidebar %}
