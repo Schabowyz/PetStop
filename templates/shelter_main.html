@@ -46,6 +46,11 @@
     {% endif %}
 {% endblock %}
 
+{% block body_map %}
+    <!-- Body map -->
+    {% include 'component_map.html' %}
+{% endblock %}
+
 {% block body_sidebar %}
     <!-- Panel for keepers/owner -->
     {% if user_status['keeper'] == True %}

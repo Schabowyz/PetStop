@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, session, flash
 from flask_session import Session
 from datetime import timedelta
 
-from main_helpers import login_required, logout_required, get_user_status, get_shelter_info, get_animals_info, get_keepers, get_animal_info, get_animal_vaccinations, get_user_saved, get_user_schedule, get_shelter_volunteers, get_user_info, get_user_shelters, geocoding
+from main_helpers import login_required, logout_required, get_user_status, get_shelter_info, get_animals_info, get_keepers, get_animal_info, get_animal_vaccinations, get_user_saved, get_user_schedule, get_shelter_volunteers, get_user_info, get_user_shelters, get_coords
 from main_user import login_user, register_user, save_user_animal, delete_user_animal, delete_user, user_edit_info, user_edit_pass
 from main_shelter import add_shelter, edit_shelter_info, delete_keeper, add_keeper, add_owner, add_volunteer, delete_volunteer, search_for_shelters
 from main_animal import add_animal, update_animal_status, update_animal_info, add_animal_vaccine, delete_animal_vaccine, schedule_visit, delete_animal_schedule, schedule_walk, delete_animal, search_for_animals
@@ -199,6 +199,8 @@ def shelter_create():
 @app.route('/shelter/<shelter_id>', methods = ['GET', 'POST'])
 def shelter_main(shelter_id):
 
+    coords = get_coords(shelter_id)
+
     shelter = get_shelter_info(shelter_id)
     if not shelter:
         return redirect('/')
@@ -208,7 +210,7 @@ def shelter_main(shelter_id):
     if request.method == 'POST':
         animals = search_for_animals(shelter_id)
 
-    return render_template('shelter_main.html', user_status=get_user_status(shelter_id), shelter=shelter, animals=animals, db={})
+    return render_template('shelter_main.html', user_status=get_user_status(shelter_id), shelter=shelter, animals=animals, db={}, coords=coords)
 
 
 # Edit information

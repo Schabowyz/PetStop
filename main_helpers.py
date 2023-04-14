@@ -350,3 +350,22 @@ def get_animal_vaccinations(animal_id):
     if not vaccinations:
         return False
     return vaccinations
+
+
+##############################    MAP DISPLAY    ##############################
+
+# Generates a map based on shelter id
+def get_coords(shelter_id):
+    if not shelter_id:
+        return False
+    # Connect to database and return coords
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute("SELECT geo_lat, geo_lng FROM shelters WHERE id = ?", (shelter_id,))
+    location = cur.fetchone()
+    con.close()
+    # If theres no coords return false
+    if not location:
+        flash('Could not generate map!')
+        return False
+    return location
