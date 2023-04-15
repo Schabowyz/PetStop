@@ -366,8 +366,7 @@ def get_coords(shelter_id):
     location = cur.fetchone()
     con.close()
     # If theres no coords return false
-    if not location:
-        flash('Could not generate map!')
+    if not location['geo_lat']:
         return False
     location = {'geo_lat': float(location['geo_lat']), 'geo_lng': float(location['geo_lng']), 'name': location['name']}
     return location
