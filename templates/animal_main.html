@@ -81,9 +81,9 @@
             <h3>Localization</h3>
             {{ animal['name'] }} is sheltered in {{ shelter['name'] }} shelter.
             <br>
-            {{ shelter['loc_city'] }}
+            {{ shelter['loc_adress'] }}
             <br>
-            {{ shelter['loc_adress'] }} {{ shelter['loc_postal'] }}
+            {{ shelter['loc_city'] }} {{ shelter['loc_postal'] }}
             <br>
             <br>
             {% include 'component_map.html' %}
