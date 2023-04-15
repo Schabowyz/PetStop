@@ -78,12 +78,15 @@
     <!-- Panel with shelter info -->
     <div class="p-3">
         <div class="container border bg-light p-3">
+            <h3>Localization</h3>
             {{ animal['name'] }} is sheltered in {{ shelter['name'] }} shelter.
             <br>
             {{ shelter['loc_city'] }}
             <br>
             {{ shelter['loc_adress'] }} {{ shelter['loc_postal'] }}
             <br>
+            <br>
+            {% include 'component_map.html' %}
             <div class="d-grid gap-2">
                 <br>
                     <a type="button" class="btn btn-secondary" href="/shelter/{{ animal['shelter_id'] }}">Visit shelter page</a>

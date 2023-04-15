@@ -343,10 +343,11 @@ def shelter_delete_volunteer(shelter_id, username):
 def animal_main(animal_id):
 
     animal = get_animal_info(animal_id)
+    coords = get_coords(animal['shelter_id'])
     if not animal:
         return redirect('/')
     
-    return render_template('animal_main.html', user_status=get_user_status(animal['shelter_id']), animal=animal, shelter=get_shelter_info(animal['shelter_id']), vaccinations=get_animal_vaccinations(animal_id))
+    return render_template('animal_main.html', user_status=get_user_status(animal['shelter_id']), animal=animal, shelter=get_shelter_info(animal['shelter_id']), vaccinations=get_animal_vaccinations(animal_id), coords=coords)
 
 
 # Edit animal info
