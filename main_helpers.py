@@ -292,6 +292,20 @@ def get_shelter_volunteers(shelter_id):
         return False
     return volunteers
 
+# Gets shelters supply demands
+def get_shelter_supplies(shelter_id):
+    # Connects to db and checks if there are any demands in shelter, returns either demands or False
+    con = sqlite3.connect('database.db')
+    con.row_factory = dict_factory
+    cur = con.cursor()
+    cur.execute("SELECT id, supply, demand, date FROM supplies WHERE shelter_id = ?", (shelter_id))
+    supplies = cur.fetchall()
+    con.close()
+    if not supplies:
+        return False
+    else:
+        return supplies
+
 
 ##############################    ANIMAL INFORMATION    ##############################
 

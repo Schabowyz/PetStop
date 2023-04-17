@@ -2,9 +2,9 @@ from flask import Flask, render_template, request, redirect, session, flash
 from flask_session import Session
 from datetime import timedelta
 
-from main_helpers import login_required, logout_required, get_user_status, get_shelter_info, get_animals_info, get_keepers, get_animal_info, get_animal_vaccinations, get_user_saved, get_user_schedule, get_shelter_volunteers, get_user_info, get_user_shelters, get_coords
+from main_helpers import login_required, logout_required, get_user_status, get_shelter_info, get_animals_info, get_keepers, get_animal_info, get_animal_vaccinations, get_user_saved, get_user_schedule, get_shelter_volunteers, get_user_info, get_user_shelters, get_coords, get_shelter_supplies
 from main_user import login_user, register_user, save_user_animal, delete_user_animal, delete_user, user_edit_info, user_edit_pass
-from main_shelter import add_shelter, edit_shelter_info, delete_keeper, add_keeper, add_owner, add_volunteer, delete_volunteer, search_for_shelters, add_supply
+from main_shelter import add_shelter, edit_shelter_info, delete_keeper, add_keeper, add_owner, add_volunteer, delete_volunteer, search_for_shelters, add_supply, delete_supply
 from main_animal import add_animal, update_animal_status, update_animal_info, add_animal_vaccine, delete_animal_vaccine, schedule_visit, delete_animal_schedule, schedule_walk, delete_animal, search_for_animals
 from main_checks import keeper_check, owner_check, walk_check
 
@@ -210,7 +210,7 @@ def shelter_main(shelter_id):
     if request.method == 'POST':
         animals = search_for_animals(shelter_id)
 
-    return render_template('shelter_main.html', user_status=get_user_status(shelter_id), shelter=shelter, animals=animals, db={}, coords=coords)
+    return render_template('shelter_main.html', user_status=get_user_status(shelter_id), shelter=shelter, animals=animals, db={}, coords=coords, supplies=get_shelter_supplies(shelter_id))
 
 
 # Edit information
@@ -237,13 +237,27 @@ def shelter_edit_needs(shelter_id):
     if request.method == 'POST':
         add_supply(shelter_id)
     
-    return render_template('shelter_needs.html', user_status=get_user_status(shelter_id), shelter=get_shelter_info(shelter_id), db={'needs': 'disabled'})
+    return render_template('shelter_needs.html', user_status=get_user_status(shelter_id), shelter=get_shelter_info(shelter_id), db={'needs': 'disabled'}, supplies=get_shelter_supplies(shelter_id))
+
+
+# Delete needs
+@app.route('/shelter/<shelter_id>/needs/delete/<supply_id>')
+@login_required
+def shelter_delete_supply(shelter_id, supply_id):
+
+    if not keeper_check(shelter_id):
+        flash('You have to be shelter keeper to do it!')
+        return redirect('/shelter/{}'.format(shelter_id))
+    
+    delete_supply(shelter_id, supply_id)
+
+    return redirect('/shelter/{}/needs'.format(shelter_id))
 
 
 # Edit keepers
 @app.route('/shelter/<shelter_id>/keepers', methods = ['GET', 'POST'])
 @login_required
-def eshelter_edit_keepers(shelter_id):
+def shelter_edit_keepers(shelter_id):
 
     if not keeper_check(shelter_id):
         flash('You have to be shelter keeper to acces this page!')

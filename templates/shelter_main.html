@@ -120,14 +120,37 @@
     <!-- Panel with shelter supplies -->
     <div class="p-3">
         <div class="container border bg-light p-3">
-            Shelter supplies:<br>
-            Displays<br>
-            supplies<br>
-            with<br>
-            current<br>
-            level<br>
-            and<br>
-            needs<br>
+            <h3>Supply demands</h3>
+                {% if supplies %}
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Supply</th>
+                                <th scope="col">Demand</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                {% for supply in supplies %}
+                                <tr>
+                                    <td class="align-middle">{{ supply['supply'] }}</td>
+                                    <td class="align-middle">
+                                        {% if supply['demand'] == 0 %}
+                                            Low
+                                        {% endif %}
+                                        {% if supply['demand'] == 1 %}
+                                            Medium
+                                        {% endif %}
+                                        {% if supply['demand'] == 2 %}
+                                            High
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    There's no demand for any of product right now.
+                {% endif %}
             <br>
             <div class="d-grid gap-2">
                 <a type="button" class="btn btn-secondary" href="/shelter/{{ shelter['id'] }}/needs">Details</a>

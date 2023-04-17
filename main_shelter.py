@@ -132,6 +132,7 @@ def edit_shelter_info(shelter_id):
     con.close()
     return True
 
+# Addes new demand to supplies db
 def add_supply(shelter_id):
     # Checks weather form is filled correctly
     error = False
@@ -165,6 +166,22 @@ def add_supply(shelter_id):
     con.close()
     flash('Product was succesfully added to demands list!')
     return True
+
+# Removes suply from demands db
+def delete_supply(shelter_id, supply_id):
+    # Connects to db and checks if theres an entry with provided id
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute("SELECT id FROM supplies WHERE shelter_id = ? AND id = ?", (shelter_id, supply_id))
+    if not cur.fetchone():
+        con.close()
+        flash('There is no such product request in demands!')
+        return False
+    cur.execute("DELETE FROM supplies WHERE id = ?", (supply_id,))
+    con.commit()
+    con.close()
+    flash('Product request was successfully removed!')
+    return True        
 
 
 ##################################################    SHELTER STAFF    ##################################################

@@ -17,17 +17,31 @@
                 <th scope="col">Supply</th>
                 <th scope="col">Demand</th>
                 <th scope="col">Date</th>
-                <th scope="col">Action</th>
+                {% if user_status['keeper'] or user_status['owner'] %}
+                    <th scope="col">Action</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
             {% if supplies %}
-                {% for vac in vaccinations %}
+                {% for supply in supplies %}
                 <tr>
-                    <td class="align-middle">{{ supply['name'] }}</td>
-                    <td class="align-middle">{{ supply['demand'] }}</td>
+                    <td class="align-middle">{{ supply['supply'] }}</td>
+                    <td class="align-middle">
+                        {% if supply['demand'] == 0 %}
+                            Low
+                        {% endif %}
+                        {% if supply['demand'] == 1 %}
+                            Medium
+                        {% endif %}
+                        {% if supply['demand'] == 2 %}
+                            High
+                        {% endif %}
+                    </td>
                     <td class="align-middle">{{ supply['date'] }}</td>
-                    <td class="align-middle"><div class="d-grid gap-2"><a type="button" class="btn btn-secondary" href="/shelter/{{ shelter['id'] }}/needs/delete/{{ supply['id'] }}">Delete</a></div></td>
+                    {% if user_status['keeper'] or user_status['owner'] %}
+                        <td class="align-middle"><div class="d-grid gap-2"><a type="button" class="btn btn-secondary" href="/shelter/{{ shelter['id'] }}/needs/delete/{{ supply['id'] }}">Delete</a></div></td>
+                    {% endif %}    
                 </tr>
                 {% endfor %}
             {% else %}
