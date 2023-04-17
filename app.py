@@ -232,12 +232,9 @@ def shelter_edit_information(shelter_id):
 
 # Edit needs
 @app.route('/shelter/<shelter_id>/needs')
-@login_required
 def shelter_edit_needs(shelter_id):
 
-    if not keeper_check(shelter_id):
-        flash('You have to be shelter keeper to acces this page!')
-        return redirect('/shelter/{}'.format(shelter_id))
+
     
     return render_template('shelter_needs.html', user_status=get_user_status(shelter_id), shelter=get_shelter_info(shelter_id), db={'needs': 'disabled'})
 
