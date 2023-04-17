@@ -27,7 +27,7 @@
                     <td class="align-middle">{{ supply['name'] }}</td>
                     <td class="align-middle">{{ supply['demand'] }}</td>
                     <td class="align-middle">{{ supply['date'] }}</td>
-                    <td class="align-middle"><div class="d-grid gap-2"><a type="button" class="btn btn-secondary" href="/animal/{{ animal['id'] }}/vaccinations/delete/{{ vac['id'] }}">Delete</a></div></td>
+                    <td class="align-middle"><div class="d-grid gap-2"><a type="button" class="btn btn-secondary" href="/shelter/{{ shelter['id'] }}/needs/delete/{{ supply['id'] }}">Delete</a></div></td>
                 </tr>
                 {% endfor %}
             {% else %}

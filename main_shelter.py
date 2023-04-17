@@ -2,6 +2,7 @@ from flask import session, request, flash
 import sqlite3
 import os
 from email_validator import validate_email, EmailNotValidError
+from datetime import date
 
 from main_checks import email_check, shelter_form_check
 from main_helpers import dict_factory, save_image, get_geocode
@@ -129,6 +130,40 @@ def edit_shelter_info(shelter_id):
     ))
     con.commit()
     con.close()
+    return True
+
+def add_supply(shelter_id):
+    # Checks weather form is filled correctly
+    error = False
+    name = request.form.get('name')
+    if len(name) < 1 or len(name) > 50 or not name.replace(' ','').isalnum():
+        error = True
+        flash('Please provide a right supply name!')
+    demand = int(request.form.get('demand'))
+    if demand not in [0, 1, 2]:
+        error = True
+        flash('Please provide a right demand level!')
+    # Checks if product is already on a demand list
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute("SELECT supply FROM supplies WHERE supply = ? AND shelter_id = ?", (name, shelter_id))
+    if cur.fetchone():
+        error = True
+        flash('Product is already in demands list!')
+    # Return false if there are any problems
+    if error:
+        con.close()
+        return False
+    # If everything is alright makes a commit in database
+    cur.execute("INSERT INTO supplies(shelter_id, supply, demand, date) VALUES (?, ?, ?, ?)", (
+        shelter_id,
+        name,
+        demand,
+        date.today()
+    ))
+    con.commit()
+    con.close()
+    flash('Product was succesfully added to demands list!')
     return True
 
 
