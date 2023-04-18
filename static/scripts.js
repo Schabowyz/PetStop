@@ -22,6 +22,7 @@ async function initMap() {
     position: position,
     title: cyce,
   });
+  alert(key)
 }
 
 initMap();

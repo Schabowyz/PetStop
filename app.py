@@ -8,6 +8,8 @@ from main_shelter import add_shelter, edit_shelter_info, delete_keeper, add_keep
 from main_animal import add_animal, update_animal_status, update_animal_info, add_animal_vaccine, delete_animal_vaccine, schedule_visit, delete_animal_schedule, schedule_walk, delete_animal, search_for_animals
 from main_checks import keeper_check, owner_check, walk_check
 
+from keys import secret_key, api_key
+
 
 # Configure application
 app = Flask(__name__)
@@ -15,7 +17,7 @@ app = Flask(__name__)
 # Configure app backed server session
 app.config['SESSION_PERMAMENT'] = True
 app.config['PERMAMENT_SESSION_LIFETIME'] = timedelta(days=7)
-app.config['SECRET_KEY'] = 'key'
+app.config['SECRET_KEY'] = secret_key
 app.config['SESSION_TYPE'] = 'filesystem'
 
 # Configure uploads settings
@@ -25,7 +27,7 @@ app.config['ANIMAL_IMAGES'] = 'static/animal_images'
 
 Session(app)
 
-POS_SPECIES = ['dog', 'cat', 'stara']
+POS_SPECIES = ['dog', 'cat']
 
 
 
@@ -210,7 +212,7 @@ def shelter_main(shelter_id):
     if request.method == 'POST':
         animals = search_for_animals(shelter_id)
 
-    return render_template('shelter_main.html', user_status=get_user_status(shelter_id), shelter=shelter, animals=animals, db={}, coords=coords, supplies=get_shelter_supplies(shelter_id))
+    return render_template('shelter_main.html', user_status=get_user_status(shelter_id), shelter=shelter, animals=animals, db={}, coords=coords, api_key=api_key, supplies=get_shelter_supplies(shelter_id))
 
 
 # Edit information
@@ -359,7 +361,7 @@ def animal_main(animal_id):
     if not animal:
         return redirect('/')
     
-    return render_template('animal_main.html', user_status=get_user_status(animal['shelter_id']), animal=animal, shelter=get_shelter_info(animal['shelter_id']), vaccinations=get_animal_vaccinations(animal_id), coords=coords)
+    return render_template('animal_main.html', user_status=get_user_status(animal['shelter_id']), animal=animal, shelter=get_shelter_info(animal['shelter_id']), vaccinations=get_animal_vaccinations(animal_id), coords=coords, api_key=api_key)
 
 
 # Edit animal info

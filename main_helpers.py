@@ -8,9 +8,11 @@ import requests
 
 from main_checks import login_check, keeper_check, owner_check, volunteer_check
 
+from keys import api_key
+
 UPLOAD_EXTENSIONS = ['.jpg', '.jpeg', '.png']
 # AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA     WYKSPORTOWAĆ KLUCZ DO IGNORA
-API_KEY = 'AIzaSyASK5eDDB5YBc6q2bq8CErPY9mJy9-L8Vo'
+API_KEY = api_key
 
 
 ####################################################################################################  HELPER FUNCTIONS  ####################################################################################################
@@ -78,23 +80,23 @@ def get_geocode(city, adress, postal):
         return False
     return geocode
     
+# def geocoding():
+#     con = sqlite3.connect('database.db')
+#     con.row_factory = dict_factory
+#     cur = con.cursor()
+#     cur.execute("SELECT loc_city, loc_adress, loc_postal FROM shelters WHERE id = 1")
+#     shelter = cur.fetchone()
+#     city = shelter['loc_city']
+#     adress = shelter['loc_adress']
+#     postal = shelter['loc_postal']
 
-def geocoding():
-    con = sqlite3.connect('database.db')
-    con.row_factory = dict_factory
-    cur = con.cursor()
-    cur.execute("SELECT loc_city, loc_adress, loc_postal FROM shelters WHERE id = 1")
-    shelter = cur.fetchone()
-    city = shelter['loc_city']
-    adress = shelter['loc_adress']
-    postal = shelter['loc_postal']
+#     url = get_geocode(city, adress, postal)
 
-    url = get_geocode(city, adress, postal)
-
-    if url:
-        return True
-    else:
-        return False
+#     if url:
+#         return True
+#     else:
+#         return False
+    
 
 ##################################################    INFORMATION RECIEVERS    ##################################################
 
@@ -376,7 +378,7 @@ def get_coords(shelter_id):
     con = sqlite3.connect('database.db')
     con.row_factory = dict_factory
     cur = con.cursor()
-    cur.execute("SELECT name, geo_lat, geo_lng FROM shelters WHERE id = ?", (shelter_id,))
+    cur.execute("SELECT name, loc_city, loc_adress, loc_postal, geo_lat, geo_lng FROM shelters WHERE id = ?", (shelter_id,))
     location = cur.fetchone()
     con.close()
     # If theres no coords return false
