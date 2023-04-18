@@ -1,8 +1,5 @@
-# keys
 keys.py
 
-# pycache
-__pycache__/
+__pycache__
 
-# flask session
-flask_session/
+flask_session
