@@ -41,6 +41,12 @@ def index():
     return render_template('index.html', user_status=get_user_status(None))
 
 
+# Page not found
+@app.route('/404')
+def not_found():
+
+    return render_template('404.html', user_status=get_user_status(None))
+
 
 #################### USER ####################
 
@@ -196,7 +202,6 @@ def shelter_create():
 #################### SHELTER ####################
 
 
-# AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA                     ZROBIĆ REDIRECT NA 404 SHELTER NOT FOUND
 # Shelter page
 @app.route('/shelter/<shelter_id>', methods = ['GET', 'POST'])
 def shelter_main(shelter_id):
@@ -205,7 +210,7 @@ def shelter_main(shelter_id):
 
     shelter = get_shelter_info(shelter_id)
     if not shelter:
-        return redirect('/')
+        return redirect('/404')
     
     animals = get_animals_info(shelter_id)
 
@@ -352,14 +357,13 @@ def shelter_delete_volunteer(shelter_id, username):
 #################### ANIMAL ####################
 
 
-# AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA                     ZROBIĆ REDIRECT NA 404 ANIAL NOT FOUND
 @app.route('/animal/<animal_id>')
 def animal_main(animal_id):
 
     animal = get_animal_info(animal_id)
     coords = get_coords(animal['shelter_id'])
     if not animal:
-        return redirect('/')
+        return redirect('/404')
     
     return render_template('animal_main.html', user_status=get_user_status(animal['shelter_id']), animal=animal, shelter=get_shelter_info(animal['shelter_id']), vaccinations=get_animal_vaccinations(animal_id), coords=coords, api_key=api_key)
 

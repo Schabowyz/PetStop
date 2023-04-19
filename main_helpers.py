@@ -11,7 +11,6 @@ from main_checks import login_check, keeper_check, owner_check, volunteer_check
 from keys import api_key
 
 UPLOAD_EXTENSIONS = ['.jpg', '.jpeg', '.png']
-# AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA     WYKSPORTOWAĆ KLUCZ DO IGNORA
 API_KEY = api_key
 
 
