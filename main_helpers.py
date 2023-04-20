@@ -78,24 +78,7 @@ def get_geocode(city, adress, postal):
     except:
         return False
     return geocode
-    
-# def geocoding():
-#     con = sqlite3.connect('database.db')
-#     con.row_factory = dict_factory
-#     cur = con.cursor()
-#     cur.execute("SELECT loc_city, loc_adress, loc_postal FROM shelters WHERE id = 1")
-#     shelter = cur.fetchone()
-#     city = shelter['loc_city']
-#     adress = shelter['loc_adress']
-#     postal = shelter['loc_postal']
-
-#     url = get_geocode(city, adress, postal)
-
-#     if url:
-#         return True
-#     else:
-#         return False
-    
+        
 
 ##################################################    INFORMATION RECIEVERS    ##################################################
 
