@@ -1,4 +1,4 @@
-from flask import session
+from flask import session, request
 from email_validator import validate_email, EmailNotValidError
 import sqlite3
 import datetime
@@ -183,3 +183,15 @@ def time_check(time):
         return False
     else:
         return True
+
+
+##################################################    ANIMAL CHECKS    ##################################################
+
+# Checks if animal already has a walk at selected day
+def animal_walk_check(animal_id):
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM schedule WHERE animal_id = ? AND date = ? AND type = 'walk'", (animal_id, request.form.get('app_day')))
+    if cur.fetchone():
+        return True
+    return False

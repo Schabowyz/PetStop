@@ -259,11 +259,15 @@ def delete_animal_vaccine(vac_id):
 
 ##################################################    SCHEDULE    ##################################################
 
-# Schedules a visit
+# Schedules an appointment
 def schedule_visit(animal_id):
     # Gets the date from the form and checks it's correctnes
-    date = request.form.get('visit_date')
-    time = request.form.get('visit_time')
+    date = session['appointment']
+    print(date)
+    app_type = request.form.get('app_type')
+    print(app_type)
+    time = request.form.get('app_time')
+    print(time)
     if not date_check(date) or not time_check(time):
         flash('Incorrect date!')
         return False
@@ -278,46 +282,17 @@ def schedule_visit(animal_id):
         flash('Animal does not exist!')
         return False
     # Checks if user has already vist with the animal scheduled for that day
-    cur.execute("SELECT username FROM schedule WHERE animal_id = ? AND username = ? AND type = 'visit' AND date = ?", (animal_id, session['user'], date))
+    cur.execute("SELECT username FROM schedule WHERE animal_id = ? AND username = ? AND date = ?", (animal_id, session['user'], date))
     if cur.fetchone():
         con.close()
-        flash('You already have a visit with this animal scheduled for that day!')
+        flash('You already have an appointment with this animal scheduled for that day!')
         return False
     # Creates an event in animals schedule
-    cur.execute("INSERT INTO schedule (animal_id, username, type, date, time) VALUES (?, ?, 'visit', ?, ?)", (animal_id, session['user'], date, time))
+    cur.execute("INSERT INTO schedule (animal_id, username, type, date, time) VALUES (?, ?, ?, ?, ?)", (animal_id, session['user'], app_type, date, time))
     con.commit()
     con.close()
     flash('Visit was scheduled for {}!'.format(date))
-    return True
-
-# Schedules a walk
-def schedule_walk(animal_id):
-    # Gets the date from the form and checks it's correctnes    
-    date = request.form.get('visit')
-    if not date_check(date):
-        flash('Incorrect date!')
-        return False
-    # Connects to db
-    con = sqlite3.connect('database.db')
-    con.row_factory = dict_factory
-    cur = con.cursor()
-    # Checks if animal with submited id exists
-    cur.execute("SELECT id FROM animals WHERE id = ?", (animal_id,))
-    if not cur.fetchone():
-        con.close()
-        flash('Animal does not exist!')
-        return False
-    # Checks if user has already vist with the animal scheduled for that day
-    cur.execute("SELECT username FROM schedule WHERE animal_id = ? AND username = ? AND type = 'walk' AND date = ?", (animal_id, session['user'], date))
-    if cur.fetchone():
-        con.close()
-        flash('You already have a walk with this animal scheduled for that day!')
-        return False
-    # Creates an event in animals schedule
-    cur.execute("INSERT INTO schedule (animal_id, username, type, date) VALUES (?, ?, 'walk', ?)", (animal_id, session['user'], date))
-    con.commit()
-    con.close()
-    flash('Walk was scheduled for {}!'.format(date))
+    session.pop('appointment')
     return True
 
 # Deletes event from animals schedule

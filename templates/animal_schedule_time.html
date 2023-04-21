@@ -6,22 +6,34 @@
 
         <label for="app_day" class="form-label"><h5>Choose a day for your appointment:</h5></label>
         <br>
-        <input type="date" id="app_day" name="app_day" min="{{ pos_day['min'] }}" max="{{ pos_day['max'] }}" value="{{ pos_day['min'] }}">
-        <br><br>
-        <button type="submit" class="btn btn-secondary">Select</button>
+        <input type="date" id="app_day" name="app_day" min="{{ pos_day['min'] }}" max="{{ pos_day['max'] }}" value="{{ day }}">
+        <button type="submit">Select</button>
 
     </form>
 
     <br>
+    {% if walk %}
+        <h5>Please take a note that {{ animal['name'] }} already has a walk scheduled for selected day!</h5><br>
+    {% endif %}
 
     <form action="/animal/{{ animal['id'] }}/schedule/time" method="post">
 
-        <label for="app_day" class="form-label"><h5>Choose time for your appointment:</h5></label>
+        <label for="app_type" class="form-label"><h5>Choose type of your appointment:</h5></label>
+        <select class="form-select" name="app_type" id="app_type">
+            <option value="visit">Visit</option>
+            <option value="walk">Walk</option>
+        </select>
         <br>
-        <input type="date" id="app_day" name="app_day" min="{{ pos_day['min'] }}" max="{{ pos_day['max'] }}" value="{{ pos_day['min'] }}">
-        <br><br>
-        <button type="submit" class="btn btn-secondary">Select</button>
-
+        <label for="app_time" class="form-label"><h5>Possible appointment hours at {{ day }}:</h5></label>
+        <select class="form-select" name="app_time" id="app_time">
+            {% for hour in pos_hours %}
+                <option value="{{ hour }}">{{ hour }}.00</option>
+            {% endfor %}
+        </select>
+        <br>
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
     </form>
 
 {% endblock %}

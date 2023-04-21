@@ -2,11 +2,11 @@ from flask import Flask, render_template, request, redirect, session, flash
 from flask_session import Session
 from datetime import timedelta
 
-from main_helpers import login_required, logout_required, get_user_status, get_shelter_info, get_animals_info, get_keepers, get_animal_info, get_animal_vaccinations, get_user_saved, get_user_schedule, get_shelter_volunteers, get_user_info, get_user_shelters, get_coords, get_shelter_supplies, get_pos_day
+from main_helpers import login_required, logout_required, get_user_status, get_shelter_info, get_animals_info, get_keepers, get_animal_info, get_animal_vaccinations, get_user_saved, get_user_schedule, get_shelter_volunteers, get_user_info, get_user_shelters, get_coords, get_shelter_supplies, get_pos_day, get_pos_hours
 from main_user import login_user, register_user, save_user_animal, delete_user_animal, delete_user, user_edit_info, user_edit_pass
 from main_shelter import add_shelter, edit_shelter_info, delete_keeper, add_keeper, add_owner, add_volunteer, delete_volunteer, search_for_shelters, add_supply, delete_supply
-from main_animal import add_animal, update_animal_status, update_animal_info, add_animal_vaccine, delete_animal_vaccine, schedule_visit, delete_animal_schedule, schedule_walk, delete_animal, search_for_animals
-from main_checks import keeper_check, owner_check, walk_check
+from main_animal import add_animal, update_animal_status, update_animal_info, add_animal_vaccine, delete_animal_vaccine, schedule_visit, delete_animal_schedule, delete_animal, search_for_animals
+from main_checks import keeper_check, owner_check, animal_walk_check
 
 from keys import secret_key, api_key
 
@@ -457,7 +457,7 @@ def animal_delete(animal_id):
         return redirect('/animal/{}'.format(animal_id))
     
 
-# Schedule an appointment
+# Schedule an appointment day
 @app.route('/animal/<animal_id>/schedule/day', methods = ['GET', 'POST'])
 @login_required
 def animal_schedule_day(animal_id):
@@ -465,10 +465,20 @@ def animal_schedule_day(animal_id):
     animal = get_animal_info(animal_id)
 
     if request.method == 'POST':
-
-        return render_template('animal_schedule_time.html', user_status=get_user_status(animal['shelter_id']), animal=animal, shelter=get_shelter_info(animal['shelter_id']), pos_day=get_pos_day())
+        return render_template('animal_schedule_time.html', user_status=get_user_status(animal['shelter_id']), animal=animal, shelter=get_shelter_info(animal['shelter_id']), pos_day=get_pos_day(), pos_hours=get_pos_hours(animal_id), walk=animal_walk_check(animal_id), day=request.form.get('app_day'))
 
     return render_template('animal_schedule_day.html', user_status=get_user_status(animal['shelter_id']), animal=animal, shelter=get_shelter_info(animal['shelter_id']), pos_day=get_pos_day())
+
+
+# Schedule an appointment time
+@app.route('/animal/<animal_id>/schedule/time', methods = ['POST'])
+@login_required
+def animal_schedule_time(animal_id):
+
+    if schedule_visit(animal_id):
+        return redirect('/animal/{}'.format(animal_id))
+    else:
+        return redirect('/animal/{}/schedule/day'.format(animal_id))
 
 
 #################### SEARCH ####################
