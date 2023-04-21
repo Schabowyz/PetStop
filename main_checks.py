@@ -169,10 +169,17 @@ def shelter_form_check(shelter):
     # Retutns either errors or emoty list
     return errors
 
-# Checks if date is correct
+# Checks if vist/walk date is correct
 def date_check(date):
     try:
         datetime.date.fromisoformat(date)
         return True
     except ValueError:
         return False
+    
+# Checks if visit/walk time is correct
+def time_check(time):
+    if not time.isnumeric():
+        return False
+    else:
+        return True

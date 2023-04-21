@@ -52,6 +52,7 @@
 {% endblock %}
 
 {% block body_sidebar %}
+
     <!-- Panel for keepers -->
     {% if user_status['keeper'] == True %}
         {% include "sidebar_animal_keeper.html" %}
@@ -65,13 +66,15 @@
             {% else %}
                 <img src="/static/animal_profile_image.jpg" class="img-thumbnail" alt="{{ animal['name'] }}">
             {% endif %}
-            {% if user_status['login'] == True %}
-                <br>
-                <div class="d-grid gap-2">
-                    <br>
-                    <a type="button" class="btn btn-secondary" href="/animal/{{ animal['id'] }}/save">Save in your animals</a>
-                </div>
-            {% endif %}
+            
+            <br><br>
+            <div class="d-grid gap-2">
+                    {% if user_status['login'] == True %}
+                <a type="button" class="btn btn-secondary" href="/animal/{{ animal['id'] }}/save">Save in your animals</a>
+                    {% endif %}
+                <a type="button" class="btn btn-secondary" href="/animal/{{ animal['id'] }}/schedule/day">Schedule an appointment</a>
+            </div>
+            
         </div>
     </div>
 
@@ -94,79 +97,4 @@
         </div>
     </div>
 
-    <!-- Panel with animal schedule -->
-    <div class="p-3">
-        <div class="container border bg-light p-3">
-            This is {{ animal['name'] }} schedule panel - you can schedule your visit or (if you're shelter keeper or volunteer) walk with {{ animal['name'] }} here.
-            <div class="d-grid gap-2">
-                <br>
-                {% if user_status['login'] == True %}
-                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#visitModal">
-                        Schedule a visit
-                    </button>
-                {% else %}
-                    <a type="button" class="btn btn-secondary" href="/login">
-                        Schedule a visit
-                    </a>
-                {% endif %}
-                {% if user_status['volunteer'] == True or user_status['keeper'] == True %}
-                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#walkModal">
-                        Schedule a walk
-                    </button>
-                {% endif %}
-            </div>
-        </div>
-    </div>
 {% endblock %}
-
-{% block modal %}
-
-    <!-- Visit modal -->
-    <div class="modal fade" id="visitModal" tabindex="-1" aria-labelledby="visitModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="visitModalLabel">Schedule a visit</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                <form action="/animal/{{ animal['id'] }}/visit" method="post" id="visitForm">
-                    <div class="modal-body">
-                        <label for="visit">Pick visit day: </label>
-                        <input type="date" id="visit" name="visit">
-                    </div>
-                </form>
-    
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" form="visitForm">Submit</button>
-                </div>
-            </div>
-        </div>
-      </div>
-
-      <!-- Walk modal -->
-      <div class="modal fade" id="walkModal" tabindex="-1" aria-labelledby="walkModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="walkModalLabel">Schedule a walk</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-    
-                <form action="/animal/{{ animal['id'] }}/walk" method="post" id="walkForm">
-                    <div class="modal-body">
-                        <label for="visit">Pick walk day: </label>
-                        <input type="date" id="visit" name="visit">
-                    </div>
-                </form>
-    
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" form="walkForm">Submit</button>
-                </div>
-            </div>
-        </div>
-      </div>
-{% endblock %}
-

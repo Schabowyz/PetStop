@@ -2,7 +2,7 @@ from flask import session, request, flash
 import sqlite3
 import os
 
-from main_checks import date_check
+from main_checks import date_check, time_check
 from main_helpers import dict_factory, save_image
 
 ANIMAL_IMAGES_PATH = 'static/animal_images/'
@@ -262,8 +262,9 @@ def delete_animal_vaccine(vac_id):
 # Schedules a visit
 def schedule_visit(animal_id):
     # Gets the date from the form and checks it's correctnes
-    date = request.form.get('visit')
-    if not date_check(date):
+    date = request.form.get('visit_date')
+    time = request.form.get('visit_time')
+    if not date_check(date) or not time_check(time):
         flash('Incorrect date!')
         return False
     # Connects to db
@@ -283,7 +284,7 @@ def schedule_visit(animal_id):
         flash('You already have a visit with this animal scheduled for that day!')
         return False
     # Creates an event in animals schedule
-    cur.execute("INSERT INTO schedule (animal_id, username, type, date) VALUES (?, ?, 'visit', ?)", (animal_id, session['user'], date))
+    cur.execute("INSERT INTO schedule (animal_id, username, type, date, time) VALUES (?, ?, 'visit', ?, ?)", (animal_id, session['user'], date, time))
     con.commit()
     con.close()
     flash('Visit was scheduled for {}!'.format(date))

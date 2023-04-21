@@ -1,0 +1,55 @@
+{% extends "layout_body.html" %}
+
+{% block head_title %}: {{ animal['name'] }} schedule{% endblock %}
+
+
+{% block body_header %}
+    <h3>Schedule an appointment with {{ animal['name'] }}</h3>
+{% endblock %}
+
+
+{% block body_sidebar %}
+
+    <!-- Panel with shelter info -->
+    <div class="p-3">
+        <div class="container border bg-light p-3">
+            <h3>Localization</h3>
+            {{ animal['name'] }} is sheltered in {{ shelter['name'] }} shelter.
+            <br>
+            {{ shelter['loc_adress'] }}
+            <br>
+            {{ shelter['loc_city'] }} {{ shelter['loc_postal'] }}
+            <br>
+            <div class="d-grid gap-2">
+                <br>
+                    <a type="button" class="btn btn-secondary" href="/shelter/{{ animal['shelter_id'] }}">Visit shelter page</a>
+                    <a type="button" class="btn btn-secondary" href="/animal/{{ animal['id'] }}">Back</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel with shelter opening hours -->
+    <div class="p-3">
+        <div class="container border bg-light p-3">
+            <table class="table">
+                <h5>Shelter opening hours:</h5>
+                <thead>
+                    <tr>
+                        <th scope="col">Day</th>
+                        <th scope="col">Hours</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Monday</td>
+                        <td>7.00-16.00</td>
+                    </tr>
+                </tbody>
+            </table>
+            <h5>Please take a note that:</h5>
+            Visits can be scheduled for up to 1 hour before shelter closing.<br>
+            Walks can be scheduled for up to 2 hours before shelter closing.
+        </div>
+    </div>
+
+{% endblock %}

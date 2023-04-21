@@ -5,6 +5,8 @@ import os
 import uuid
 from urllib.parse import urlencode
 import requests
+from datetime import date, datetime
+from dateutil import relativedelta
 
 from main_checks import login_check, keeper_check, owner_check, volunteer_check
 
@@ -77,7 +79,7 @@ def get_geocode(city, adress, postal):
         geocode = (data.json()['results'][0]['geometry']['location']['lat'], data.json()['results'][0]['geometry']['location']['lng'])
     except:
         return False
-    return geocode
+    return geocode   
         
 
 ##################################################    INFORMATION RECIEVERS    ##################################################
@@ -290,6 +292,19 @@ def get_shelter_supplies(shelter_id):
     else:
         return supplies
 
+# Gets shelter opening hours
+def get_opening_hours(shelter_id):
+    # Connects to database, checks hours and returns either hours or false if hours are not found
+    con = sqlite3.connect('database.db')
+    con.row_factory = dict_factory
+    cur = con.cursor()
+    cur.execute("SELECT open, close FROM opening_hours WHERE shelter_id = ?", (shelter_id,))
+    opening_hours = cur.fetchone()
+    con.close()
+    if not opening_hours:
+        return False
+    return opening_hours
+
 
 ##############################    ANIMAL INFORMATION    ##############################
 
@@ -349,6 +364,86 @@ def get_animal_vaccinations(animal_id):
         return False
     return vaccinations
 
+# Gets dates from today to next month
+def get_pos_day():
+    pos_day = {}
+    pos_day['min'] = date.today()
+    pos_day['max'] = date.today() + relativedelta.relativedelta(months=1)      
+    return pos_day
+
+# Gets free hours of an animal
+def get_pos_hours(animal_id):
+    visit_day = request.form.get('visit_day')
+
+    con = sqlite3.connect('database.db')
+    con.row_factory = dict_factory
+    cur = con.cursor()
+    cur.execute("SELECT * FROM opening_hours WHERE shelter_id = (SELECT shelter_id FROM animals WHERE id = ?)", (animal_id,))
+    opening_hours = cur.fetchone()
+    pos_hours = []
+    # cur.execute("SELECT time FROM schedule WHERE animal_id = ? AND date = ?", (animal_id, visit_day))
+    # busy_hours = cur.fetchall()
+    # for hour in range(opening_hours['open'], opening_hours['close'] - 1):
+    #     if hour in busy_hours['time']:
+    #         pos_hours.append({hour: False})
+    #     else:
+    #         pos_hours.append({hour: True})
+
+
+    for hour in range(opening_hours['open'], opening_hours['close'] - 1):
+        pos_hours.append(hour)
+
+
+
+
+    con.close()
+    return pos_hours
+
+
+def get_pos_time(animal_id):
+    today = date.today()
+    pos_time = []
+    
+    # Select wszystkie eventy z animal schedule z animal id
+    # Wybrać wsztstkie daty + godziny możliwe
+    # Dla każdego eventu usunąć możliwe godziny
+    # Zwrócić listę możliwych dat + godzin
+
+    con = sqlite3.connect('database.db')
+    con.row_factory = dict_factory
+    cur = con.cursor()
+
+    # Gets all events of an animal starting with today
+    cur.execute("SELECT * FROM schedule WHERE animal_id = ? AND date >= ?", (animal_id, today))
+    busy = cur.fetchall()
+    
+    # Gets all possible days and hours
+    cur.execute("SELECT * FROM opening_hours WHERE shelter_id = (SELECT shelter_id FROM animals WHERE id = ?)", (animal_id,))
+    hours = cur.fetchone()
+    con.close()
+
+    opening_hours = []
+    for hour in range(hours['open'], hours['close'] - 1):
+        opening_hours.append(hour)
+
+    for i in range(31):
+        cur_date = str(date.today() + relativedelta.relativedelta(days=i))
+        print(cur_date)
+        pos_time.append({cur_date: []})
+        for hour in opening_hours:
+            pos_time[i][cur_date].append(hour)
+    
+    print(pos_time)
+
+    return pos_time
+                
+
+
+            
+
+
+
+
 
 ##############################    MAP DISPLAY    ##############################
 
@@ -363,6 +458,9 @@ def get_coords(shelter_id):
     cur.execute("SELECT name, loc_city, loc_adress, loc_postal, geo_lat, geo_lng FROM shelters WHERE id = ?", (shelter_id,))
     location = cur.fetchone()
     con.close()
+    # If theres shelter with such id return false
+    if not location:
+        return False
     # If theres no coords return false
     if not location['geo_lat']:
         return False

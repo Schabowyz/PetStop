@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, session, flash
 from flask_session import Session
 from datetime import timedelta
 
-from main_helpers import login_required, logout_required, get_user_status, get_shelter_info, get_animals_info, get_keepers, get_animal_info, get_animal_vaccinations, get_user_saved, get_user_schedule, get_shelter_volunteers, get_user_info, get_user_shelters, get_coords, get_shelter_supplies
+from main_helpers import login_required, logout_required, get_user_status, get_shelter_info, get_animals_info, get_keepers, get_animal_info, get_animal_vaccinations, get_user_saved, get_user_schedule, get_shelter_volunteers, get_user_info, get_user_shelters, get_coords, get_shelter_supplies, get_pos_day
 from main_user import login_user, register_user, save_user_animal, delete_user_animal, delete_user, user_edit_info, user_edit_pass
 from main_shelter import add_shelter, edit_shelter_info, delete_keeper, add_keeper, add_owner, add_volunteer, delete_volunteer, search_for_shelters, add_supply, delete_supply
 from main_animal import add_animal, update_animal_status, update_animal_info, add_animal_vaccine, delete_animal_vaccine, schedule_visit, delete_animal_schedule, schedule_walk, delete_animal, search_for_animals
@@ -361,9 +361,9 @@ def shelter_delete_volunteer(shelter_id, username):
 def animal_main(animal_id):
 
     animal = get_animal_info(animal_id)
-    coords = get_coords(animal['shelter_id'])
     if not animal:
         return redirect('/404')
+    coords = get_coords(animal['shelter_id'])
     
     return render_template('animal_main.html', user_status=get_user_status(animal['shelter_id']), animal=animal, shelter=get_shelter_info(animal['shelter_id']), vaccinations=get_animal_vaccinations(animal_id), coords=coords, api_key=api_key)
 
@@ -446,29 +446,6 @@ def user_animal_save(animal_id):
     return redirect('/animal/{}'.format(animal_id))
 
 
-# Set animal visit day
-@app.route('/animal/<animal_id>/visit', methods = ['POST'])
-@login_required
-def user_animal_visit(animal_id):
-
-    schedule_visit(animal_id)
-
-    return redirect('/animal/{}'.format(animal_id))
-
-
-# Set animal walk day
-@app.route('/animal/<animal_id>/walk', methods = ['POST'])
-@login_required
-def user_animal_walk(animal_id):
-
-    if walk_check(animal_id):
-        schedule_walk(animal_id)
-    else:
-        flash('Only shelter keeper or volunteer can take an animal for a walk!')
-
-    return redirect('/animal/{}'.format(animal_id))
-
-
 # Delete animal
 @app.route('/animal/<animal_id>/delete', methods = ['POST'])
 @login_required
@@ -479,6 +456,19 @@ def animal_delete(animal_id):
     else:
         return redirect('/animal/{}'.format(animal_id))
     
+
+# Schedule an appointment
+@app.route('/animal/<animal_id>/schedule/day', methods = ['GET', 'POST'])
+@login_required
+def animal_schedule_day(animal_id):
+
+    animal = get_animal_info(animal_id)
+
+    if request.method == 'POST':
+
+        return render_template('animal_schedule_time.html', user_status=get_user_status(animal['shelter_id']), animal=animal, shelter=get_shelter_info(animal['shelter_id']), pos_day=get_pos_day())
+
+    return render_template('animal_schedule_day.html', user_status=get_user_status(animal['shelter_id']), animal=animal, shelter=get_shelter_info(animal['shelter_id']), pos_day=get_pos_day())
 
 
 #################### SEARCH ####################
@@ -537,7 +527,7 @@ def search_shelters():
 @app.route('/test')
 def test():
 
-
+    
 
 
     return redirect('/')
