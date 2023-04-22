@@ -263,11 +263,8 @@ def delete_animal_vaccine(vac_id):
 def schedule_visit(animal_id):
     # Gets the date from the form and checks it's correctnes
     date = session['appointment']
-    print(date)
     app_type = request.form.get('app_type')
-    print(app_type)
     time = request.form.get('app_time')
-    print(time)
     if not date_check(date) or not time_check(time):
         flash('Incorrect date!')
         return False
