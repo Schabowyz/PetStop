@@ -20,9 +20,10 @@
         <div class="form-group">
             <label for="speciesSelect" class="form-label">Choose species</label>
             <select name="species" class="form-select">
-                <option selected value="dog">Dog</option>
-                <option value="cat">Cat</option>
-                <option value="stara">Twoja stara</option>
+                <option selected disabled>Choose</option>
+                {% for specie in species %}
+                    <option value="{{ specie }}">{{ specie }}</option>
+                {% endfor %}
             </select>
         </div>
         <br>

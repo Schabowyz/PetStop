@@ -27,7 +27,7 @@ app.config['ANIMAL_IMAGES'] = 'static/animal_images'
 
 Session(app)
 
-POS_SPECIES = ['dog', 'cat']
+POS_SPECIES = ['dog', 'cat', 'bunny', 'chameleon']
 
 
 
@@ -321,7 +321,7 @@ def shelter_add_animal(shelter_id):
             flash('Animal was succesfully added to shelter!')
             return redirect('/shelter/{}'.format(shelter_id))
         
-    return render_template('shelter_animal.html', user_status=get_user_status(shelter_id), shelter=get_shelter_info(shelter_id), keepers=get_keepers(shelter_id), db={'animal': 'disabled'})
+    return render_template('shelter_animal.html', user_status=get_user_status(shelter_id), shelter=get_shelter_info(shelter_id), keepers=get_keepers(shelter_id), db={'animal': 'disabled'}, species=POS_SPECIES)
 
 
 # Edit volunteers
