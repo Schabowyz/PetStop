@@ -27,9 +27,20 @@ def add_shelter():
     shelter['loc_postal'] = request.form.get('loc_postal')
     shelter['con_phone'] = request.form.get('con_phone')
     shelter['description'] = request.form.get('description')
+    time_open = request.form.get('open')
+    time_close = request.form.get('close')
     # Checks for errors and if there are any returns fals
     errors = shelter_form_check(shelter)
     errors += email_check('shelters', shelter['con_email'])
+    try:
+        time_open = int(time_open)
+        time_close = int(time_close)
+        if time_open not in range(0, 24) or time_close not in range(0, 24):
+            errors.append('Wrong time format!')
+        if time_open > time_close:
+            errors.append('Opening hour must be earlier than closing hour!')
+    except ValueError:
+        errors.append('Wrong time input, please use numbers!')
     if errors:
         for error in errors:
             flash(error)
@@ -61,6 +72,8 @@ def add_shelter():
     ))
     con.commit()
     shelter_id = cur.lastrowid
+    cur.execute("INSERT INTO opening_hours VALUES (?, ?, ?)", (shelter_id, time_open, time_close))
+    con.commit()
     con.close()
     flash('Shelter was successfully created!')
     # Adds logged user as shelter keeper and shelter owner
@@ -79,6 +92,8 @@ def edit_shelter_info(shelter_id):
     shelter['loc_postal'] = request.form.get('loc_postal')
     shelter['con_phone'] = request.form.get('con_phone')
     shelter['description'] = request.form.get('description')
+    time_open = request.form.get('open')
+    time_close = request.form.get('close')
     # Checks for errors and if there are any returns fals
     errors = shelter_form_check(shelter)
     try:
@@ -91,6 +106,15 @@ def edit_shelter_info(shelter_id):
     cur.execute("SELECT con_email FROM shelters WHERE con_email = ? AND id != ?", (shelter['con_email'], shelter_id))
     if cur.fetchone():
         errors.append('Email adress is already taken!')
+    try:
+        time_open = int(time_open)
+        time_close = int(time_close)
+        if time_open not in range(0, 24) or time_close not in range(0, 24):
+            errors.append('Wrong time format!')
+        if time_open > time_close:
+            errors.append('Opening hour must be earlier than closing hour!')
+    except ValueError:
+        errors.append('Wrong time input, please use numbers!')
     # If there are any errors returns false
     if errors:
         for error in errors:
@@ -128,6 +152,7 @@ def edit_shelter_info(shelter_id):
         shelter['geo_lng'],
         shelter_id
     ))
+    cur.execute("UPDATE opening_hours SET open = ?, close = ? WHERE shelter_id = ?", (time_open, time_close, shelter_id))
     con.commit()
     con.close()
     return True

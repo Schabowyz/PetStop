@@ -41,6 +41,33 @@
         <label for="imageInput">Image</label>
         <input name="image" type="file" class="form-control" id="imageInput" onchange="preview()">
         <br>
+
+        Opening hours
+        <div class="container">
+            <div class="row align-items-start">
+                <div class="col-5">
+                    <select name="open" class="form-select" id="openInput">
+                        <option selected disabled>Opening time</option>
+                        {% for i in range(24) %}
+                            <option value="{{ i }}">{{ i }}.00</option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                </div>
+                <div class="col-2 d-flex justify-content-center">
+                    -
+                </div>
+                <div class="col-5">
+                    <select name="close" class="form-select" id="closeInput">
+                        <option selected disabled>Closing time</option>
+                        {% for i in range(24) %}
+                            <option value="{{ i }}">{{ i }}.00</option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                </div>
+            </div>
+        </div>
     
     </form>
 {% endblock %}

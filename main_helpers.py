@@ -284,7 +284,7 @@ def get_shelter_supplies(shelter_id):
     con = sqlite3.connect('database.db')
     con.row_factory = dict_factory
     cur = con.cursor()
-    cur.execute("SELECT id, supply, demand, date FROM supplies WHERE shelter_id = ?", (shelter_id))
+    cur.execute("SELECT id, supply, demand, date FROM supplies WHERE shelter_id = ?", (shelter_id, ))
     supplies = cur.fetchall()
     con.close()
     if not supplies:

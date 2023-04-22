@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, session, flash
 from flask_session import Session
 from datetime import timedelta
 
-from main_helpers import login_required, logout_required, get_user_status, get_shelter_info, get_animals_info, get_keepers, get_animal_info, get_animal_vaccinations, get_user_saved, get_user_schedule, get_shelter_volunteers, get_user_info, get_user_shelters, get_coords, get_shelter_supplies, get_pos_day, get_pos_hours, get_animal_schedule
+from main_helpers import login_required, logout_required, get_user_status, get_shelter_info, get_animals_info, get_keepers, get_animal_info, get_animal_vaccinations, get_user_saved, get_user_schedule, get_shelter_volunteers, get_user_info, get_user_shelters, get_coords, get_shelter_supplies, get_pos_day, get_pos_hours, get_animal_schedule, get_opening_hours
 from main_user import login_user, register_user, save_user_animal, delete_user_animal, delete_user, user_edit_info, user_edit_pass
 from main_shelter import add_shelter, edit_shelter_info, delete_keeper, add_keeper, add_owner, add_volunteer, delete_volunteer, search_for_shelters, add_supply, delete_supply
 from main_animal import add_animal, update_animal_status, update_animal_info, add_animal_vaccine, delete_animal_vaccine, schedule_visit, delete_animal_schedule, delete_animal, search_for_animals
@@ -217,7 +217,7 @@ def shelter_main(shelter_id):
     if request.method == 'POST':
         animals = search_for_animals(shelter_id)
 
-    return render_template('shelter_main.html', user_status=get_user_status(shelter_id), shelter=shelter, animals=animals, db={}, coords=coords, api_key=api_key, supplies=get_shelter_supplies(shelter_id))
+    return render_template('shelter_main.html', user_status=get_user_status(shelter_id), shelter=shelter, animals=animals, db={}, coords=coords, api_key=api_key, supplies=get_shelter_supplies(shelter_id), opening_hours=get_opening_hours(shelter_id))
 
 
 # Edit information
@@ -234,7 +234,7 @@ def shelter_edit_information(shelter_id):
         if edit_shelter_info(shelter_id):
             flash('Changes were successfully implemented!')
 
-    return render_template('shelter_info.html', user_status=get_user_status(shelter_id), shelter=get_shelter_info(shelter_id), db={'info': 'disabled'})
+    return render_template('shelter_info.html', user_status=get_user_status(shelter_id), shelter=get_shelter_info(shelter_id), db={'info': 'disabled'}, opening_hours=get_opening_hours(shelter_id))
 
 
 # Edit needs
@@ -365,7 +365,7 @@ def animal_main(animal_id):
         return redirect('/404')
     coords = get_coords(animal['shelter_id'])
     
-    return render_template('animal_main.html', user_status=get_user_status(animal['shelter_id']), animal=animal, shelter=get_shelter_info(animal['shelter_id']), vaccinations=get_animal_vaccinations(animal_id), coords=coords, api_key=api_key)
+    return render_template('animal_main.html', user_status=get_user_status(animal['shelter_id']), animal=animal, shelter=get_shelter_info(animal['shelter_id']), vaccinations=get_animal_vaccinations(animal_id), coords=coords, api_key=api_key, opening_hours=get_opening_hours(animal['shelter_id']))
 
 
 # Edit animal info
@@ -474,9 +474,9 @@ def animal_schedule_day(animal_id):
     animal = get_animal_info(animal_id)
 
     if request.method == 'POST':
-        return render_template('animal_schedule_time.html', user_status=get_user_status(animal['shelter_id']), animal=animal, shelter=get_shelter_info(animal['shelter_id']), pos_day=get_pos_day(), pos_hours=get_pos_hours(animal_id), walk=animal_walk_check(animal_id), day=request.form.get('app_day'))
+        return render_template('animal_schedule_time.html', user_status=get_user_status(animal['shelter_id']), animal=animal, shelter=get_shelter_info(animal['shelter_id']), pos_day=get_pos_day(), pos_hours=get_pos_hours(animal_id), walk=animal_walk_check(animal_id), day=request.form.get('app_day'), opening_hours=get_opening_hours(animal['shelter_id']))
 
-    return render_template('animal_schedule_day.html', user_status=get_user_status(animal['shelter_id']), animal=animal, shelter=get_shelter_info(animal['shelter_id']), pos_day=get_pos_day())
+    return render_template('animal_schedule_day.html', user_status=get_user_status(animal['shelter_id']), animal=animal, shelter=get_shelter_info(animal['shelter_id']), pos_day=get_pos_day(), opening_hours=get_opening_hours(animal['shelter_id']))
 
 
 # Schedule an appointment time

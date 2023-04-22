@@ -3,7 +3,7 @@
 {% block head_title %}: {{ shelter['name'] }}{% endblock %}
 
 {% block body_header %}
-    <h3>Animals in shelter</h3><br>
+    <h3>Animals in shelter:</h3>
 {% endblock %}
 
 {% block body_content %}
@@ -94,25 +94,49 @@
     <!-- Panel with shelter information -->
     <div class="p-3">
         <div class="container border bg-light p-3">
-            {% if shelter['image'] != 0 %}
-                <img src="/{{ shelter['image'] }}" class="img-thumbnail" alt="{{ shelter['name'] }}">
-            {% else %}
-                <img src="/static/shelter_image.jpg" class="img-thumbnail" alt="{{ shelter['name'] }}">
-            {% endif %}
-            <h3>{{ shelter['name'] }}</h3>
-            {{ shelter['loc_city'] }}<br>
-            {{ shelter['loc_adress'] }}<br>
-            {{ shelter['loc_postal'] }}<br>
-            {{ shelter['con_phone'] }}<br>
-            {{ shelter['con_email'] }}<br>
-            {{ shelter['description'] }}<br>
+            <div>
+                <h3>{{ shelter['name'] }}</h3>
+                {% if shelter['image'] != 0 %}
+                    <img src="/{{ shelter['image'] }}" class="img-thumbnail" alt="{{ shelter['name'] }}">
+                {% else %}
+                    <img src="/static/shelter_image.jpg" class="img-thumbnail" alt="{{ shelter['name'] }}">
+                {% endif %}
+            </div>
+            <br>
+            <div>
+                {{ shelter['description'] }}<br>
+            </div>
+            <br>
+            <div>
+                <h5>Contact:</h5>
+                {{ shelter['con_phone'] }}<br>
+                {{ shelter['con_email'] }}<br>
+            </div>
+            <br>
+            <table class="table">
+                <h5>Opening hours:</h5>
+                <thead>
+                    <tr>
+                        <th scope="col">Open</th>
+                        <th scope="col">Close</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ opening_hours['open'] }}.00</td>
+                        <td>{{ opening_hours['close'] }}.00</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
     <!-- Panel with map -->
     <div class="p-3">
         <div class="container border bg-light p-3">
-            <h3>Localization</h3>
+            <h3>Localization:</h3>
+            {{ shelter['loc_adress'] }}<br>
+            {{ shelter['loc_city'] }}, {{ shelter['loc_postal'] }}<br><br>
             {% include 'component_map.html' %}
         </div>
     </div>
@@ -121,37 +145,36 @@
     <div class="p-3">
         <div class="container border bg-light p-3">
             <h3>Supply demands</h3>
-                {% if supplies %}
-                    <table class="table table-hover">
-                        <thead>
+            {% if supplies %}
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Supply</th>
+                            <th scope="col">Demand</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            {% for supply in supplies %}
                             <tr>
-                                <th scope="col">Supply</th>
-                                <th scope="col">Demand</th>
+                                <td class="align-middle">{{ supply['supply'] }}</td>
+                                <td class="align-middle">
+                                    {% if supply['demand'] == 0 %}
+                                        Low
+                                    {% endif %}
+                                    {% if supply['demand'] == 1 %}
+                                        Medium
+                                    {% endif %}
+                                    {% if supply['demand'] == 2 %}
+                                        High
+                                    {% endif %}
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                                {% for supply in supplies %}
-                                <tr>
-                                    <td class="align-middle">{{ supply['supply'] }}</td>
-                                    <td class="align-middle">
-                                        {% if supply['demand'] == 0 %}
-                                            Low
-                                        {% endif %}
-                                        {% if supply['demand'] == 1 %}
-                                            Medium
-                                        {% endif %}
-                                        {% if supply['demand'] == 2 %}
-                                            High
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                        </tbody>
-                    </table>
-                {% else %}
-                    There's no demand for any of product right now.
-                {% endif %}
-            <br>
+                            {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                There's no demand for any of product right now.<br><br>
+            {% endif %}
             <div class="d-grid gap-2">
                 <a type="button" class="btn btn-secondary" href="/shelter/{{ shelter['id'] }}/needs">Details</a>
             </div>

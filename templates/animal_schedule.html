@@ -7,20 +7,19 @@
 {% endblock %}
 
 {% block body_content %}
-    
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                {% if user_status['keeper'] or user_status['owner'] %}
-                    <th scope="col">User</th>
-                {% endif %}
-                <th scope="col">Type</th>
-                <th scope="col">Date</th>
-                <th scope="col">Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% if schedule %}
+    {% if schedule %}
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    {% if user_status['keeper'] or user_status['owner'] %}
+                        <th scope="col">User</th>
+                    {% endif %}
+                    <th scope="col">Type</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Time</th>
+                </tr>
+            </thead>
+            <tbody>
                 {% for event in schedule %}
                 <tr>
                     {% if user_status['keeper'] or user_status['owner'] %}
@@ -31,11 +30,11 @@
                     <td class="align-middle">{{ event['time'] }}.00 - {{ event['time'] + 1 }}.00</td>
                 </tr>
                 {% endfor %}
-            {% else %}
-                There is no event scheduled for {{ animal['name'] }} yet.<br>
-            {% endif %}
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    {% else %}
+        There is no event scheduled for {{ animal['name'] }} yet.<br>
+    {% endif %}
 {% endblock %}
 
 {% block body_sidebar %}

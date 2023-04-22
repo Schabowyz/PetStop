@@ -1,6 +1,6 @@
 {% extends "layout_body.html" %}
 
-{% block head_title %}: {{ animal['name'] }} schedule{% endblock %}
+{% block head_title %}: schedule appointment{% endblock %}
 
 
 {% block body_header %}
@@ -35,14 +35,14 @@
                 <h5>Shelter opening hours:</h5>
                 <thead>
                     <tr>
-                        <th scope="col">Day</th>
-                        <th scope="col">Hours</th>
+                        <th scope="col">Open</th>
+                        <th scope="col">Close</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Monday</td>
-                        <td>7.00-16.00</td>
+                        <td>{{ opening_hours['open'] }}.00</td>
+                        <td>{{ opening_hours['close'] }}.00</td>
                     </tr>
                 </tbody>
             </table>
