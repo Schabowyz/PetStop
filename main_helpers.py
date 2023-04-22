@@ -5,7 +5,7 @@ import os
 import uuid
 from urllib.parse import urlencode
 import requests
-from datetime import date, datetime
+from datetime import date
 from dateutil import relativedelta
 
 from main_checks import login_check, keeper_check, owner_check, volunteer_check
@@ -116,7 +116,7 @@ def get_user_schedule():
     con = sqlite3.connect('database.db')
     con.row_factory = dict_factory
     cur = con.cursor()
-    cur.execute("SELECT * FROM schedule WHERE username = ?", (session['user'],))
+    cur.execute("SELECT * FROM schedule WHERE username = ? AND date >= ? ORDER BY date, time", (session['user'], str(date.today())))
     schedule = cur.fetchall()
     # If theres nothing in users schedule, returns false
     if not schedule:
@@ -363,6 +363,22 @@ def get_animal_vaccinations(animal_id):
     if not vaccinations:
         return False
     return vaccinations
+
+# Gets animals schedule
+def get_animal_schedule(animal_id):
+    if not animal_id:
+        return False
+    # Connects to database and gets all vaccination info from it
+    con = sqlite3.connect('database.db')
+    con.row_factory = dict_factory
+    cur = con.cursor()
+    cur.execute("SELECT * FROM schedule WHERE animal_id = ? AND date >= ? ORDER BY date, time", (animal_id, str(date.today())))
+    schedule = cur.fetchall()
+    con.close()
+    print(schedule)
+    if not schedule:
+        return False
+    return schedule
 
 # Gets dates from today to next month
 def get_pos_day():

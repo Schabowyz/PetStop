@@ -1,0 +1,49 @@
+{% extends "layout_body.html" %}
+
+{% block head_title %}: animal schedule{% endblock %}
+
+{% block body_header %}
+    <h3>{{ animal['name'] }} schedule:</h3>
+{% endblock %}
+
+{% block body_content %}
+    
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                {% if user_status['keeper'] or user_status['owner'] %}
+                    <th scope="col">User</th>
+                {% endif %}
+                <th scope="col">Type</th>
+                <th scope="col">Date</th>
+                <th scope="col">Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if schedule %}
+                {% for event in schedule %}
+                <tr>
+                    {% if user_status['keeper'] or user_status['owner'] %}
+                        <td class="align-middle">{{ event['username'] }}</td>
+                    {% endif %}
+                    <td class="align-middle">{{ event['type'] }}</td>
+                    <td class="align-middle">{{ event['date'] }}</td>
+                    <td class="align-middle">{{ event['time'] }}.00 - {{ event['time'] + 1 }}.00</td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                There is no event scheduled for {{ animal['name'] }} yet.<br>
+            {% endif %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block body_sidebar %}
+    <div class="p-3">
+        <div class="container border bg-light p-3">
+            <div class="d-grid gap-2">
+                <a type="button" class="btn btn-secondary" href="/animal/{{ animal['id'] }}">Back</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
