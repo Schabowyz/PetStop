@@ -1,9 +1,10 @@
 from flask import session, request, flash
 import sqlite3
 import os
+from datetime import datetime
 
 from main_checks import date_check, time_check
-from main_helpers import dict_factory, save_image
+from main_helpers import dict_factory, save_image, get_pos_hours
 
 ANIMAL_IMAGES_PATH = 'static/animal_images/'
 
@@ -260,7 +261,7 @@ def delete_animal_vaccine(vac_id):
 ##################################################    SCHEDULE    ##################################################
 
 # Schedules an appointment
-def schedule_visit(animal_id):
+def schedule_appointment(animal_id):
     # Gets the date from the form and checks it's correctnes
     date = session['appointment']
     app_type = request.form.get('app_type')
@@ -278,7 +279,13 @@ def schedule_visit(animal_id):
         con.close()
         flash('Animal does not exist!')
         return False
-    # Checks if user has already vist with the animal scheduled for that day
+    # Checks if user already has up to 10 visits scheduled
+    cur.execute("SELECT COUNT(*) FROM schedule WHERE username = ? AND date >= ?", (session['user'], datetime.today()))
+    count = cur.fetchone()['COUNT(*)']
+    if count > 10:
+        flash('You can have only up to 10 appointments scheduled!')
+        return False
+    # Checks if user has already appointment with the animal scheduled for that day
     cur.execute("SELECT username FROM schedule WHERE animal_id = ? AND username = ? AND date = ?", (animal_id, session['user'], date))
     if cur.fetchone():
         con.close()

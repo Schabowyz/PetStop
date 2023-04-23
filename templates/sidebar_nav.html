@@ -1,6 +1,5 @@
 <div class="p-3">
     <div class="container border bg-light p-3">
-        Hello {{ keeper }}!<br>
         This is shelters control panel - visible only for shlter keepers after logging in.
         <div class="d-grid gap-2">
             <br>
@@ -8,8 +7,8 @@
                 <a type="button" class="btn btn-secondary {{ db['needs'] }}" href="/shelter/{{ shelter['id'] }}/needs">Shelter needs</a>
                 <a type="button" class="btn btn-secondary {{ db['keepers'] }}" href="/shelter/{{ shelter['id'] }}/keepers">Shelter keepers</a>
                 <a type="button" class="btn btn-secondary {{ db['volunteers'] }}" href="/shelter/{{ shelter['id'] }}/volunteers">Shelter volunteers</a>
-                <a type="button" class="btn btn-secondary {{ db['animal'] }}" href="/shelter/{{ shelter['id'] }}/addanimal">Add an animal</a>
                 <a type="button" class="btn btn-secondary {{ db['adopted'] }}" href="/shelter/{{ shelter['id'] }}/adopted">Adopted animals</a>
+                <a type="button" class="btn btn-secondary {{ db['animal'] }}" href="/shelter/{{ shelter['id'] }}/addanimal">Add an animal</a>
         </div>
     </div>
 </div>

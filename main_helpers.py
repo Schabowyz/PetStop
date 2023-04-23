@@ -375,7 +375,6 @@ def get_animal_schedule(animal_id):
     cur.execute("SELECT * FROM schedule WHERE animal_id = ? AND date >= ? ORDER BY date, time", (animal_id, str(date.today())))
     schedule = cur.fetchall()
     con.close()
-    print(schedule)
     if not schedule:
         return False
     return schedule
@@ -409,7 +408,6 @@ def get_pos_hours(animal_id):
     if not busy_hours:
         return pos_hours
     for hour in busy_hours:
-        print(hour)
         if hour['time'] in pos_hours:
             pos_hours.remove(hour['time'])
     return pos_hours           
