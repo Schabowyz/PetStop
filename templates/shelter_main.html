@@ -9,7 +9,7 @@
 {% block body_content %}
     {% if animals %}
         {% for animal in animals %}
-            {% if animal['status_visibility'] == True or user_status['keeper'] == True %}
+            {% if (animal['status_visibility'] != 0 and animal['status'] != 'adopted') or user_status['keeper'] == True %}
                 <div class="card">
                     <div class="card-body">
                         <div class="container">

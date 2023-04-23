@@ -1,0 +1,100 @@
+{% extends "layout_body.html" %}
+
+{% block head_title %}: {{ shelter['name'] }}{% endblock %}
+
+{% block body_header %}
+    <h3>Adopted animals:</h3>
+{% endblock %}
+
+{% block body_content %}
+
+
+    {% if animals %}
+        {% for animal in animals %}
+            {% if animal['status'] == 'adopted' %}
+                <div class="card">
+                    <div class="card-body">
+                        <div class="container">
+                            <div class="row gy-1 gx-1">
+                                <div class="col-3">
+                                    <div class="d-grid gap-2">
+                                        {% if animal['image'] != 0 %}
+                                            <img src="/{{ animal['image'] }}" class="img-thumbnail" alt="{{ animal['name'] }}">
+                                        {% else %}
+                                            <img src="/static/animal_image.jpg" class="img-thumbnail" alt="{{ animal['name'] }}">
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-8">
+                                    <h5 class="card-title">{{ animal['name'] }}</h5>
+                                    <p class="card-text">
+                                        {{ animal['species'] }}
+                                        <br>
+                                        {% if animal['description'] != None %}
+                                            {{ animal['description'] }}
+                                        {% else %}
+                                            {{ animal['name'] }} has no description.
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div> 
+                        <a href="/animal/{{ animal['id'] }}" class="stretched-link"></a>
+                    </div>
+                </div>
+                <br>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
+
+{% block body_sidebar %}
+    <!-- Panel for keepers/owner -->
+    {% if user_status['keeper'] == True %}
+        {% include "sidebar_nav.html" %}
+    {% endif %}
+
+
+    <!-- Panel with shelter information -->
+    <div class="p-3">
+        <div class="container border bg-light p-3">
+            <div>
+                <h3>{{ shelter['name'] }}</h3>
+                {% if shelter['image'] != 0 %}
+                    <img src="/{{ shelter['image'] }}" class="img-thumbnail" alt="{{ shelter['name'] }}">
+                {% else %}
+                    <img src="/static/shelter_image.jpg" class="img-thumbnail" alt="{{ shelter['name'] }}">
+                {% endif %}
+            </div>
+            <br>
+            <div>
+                {{ shelter['description'] }}<br>
+            </div>
+            <br>
+            <div>
+                <h5>Contact:</h5>
+                {{ shelter['con_phone'] }}<br>
+                {{ shelter['con_email'] }}<br>
+            </div>
+            <br>
+            <table class="table">
+                <h5>Opening hours:</h5>
+                <thead>
+                    <tr>
+                        <th scope="col">Open</th>
+                        <th scope="col">Close</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ opening_hours['open'] }}.00</td>
+                        <td>{{ opening_hours['close'] }}.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+{% endblock %}

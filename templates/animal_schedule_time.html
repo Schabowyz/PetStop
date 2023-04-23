@@ -12,6 +12,14 @@
     </form>
 
     <br>
+    {% if animal['status_visitability'] == False %}
+        <h5>{{ animal['name'] }} is not available for visits!</h5><br>
+    {% endif %}
+
+    {% if animal['status_walkability'] == False %}
+        <h5>{{ animal['name'] }} is not available for walks!</h5><br>
+    {% endif %}
+
     {% if walk %}
         <h5>Please take a note that {{ animal['name'] }} already has a walk scheduled for selected day!</h5><br>
     {% endif %}
@@ -20,8 +28,12 @@
 
         <label for="app_type" class="form-label"><h5>Choose type of your appointment:</h5></label>
         <select class="form-select" name="app_type" id="app_type">
-            <option value="visit">Visit</option>
-            <option value="walk">Walk</option>
+            {% if animal['status_visitability'] == True %}
+                <option value="visit">Visit</option>
+            {% endif %}
+            {% if animal['status_walkability'] == True %}
+                <option value="walk">Walk</option>
+            {% endif %}
         </select>
         <br>
         <label for="app_time" class="form-label"><h5>Possible appointment hours at {{ day }}:</h5></label>

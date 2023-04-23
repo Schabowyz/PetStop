@@ -324,6 +324,24 @@ def shelter_add_animal(shelter_id):
     return render_template('shelter_animal.html', user_status=get_user_status(shelter_id), shelter=get_shelter_info(shelter_id), keepers=get_keepers(shelter_id), db={'animal': 'disabled'}, species=POS_SPECIES)
 
 
+# Check adopted animals from a shelter
+@app.route('/shelter/<shelter_id>/adopted')
+@login_required
+def shelter_adopted_animals(shelter_id):
+
+    shelter = get_shelter_info(shelter_id)
+    if not shelter:
+        return redirect('/404')
+
+    if not keeper_check(shelter_id):
+        flash('Only shelter keepers can add a new animal to the shelter!')
+        return redirect('/shelter/{}'.format(shelter_id))
+    
+    animals = get_animals_info(shelter_id)
+    
+    return render_template('shelter_adopted.html', user_status=get_user_status(shelter_id), shelter=shelter, animals=animals, db={'adopted': 'disabled'}, supplies=get_shelter_supplies(shelter_id), opening_hours=get_opening_hours(shelter_id))
+
+
 # Edit volunteers
 @app.route('/shelter/<shelter_id>/volunteers', methods = ['GET', 'POST'])
 @login_required
