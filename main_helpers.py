@@ -344,11 +344,15 @@ def get_animal_info(animal_id):
     cur = con.cursor()
     cur.execute("SELECT * FROM animals WHERE id = ?", (animal_id,))
     animal = cur.fetchone()
-    con.close()
     # If theres no such animal returns false, else returns the info
     if not animal:
+        con.close()
         flash('Animal does not exist!')
         return False
+    # Get shelters name
+    cur.execute("SELECT name FROM shelters WHERE id = ?", (animal['shelter_id'],))
+    animal['shelter'] = cur.fetchone()['name']
+    con.close()
     return animal
 
 # Gets animal vaccinations with animal id
@@ -434,3 +438,38 @@ def get_coords(shelter_id):
         return False
     location = {'geo_lat': float(location['geo_lat']), 'geo_lng': float(location['geo_lng']), 'name': location['name']}
     return location
+
+
+##############################    SEARCH INFORMATION    ##############################
+
+# Gets information about animal search filters
+def get_animal_search_filters():
+    filters = {}
+    if request.form.get('keywords'):  
+        filters['keywords'] = request.form.get('keywords')
+    if request.form.get('name') == 'True':
+        filters['name'] = 'name'
+    if request.form.get('species') == 'True':
+        filters['species'] = 'species'
+    if request.form.get('description') == 'True':
+        filters['description'] = 'description'
+    if request.form.get('location') == 'True':
+        filters['location'] = 'location'
+    if not filters:
+        filters = None
+    return filters
+
+# Gets information about shelter search filters
+def get_shelter_search_filters():
+    filters = {}
+    if request.form.get('keywords'):
+        filters['keywords'] = request.form.get('keywords')
+    if request.form.get('name') == 'True':
+        filters['name'] = 'name'
+    if request.form.get('location') == 'True':
+        filters['location'] = 'location'
+    if request.form.get('description') == 'True':
+        filters['description'] = 'description'
+    if not filters:
+        filters = None
+    return filters

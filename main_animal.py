@@ -4,7 +4,7 @@ import os
 from datetime import datetime
 
 from main_checks import date_check, time_check
-from main_helpers import dict_factory, save_image, get_pos_hours
+from main_helpers import dict_factory, save_image, get_animals_info
 
 ANIMAL_IMAGES_PATH = 'static/animal_images/'
 
@@ -332,7 +332,7 @@ def search_for_animals(shelter_id):
     # Gets search keywords from the form and checks correctness
     keywords = request.form.get('keywords')
     if not keywords:
-        return False
+        return get_animals_info(shelter_id)
     if keywords.replace(' ','').isalnum() == False:
         flash('You can only use letters and numbers!')
         return False

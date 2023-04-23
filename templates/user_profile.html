@@ -7,11 +7,50 @@
 {% endblock %}
 
 {% block body_content %}
-    {{ user['username'] }}<br>
-    {{ user['name'] }}<br>
-    {{ user['surname'] }}<br>
-    {{ user['con_email'] }}<br>
-    {{ user['phone'] }}<br>
+   <div class="container">
+        <h5>User:</h5>
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td>Username:</td>
+                    <td><p class="text-end">{{ user['username'] }}</p></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="container">
+        <h5>Personal info:</h5>
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td>Name:</td>
+                    <td><p class="text-end">{{ user['name'] }}</p></td>
+                </tr>
+                <tr>
+                    <td>Surname:</td>
+                    <td><p class="text-end">{{ user['surname'] }}</p></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>    
+
+    <div class="container">
+        <h5>Contact info:</h5>
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td>E-mail:</td>
+                    <td><p class="text-end">{{ user['con_email'] }}</p></td>
+                </tr>
+                <tr>
+                    <td>Phone:</td>
+                    <td><p class="text-end">{{ user['phone'] }}</p></td>
+                </tr>
+            </tbody>
+        </table>
+    </div> 
+
 {% endblock %}
 
 {% block body_sidebar %}

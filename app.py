@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, session, flash
 from flask_session import Session
 from datetime import timedelta
 
-from main_helpers import login_required, logout_required, get_user_status, get_shelter_info, get_animals_info, get_keepers, get_animal_info, get_animal_vaccinations, get_user_saved, get_user_schedule, get_shelter_volunteers, get_user_info, get_user_shelters, get_coords, get_shelter_supplies, get_pos_day, get_pos_hours, get_animal_schedule, get_opening_hours
+from main_helpers import login_required, logout_required, get_user_status, get_shelter_info, get_animals_info, get_keepers, get_animal_info, get_animal_vaccinations, get_user_saved, get_user_schedule, get_shelter_volunteers, get_user_info, get_user_shelters, get_coords, get_shelter_supplies, get_pos_day, get_pos_hours, get_animal_schedule, get_opening_hours, get_animal_search_filters, get_shelter_search_filters
 from main_user import login_user, register_user, save_user_animal, delete_user_animal, delete_user, user_edit_info, user_edit_pass
 from main_shelter import add_shelter, edit_shelter_info, delete_keeper, add_keeper, add_owner, add_volunteer, delete_volunteer, search_for_shelters, add_supply, delete_supply
 from main_animal import add_animal, update_animal_status, update_animal_info, add_animal_vaccine, delete_animal_vaccine, schedule_appointment, delete_animal_schedule, delete_animal, search_for_animals
@@ -34,6 +34,10 @@ POS_SPECIES = ['dog', 'cat', 'bunny', 'chameleon']
 ############################################# ROUTES #############################################
 
 
+
+#################### MISC ####################
+
+
 # Index page
 @app.route('/')
 def index():
@@ -46,6 +50,14 @@ def index():
 def not_found():
 
     return render_template('404.html', user_status=get_user_status(None))
+
+
+# About page
+@app.route('/about')
+def about():
+
+    return render_template('about.html', user_status=get_user_status(None))
+
 
 
 #################### USER ####################
@@ -206,6 +218,7 @@ def shelter_create():
 @app.route('/shelter/<shelter_id>', methods = ['GET', 'POST'])
 def shelter_main(shelter_id):
 
+    filters = None
     coords = get_coords(shelter_id)
 
     shelter = get_shelter_info(shelter_id)
@@ -216,8 +229,9 @@ def shelter_main(shelter_id):
 
     if request.method == 'POST':
         animals = search_for_animals(shelter_id)
+        filters = get_animal_search_filters()
 
-    return render_template('shelter_main.html', user_status=get_user_status(shelter_id), shelter=shelter, animals=animals, db={}, coords=coords, api_key=api_key, supplies=get_shelter_supplies(shelter_id), opening_hours=get_opening_hours(shelter_id))
+    return render_template('shelter_main.html', user_status=get_user_status(shelter_id), shelter=shelter, animals=animals, db={}, coords=coords, api_key=api_key, supplies=get_shelter_supplies(shelter_id), opening_hours=get_opening_hours(shelter_id), filters=filters)
 
 
 # Edit information
@@ -514,27 +528,33 @@ def animal_schedule_time(animal_id):
 # Search animals
 @app.route('/search/animals', methods = ['GET', 'POST'])
 def search_animals():
+
     animals = get_animals_info(None)
+    filters = None
 
     if request.method == 'POST':
         results = search_for_animals(None)
         if results:
             animals = results
+            filters = get_animal_search_filters()
 
-    return render_template('search_animals.html', user_status=get_user_status(None), animals=animals)
+    return render_template('search_animals.html', user_status=get_user_status(None), animals=animals, filters=filters)
 
 
 # Search shelters
 @app.route('/search/shelters', methods = ['GET', 'POST'])
 def search_shelters():
+
     shelters = get_shelter_info(None)
+    filters = None
 
     if request.method == 'POST':
         results = search_for_shelters()
         if results:
             shelters = results
+            filters = get_shelter_search_filters()
 
-    return render_template('search_shelters.html', user_status=get_user_status(None), shelters=shelters)
+    return render_template('search_shelters.html', user_status=get_user_status(None), shelters=shelters, filters=filters)
 
 
 

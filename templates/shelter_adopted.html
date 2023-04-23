@@ -8,7 +8,6 @@
 
 {% block body_content %}
 
-
     {% if animals %}
         {% for animal in animals %}
             {% if animal['status'] == 'adopted' %}
@@ -46,6 +45,7 @@
             {% endif %}
         {% endfor %}
     {% endif %}
+    
 {% endblock %}
 
 
@@ -56,43 +56,12 @@
     {% endif %}
 
 
-    <!-- Panel with shelter information -->
+    <!-- Panel with back -->
     <div class="p-3">
         <div class="container border bg-light p-3">
-            <div>
-                <h3>{{ shelter['name'] }}</h3>
-                {% if shelter['image'] != 0 %}
-                    <img src="/{{ shelter['image'] }}" class="img-thumbnail" alt="{{ shelter['name'] }}">
-                {% else %}
-                    <img src="/static/shelter_image.jpg" class="img-thumbnail" alt="{{ shelter['name'] }}">
-                {% endif %}
+            <div class="d-grid gap-2">
+                <a type="button" class="btn btn-secondary" href="/shelter/{{ shelter['id'] }}">Back</a>
             </div>
-            <br>
-            <div>
-                {{ shelter['description'] }}<br>
-            </div>
-            <br>
-            <div>
-                <h5>Contact:</h5>
-                {{ shelter['con_phone'] }}<br>
-                {{ shelter['con_email'] }}<br>
-            </div>
-            <br>
-            <table class="table">
-                <h5>Opening hours:</h5>
-                <thead>
-                    <tr>
-                        <th scope="col">Open</th>
-                        <th scope="col">Close</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{{ opening_hours['open'] }}.00</td>
-                        <td>{{ opening_hours['close'] }}.00</td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </div>
 

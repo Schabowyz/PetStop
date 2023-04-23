@@ -1,12 +1,22 @@
 {% extends "layout_body.html" %}
 
-{% block head_title %}: Search shelters{% endblock %}
+{% block head_title %}: Search animals{% endblock %}
 
 {% block body_header %}
     <h3>Animals search:</h3>
+    {% if filters %}
+        <b>Search keywords:</b> {{ filters['keywords'] }}<br>
+        <b>Search in: </b>
+        {% if filters['name'] %}{{ filters['name'] }}, {% endif %}
+        {% if filters['species'] %}{{ filters['species'] }}, {% endif %}
+        {% if filters['description'] %}{{ filters['description'] }}, {% endif %}
+        {% if filters['location'] %}{{ filters['location'] }}, {% endif %}
+        <br>
+    {% endif %}
 {% endblock %}
 
 {% block body_content %}
+
     {% if animals %}
         {% for animal in animals %}
             {% if animal['status'] != 'adopted' and animal['status_visibility'] != 0 %}
@@ -46,6 +56,7 @@
             {% endif %}
         {% endfor %}
     {% endif %}
+
 {% endblock %}
 
 {% block body_sidebar %}
@@ -63,11 +74,11 @@
                         <label class="form-check-label" for="name">Animal name</label>
                     </div>
                     <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" name="location" id="location" value="True" checked>
+                        <input class="form-check-input" type="checkbox" name="location" id="location" value="True">
                         <label class="form-check-label" for="location">Animal location</label>
                     </div>
                     <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" name="species" id="species" value="True" checked>
+                        <input class="form-check-input" type="checkbox" name="species" id="species" value="True">
                         <label class="form-check-label" for="species">Animal species</label>
                     </div>
                     <div class="form-check form-switch">
