@@ -53,8 +53,12 @@ def add_shelter():
         shelter['image'] = 0
     # Creates a geocode for the shelter
     geocode = get_geocode(shelter['loc_city'], shelter['loc_adress'], shelter['loc_postal'])
-    shelter['geo_lat'] = geocode[0]
-    shelter['geo_lng'] = geocode[1]
+    if geocode:
+        shelter['geo_lat'] = geocode[0]
+        shelter['geo_lng'] = geocode[1]
+    else:
+        shelter['geo_lat'] = None
+        shelter['geo_lng'] = None
     # Connects to db and creates new entry
     con = sqlite3.connect("database.db")
     cur = con.cursor()
@@ -136,8 +140,12 @@ def edit_shelter_info(shelter_id):
         shelter['image'] = curr_image['image']
     # Creates a geocode for the shelter
     geocode = get_geocode(shelter['loc_city'], shelter['loc_adress'], shelter['loc_postal'])
-    shelter['geo_lat'] = geocode[0]
-    shelter['geo_lng'] = geocode[1]
+    if geocode:
+        shelter['geo_lat'] = geocode[0]
+        shelter['geo_lng'] = geocode[1]
+    else:
+        shelter['geo_lat'] = None
+        shelter['geo_lng'] = None
     # Db entry update
     cur.execute("UPDATE shelters SET name = ?, loc_city = ?, loc_adress = ?, loc_postal = ?, con_phone = ?, con_email = ?, description = ?, image = ?, geo_lat = ?, geo_lng = ? WHERE id = ?",(
         shelter['name'],
