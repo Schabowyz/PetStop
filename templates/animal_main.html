@@ -85,28 +85,30 @@
 {% block body_content %}
     <h5>Vaccinations:</h5><br>
     {% if vaccinations %}
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Vaccination</th>
-                    <th scope="col">Disease</th>
-                    <th scope="col">Serial no.</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Exp. time</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for vac in vaccinations %}
-                <tr>
-                    <td>{{ vac['vac_name'] }}</td>
-                    <td>{{ vac['vac_for'] }}</td>
-                    <td>{{ vac['vac_series'] }}</td>
-                    <td>{{ vac['vac_date'] }}</td>
-                    <td>{{ vac['vac_exp'] }} year/years</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="scrollmenu">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Vaccination</th>
+                        <th scope="col">Disease</th>
+                        <th scope="col">Serial no.</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Exp. time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for vac in vaccinations %}
+                    <tr>
+                        <td>{{ vac['vac_name'] }}</td>
+                        <td>{{ vac['vac_for'] }}</td>
+                        <td>{{ vac['vac_series'] }}</td>
+                        <td>{{ vac['vac_date'] }}</td>
+                        <td>{{ vac['vac_exp'] }} year/years</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% else %}
         There is no vaccination information provided yet.<br>
     {% endif %}
